@@ -1,0 +1,20 @@
+node_modules/
+.next/
+out/
+dist/
+.vercel
+.turbo
+.pnpm-store/
+
+.env
+.env.*
+!.env.example
+
+.DS_Store
+*.log
+coverage/
+playwright-report/
+test-results/
+
+# local cursor canvases are not the product repo
+.cursor/*.data.json

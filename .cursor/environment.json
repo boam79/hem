@@ -1,0 +1,14 @@
+{
+  "name": "boardroom",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "install": "if [ -f package.json ]; then corepack enable && pnpm install --frozen-lockfile=false; fi",
+  "ports": [
+    {
+      "name": "web",
+      "port": 3000
+    }
+  ]
+}
