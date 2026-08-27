@@ -11,9 +11,10 @@
 ## 확인
 
 - `package.json` 없음 → Cloud `install`은 no-op 성공이어야 함.
-- GitHub `hem`은 빈 리포. 다음: git init, 커밋, 푸시.
+- 커밋 `5b9b470`을 `origin/main`에 푸시함. 원격은 `git@github.com:boam79/hem.git`.
 
-## 사람 대기
+## 사람 대기 (P0-4 · P0-5)
 
-- `gh auth login`이 아직이면 푸시가 막힐 수 있음. HTTPS ls-remote는 됨.
-- Cursor 대시보드 GitHub 연결, 모바일 앱 저장소 목록 확인은 P0-4.
+- Cursor 대시보드에서 GitHub App으로 `boam79/hem` 허용.
+- 모바일 Cursor / cursor.com/agents 저장소 목록에 hem이 보이는지.
+- Cloud Agent를 한 번 실행해 클론·조건부 install이 실패하지 않는지.

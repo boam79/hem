@@ -7,7 +7,7 @@
 
 - [x] `AGENTS.md`에 `Cursor Cloud specific instructions`
 - [x] `.cursor/environment.json` + `.cursor/Dockerfile` (Node 20, 조건부 pnpm)
-- [ ] GitHub `boam79/hem`에 푸시 (P0-3)
+- [x] GitHub `boam79/hem`에 푸시 (P0-3, `5b9b470`)
 - [ ] Cloud Agent 한 번 실행해 클론 확인 (P0-5)
 
 `install`은 `package.json`이 없으면 아무것도 하지 않고 성공한다.

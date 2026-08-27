@@ -18,8 +18,8 @@ Phase 0 Cloud 골격·git·푸시. Phase 1 PRD W1.
 ## Project Status Board
 
 - [x] P0-1 Cloud용 리포 골격 파일
-- [ ] P0-2 git init + origin + 첫 커밋
-- [ ] P0-3 GitHub 푸시
+- [x] P0-2 git init + origin + 첫 커밋 (`5b9b470`)
+- [x] P0-3 GitHub 푸시 (`boam79/hem` main)
 - [ ] P0-4 Cursor GitHub 연결
 - [ ] P0-5 Cloud Agent 스모크
 - [ ] W1-1 ~ W1-5 (PRD)
