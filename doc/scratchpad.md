@@ -24,8 +24,8 @@ Phase 1: PRD W1 (타임아웃 수정 + keepalive 라우트).
 - [x] P0-1 Cloud용 리포 골격 파일
 - [x] P0-2 git init + origin + 첫 커밋 (`5b9b470`)
 - [x] P0-3 GitHub 푸시 (`boam79/hem` main)
-- [ ] P0-4 Cursor GitHub 연결 + 모바일에서 리포 보임
-- [ ] P0-5 Cloud Agent 스모크
+- [x] P0-4 Cursor GitHub 연결 (Cloud가 `boam79/hem` 클론 성공으로 확인. 폰 목록은 새로고침)
+- [x] P0-5 Cloud Agent 스모크 (`44812fd`, install exit 0, Linux `cursor`)
 - [ ] W1-1 Next.js 최소 앱
 - [ ] W1-2 스키마·페르소나·지표
 - [ ] W1-3 모델 ID 확정
@@ -34,11 +34,10 @@ Phase 1: PRD W1 (타임아웃 수정 + keepalive 라우트).
 
 ## Executor's Feedback or Assistance Requests
 
-2026-08-28: P0-1~P0-3 완료. 푸시 SHA `84578d1`.
-- GitHub API가 `doc/` 목록을 반환함. 빈 폴더에 clone 후 조건부 install exit 0. 로그: `doc/progress/2026-08-28-clone-install-evidence.md`.
-- Cloud VM 증거용 에이전트 실행 중: `bc-6d1df64c-752f-4e04-b1e1-e6de202ce3d8`. 끝나기 전 P0-5 미완료.
-- P0-4는 대시보드에서 `boam79/hem` 허용이 필요. 사람 확인 요청.
-- Supabase 활성 2/2. Boardroom DB는 `boam79_patient_data`와 합치지 말 것.
+2026-08-28: Phase 0 목표 증거 충족.
+- Cloud VM hostname `cursor`, SHA `8134cb5`, install exit 0. 파일: `doc/progress/2026-08-28-cloud-clone-evidence.md` (`44812fd`).
+- 폰에서 리포가 안 보이면 앱 목록을 당겨 새로고침하면 된다. 연결 자체는 Cloud 클론으로 확인됨.
+- W1 시작 전: Supabase 활성 2/2. Boardroom DB는 `boam79_patient_data`와 합치지 말 것.
 
 ## Lessons
 

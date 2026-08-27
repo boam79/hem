@@ -28,16 +28,21 @@ doc/: README.md cloud-mobile-setup.md infra-notes.md mcp-status.md prd prd-revie
 
 이 항목은 **GitHub에서 클론 + 스크립트 no-op** 증거다. Cursor Cloud VM에서 돌았다는 증거는 아니다.
 
-## 3. Cursor Cloud Agent
+## 3. Cursor Cloud Agent — 완료
 
-같은 검증을 Cloud VM에서 돌리기 위해 에이전트를 `main` 기준으로 실행함.
+Linux Cloud VM(`hostname: cursor`)에서 동일 스크립트를 돌렸다. 증거 커밋: https://github.com/boam79/hem/commit/44812fdf1a446adca50fac6bfa69f51f632b7081
 
-- ID: `bc-6d1df64c-752f-4e04-b1e1-e6de202ce3d8`
-- 요청: SHA·install exit 0·`doc/progress/2026-08-28-cloud-clone-evidence.md` 커밋
+- 브랜치: `cursor/cloud-clone-evidence-e3d8`
+- 커밋: `44812fd`
+- hostname: `cursor`
+- uname: `Linux cursor 6.12.94+ ... x86_64`
+- 클론 SHA: `8134cb5`
+- install exit: `0`
+- 원문: [2026-08-28-cloud-clone-evidence.md](2026-08-28-cloud-clone-evidence.md)
 
-완료되면 이 파일에 Cloud 쪽 SHA와 브랜치를 추가한다. 끝나기 전에는 P0-5를 닫지 않는다.
+P0-5 닫음. Cloud가 GitHub `boam79/hem`을 읽었다는 것은 Cursor↔GitHub 연결이 이 리포에 대해 동작한다는 뜻이다.
 
-## 4. 아직 아닌 것
+## 4. 남은 사람 확인
 
-- Docker 이미지 빌드: 이 머신에 `docker` 바이너리 없음.
-- P0-4: Cursor 계정 GitHub App으로 `boam79/hem`이 보이는지(모바일 목록)는 사람 확인.
+- 모바일 앱에서 목록 새로고침 후 `hem`이 보이는지 (연결은 Cloud 클론으로 이미 확인)
+- Docker 이미지 빌드: 이 맥에 `docker` 없음. Cloud Dockerfile은 에이전트가 빌드한다.

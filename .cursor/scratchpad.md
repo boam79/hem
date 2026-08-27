@@ -18,15 +18,15 @@ Phase 0 Cloud 골격·git·푸시. Phase 1 PRD W1.
 ## Project Status Board
 
 - [x] P0-1 Cloud용 리포 골격 파일
-- [x] P0-2 git init + origin + 첫 커밋 (`5b9b470`)
-- [x] P0-3 GitHub 푸시 (`boam79/hem` main)
-- [ ] P0-4 Cursor GitHub 연결
-- [ ] P0-5 Cloud Agent 스모크
+- [x] P0-2 git init + origin + 첫 커밋
+- [x] P0-3 GitHub 푸시
+- [x] P0-4 Cursor GitHub 연결 (Cloud 클론으로 확인)
+- [x] P0-5 Cloud Agent 스모크 (`44812fd`)
 - [ ] W1-1 ~ W1-5 (PRD)
 
 ## Executor's Feedback or Assistance Requests
 
-P0-3 완료(`84578d1`). clone+install 증거는 `doc/progress/2026-08-28-clone-install-evidence.md`. Cloud 검증 에이전트 대기 중. P0-4는 사람 확인.
+P0-3 완료. P0-5 Cloud install exit 0 (`44812fd`). W1 대기.
 
 ## Lessons
 
