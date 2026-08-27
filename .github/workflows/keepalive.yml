@@ -1,0 +1,21 @@
+name: supabase-keepalive
+
+on:
+  schedule:
+    - cron: "0 3 * * 1,4"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping keepalive
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          KEEPALIVE_SECRET: ${{ secrets.KEEPALIVE_SECRET }}
+        run: |
+          set -euo pipefail
+          curl -fsS -X POST "$APP_URL/api/keepalive" \
+            -H "x-keepalive-secret: $KEEPALIVE_SECRET" \
+            -H "content-type: application/json"
+          echo "keepalive ok $(date -u +%FT%TZ)"

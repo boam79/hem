@@ -26,18 +26,19 @@ Phase 1: PRD W1 (타임아웃 수정 + keepalive 라우트).
 - [x] P0-3 GitHub 푸시 (`boam79/hem` main)
 - [x] P0-4 Cursor GitHub 연결 (Cloud가 `boam79/hem` 클론 성공으로 확인. 폰 목록은 새로고침)
 - [x] P0-5 Cloud Agent 스모크 (`44812fd`, install exit 0, Linux `cursor`)
-- [ ] W1-1 Next.js 최소 앱
-- [ ] W1-2 스키마·페르소나·지표
-- [ ] W1-3 모델 ID 확정
-- [ ] W1-4 Supabase + round/session/keepalive API (활성 프로젝트 한도 확인)
-- [ ] W1-5 제한·keep-alive Actions
+- [x] W1-1 Next.js 최소 앱 (`pnpm build` 성공, 루트 앱)
+- [x] W1-2 스키마·페르소나·지표 (vitest 8)
+- [ ] W1-3 모델 ID 확정 (키 필요, 후보는 personas.ts)
+- [ ] W1-4 Supabase 프로젝트+마이그레이션 (SQL은 커밋됨, Free 2/2)
+- [x] W1-5 keep-alive Actions 파일
 
 ## Executor's Feedback or Assistance Requests
 
 2026-08-28: Phase 0 목표 증거 충족.
 - Cloud VM hostname `cursor`, SHA `8134cb5`, install exit 0. 파일: `doc/progress/2026-08-28-cloud-clone-evidence.md` (`44812fd`).
 - 폰에서 리포가 안 보이면 앱 목록을 당겨 새로고침하면 된다. 연결 자체는 Cloud 클론으로 확인됨.
-- W1 시작 전: Supabase 활성 2/2. Boardroom DB는 `boam79_patient_data`와 합치지 말 것.
+2026-08-28 W1 골격: 테스트 8, build 성공. 로그 `doc/progress/2026-08-28-w1-app-skeleton.md`.
+Supabase 새 프로젝트는 Free 활성 2칸이 차서 보류. 기존 환자 DB와 합치지 말 것.
 
 ## Lessons
 

@@ -22,7 +22,11 @@ Phase 0 Cloud 골격·git·푸시. Phase 1 PRD W1.
 - [x] P0-3 GitHub 푸시
 - [x] P0-4 Cursor GitHub 연결 (Cloud 클론으로 확인)
 - [x] P0-5 Cloud Agent 스모크 (`44812fd`)
-- [ ] W1-1 ~ W1-5 (PRD)
+- [x] W1-1 Next.js 최소 앱
+- [x] W1-2 스키마·페르소나·지표
+- [ ] W1-3 모델 ID 확정
+- [ ] W1-4 Supabase 프로젝트
+- [x] W1-5 keep-alive Actions 파일
 
 ## Executor's Feedback or Assistance Requests
 

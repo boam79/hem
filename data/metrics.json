@@ -1,0 +1,350 @@
+{
+  "_note": "합성 데이터. 실제 병원 수치와의 유사성 없음.",
+  "hospital": {
+    "name": "S안과(가상)",
+    "type": "강남권 시력교정·백내장 중심 안과",
+    "doctors": 4
+  },
+  "period": {
+    "from": "2025-08",
+    "to": "2026-07"
+  },
+  "monthly": [
+    {
+      "month": "2025-08",
+      "surgeries": {
+        "lasik": 210,
+        "smile": 340,
+        "icl": 95,
+        "cataract": 160
+      },
+      "per_doctor_surgeries": 201,
+      "revenue_mix": {
+        "refractive": 0.62,
+        "cataract": 0.31,
+        "other": 0.07
+      },
+      "inflow": {
+        "search_ad": 820,
+        "social": 460,
+        "referral": 310,
+        "overseas_agency": 90
+      },
+      "nationality_mix": {
+        "domestic": 0.87,
+        "china": 0.06,
+        "japan": 0.04,
+        "other": 0.03
+      },
+      "consult_to_surgery_rate": 0.63
+    },
+    {
+      "month": "2025-09",
+      "surgeries": {
+        "lasik": 140,
+        "smile": 220,
+        "icl": 70,
+        "cataract": 168
+      },
+      "per_doctor_surgeries": 150,
+      "revenue_mix": {
+        "refractive": 0.54,
+        "cataract": 0.38,
+        "other": 0.08
+      },
+      "inflow": {
+        "search_ad": 540,
+        "social": 310,
+        "referral": 280,
+        "overseas_agency": 98
+      },
+      "nationality_mix": {
+        "domestic": 0.87,
+        "china": 0.06,
+        "japan": 0.04,
+        "other": 0.03
+      },
+      "consult_to_surgery_rate": 0.61
+    },
+    {
+      "month": "2025-10",
+      "surgeries": {
+        "lasik": 140,
+        "smile": 220,
+        "icl": 70,
+        "cataract": 176
+      },
+      "per_doctor_surgeries": 152,
+      "revenue_mix": {
+        "refractive": 0.54,
+        "cataract": 0.38,
+        "other": 0.08
+      },
+      "inflow": {
+        "search_ad": 540,
+        "social": 310,
+        "referral": 280,
+        "overseas_agency": 106
+      },
+      "nationality_mix": {
+        "domestic": 0.85,
+        "china": 0.07,
+        "japan": 0.05,
+        "other": 0.03
+      },
+      "consult_to_surgery_rate": 0.6399999999999999
+    },
+    {
+      "month": "2025-11",
+      "surgeries": {
+        "lasik": 140,
+        "smile": 220,
+        "icl": 70,
+        "cataract": 184
+      },
+      "per_doctor_surgeries": 154,
+      "revenue_mix": {
+        "refractive": 0.54,
+        "cataract": 0.38,
+        "other": 0.08
+      },
+      "inflow": {
+        "search_ad": 540,
+        "social": 310,
+        "referral": 280,
+        "overseas_agency": 114
+      },
+      "nationality_mix": {
+        "domestic": 0.85,
+        "china": 0.07,
+        "japan": 0.05,
+        "other": 0.03
+      },
+      "consult_to_surgery_rate": 0.58
+    },
+    {
+      "month": "2025-12",
+      "surgeries": {
+        "lasik": 140,
+        "smile": 220,
+        "icl": 70,
+        "cataract": 192
+      },
+      "per_doctor_surgeries": 156,
+      "revenue_mix": {
+        "refractive": 0.54,
+        "cataract": 0.38,
+        "other": 0.08
+      },
+      "inflow": {
+        "search_ad": 540,
+        "social": 310,
+        "referral": 280,
+        "overseas_agency": 122
+      },
+      "nationality_mix": {
+        "domestic": 0.84,
+        "china": 0.08,
+        "japan": 0.05,
+        "other": 0.03
+      },
+      "consult_to_surgery_rate": 0.61
+    },
+    {
+      "month": "2026-01",
+      "surgeries": {
+        "lasik": 210,
+        "smile": 340,
+        "icl": 95,
+        "cataract": 160
+      },
+      "per_doctor_surgeries": 201,
+      "revenue_mix": {
+        "refractive": 0.62,
+        "cataract": 0.31,
+        "other": 0.07
+      },
+      "inflow": {
+        "search_ad": 820,
+        "social": 460,
+        "referral": 310,
+        "overseas_agency": 130
+      },
+      "nationality_mix": {
+        "domestic": 0.83,
+        "china": 0.08,
+        "japan": 0.06,
+        "other": 0.03
+      },
+      "consult_to_surgery_rate": 0.63
+    },
+    {
+      "month": "2026-02",
+      "surgeries": {
+        "lasik": 210,
+        "smile": 340,
+        "icl": 95,
+        "cataract": 168
+      },
+      "per_doctor_surgeries": 203,
+      "revenue_mix": {
+        "refractive": 0.62,
+        "cataract": 0.31,
+        "other": 0.07
+      },
+      "inflow": {
+        "search_ad": 820,
+        "social": 460,
+        "referral": 310,
+        "overseas_agency": 138
+      },
+      "nationality_mix": {
+        "domestic": 0.83,
+        "china": 0.08,
+        "japan": 0.06,
+        "other": 0.03
+      },
+      "consult_to_surgery_rate": 0.63
+    },
+    {
+      "month": "2026-03",
+      "surgeries": {
+        "lasik": 140,
+        "smile": 220,
+        "icl": 70,
+        "cataract": 176
+      },
+      "per_doctor_surgeries": 152,
+      "revenue_mix": {
+        "refractive": 0.54,
+        "cataract": 0.38,
+        "other": 0.08
+      },
+      "inflow": {
+        "search_ad": 540,
+        "social": 310,
+        "referral": 280,
+        "overseas_agency": 146
+      },
+      "nationality_mix": {
+        "domestic": 0.82,
+        "china": 0.09,
+        "japan": 0.06,
+        "other": 0.03
+      },
+      "consult_to_surgery_rate": 0.61
+    },
+    {
+      "month": "2026-04",
+      "surgeries": {
+        "lasik": 140,
+        "smile": 220,
+        "icl": 70,
+        "cataract": 184
+      },
+      "per_doctor_surgeries": 154,
+      "revenue_mix": {
+        "refractive": 0.54,
+        "cataract": 0.38,
+        "other": 0.08
+      },
+      "inflow": {
+        "search_ad": 540,
+        "social": 310,
+        "referral": 280,
+        "overseas_agency": 154
+      },
+      "nationality_mix": {
+        "domestic": 0.82,
+        "china": 0.09,
+        "japan": 0.06,
+        "other": 0.03
+      },
+      "consult_to_surgery_rate": 0.6399999999999999
+    },
+    {
+      "month": "2026-05",
+      "surgeries": {
+        "lasik": 140,
+        "smile": 220,
+        "icl": 70,
+        "cataract": 192
+      },
+      "per_doctor_surgeries": 156,
+      "revenue_mix": {
+        "refractive": 0.54,
+        "cataract": 0.38,
+        "other": 0.08
+      },
+      "inflow": {
+        "search_ad": 540,
+        "social": 310,
+        "referral": 280,
+        "overseas_agency": 162
+      },
+      "nationality_mix": {
+        "domestic": 0.8,
+        "china": 0.1,
+        "japan": 0.07,
+        "other": 0.03
+      },
+      "consult_to_surgery_rate": 0.58
+    },
+    {
+      "month": "2026-06",
+      "surgeries": {
+        "lasik": 140,
+        "smile": 220,
+        "icl": 70,
+        "cataract": 160
+      },
+      "per_doctor_surgeries": 148,
+      "revenue_mix": {
+        "refractive": 0.54,
+        "cataract": 0.38,
+        "other": 0.08
+      },
+      "inflow": {
+        "search_ad": 540,
+        "social": 310,
+        "referral": 280,
+        "overseas_agency": 170
+      },
+      "nationality_mix": {
+        "domestic": 0.8,
+        "china": 0.1,
+        "japan": 0.07,
+        "other": 0.03
+      },
+      "consult_to_surgery_rate": 0.61
+    },
+    {
+      "month": "2026-07",
+      "surgeries": {
+        "lasik": 210,
+        "smile": 340,
+        "icl": 95,
+        "cataract": 168
+      },
+      "per_doctor_surgeries": 203,
+      "revenue_mix": {
+        "refractive": 0.62,
+        "cataract": 0.31,
+        "other": 0.07
+      },
+      "inflow": {
+        "search_ad": 820,
+        "social": 460,
+        "referral": 310,
+        "overseas_agency": 178
+      },
+      "nationality_mix": {
+        "domestic": 0.8,
+        "china": 0.1,
+        "japan": 0.07,
+        "other": 0.03
+      },
+      "consult_to_surgery_rate": 0.63
+    }
+  ]
+}

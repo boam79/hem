@@ -1,0 +1,10 @@
+export const PERSONA_ABORT_MS = 22_000;
+export const PERSONA_RETRY_BUDGET_MS = 28_000;
+export const MAX_DURATION_SECONDS = 60;
+export const MAX_OUTPUT_TOKENS = 400;
+export const METRICS_TABLE_TOKEN_LIMIT = 1_000;
+export const AGENDA_MIN = 10;
+export const AGENDA_MAX = 200;
+export const IP_SESSION_PER_HOUR = 10;
+export const DEFAULT_DAILY_SESSION_CAP = 100;
+export const NANOID_SIZE = 6;
