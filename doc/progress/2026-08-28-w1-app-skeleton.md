@@ -14,7 +14,15 @@
 - Supabase 프로젝트: Free 활성 2/2. 새 프로젝트는 만들지 않음. 키가 없으면 API는 503.
 - OpenAI·Google 모델 ID는 후보 기본값. 실측(W1-3)은 API 키 필요.
 - shadcn/ui CLI는 이번 커밋에 넣지 않음. 네이티브 textarea/select/button.
-- Vercel 배포는 이 커밋 푸시 뒤에 연결.
+- Vercel 배포는 이 커밋 푸시 뒤에 연결. → 완료 (boardroom-six-delta.vercel.app READY)
+
+## 배포
+
+- Vercel 프로젝트 `boardroom` (`prj_ePyKubnNcfKOzUwBtqCmkEDIqrtU`)
+- HTTPS: https://boardroom-six-delta.vercel.app
+- 스모크: GET `/` 200, POST 짧은 안건 400 `invalid_agenda`, 정상 길이 안건 503 `supabase_unconfigured`
+
+브라우저 MCP는 이번 턴에 타임아웃. curl로 배포 URL만 확인함.
 
 ## 검증
 

@@ -17,7 +17,9 @@ pnpm test
 pnpm dev
 ```
 
-시크릿은 `.env` (커밋 금지). 이름은 `.env.example` 참고. Supabase 키가 없으면 API는 503을 반환한다.
+시크릿은 `.env`와 Vercel 환경변수 (커밋 금지). 이름은 `.env.example` 참고. Supabase 키가 없으면 API는 503을 반환한다.
+
+배포 HTTPS: https://boardroom-six-delta.vercel.app
 
 ## Cursor Cloud · 모바일
 
