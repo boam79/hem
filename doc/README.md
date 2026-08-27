@@ -10,6 +10,6 @@
 | [cloud-mobile-setup.md](cloud-mobile-setup.md) | Cursor Cloud · 모바일 착수 체크리스트 |
 | [mcp-status.md](mcp-status.md) | MCP 연결·활용 기록 |
 | [infra-notes.md](infra-notes.md) | Supabase/Vercel/Render 실측 |
-| [progress/](progress/) | 일자별 Executor 로그 |
+| [progress/](progress/) | 일자별 Executor 로그 (클론·install 증거 포함) |
 
 루트 `PRD.md`는 여기로 가는 포인터다.

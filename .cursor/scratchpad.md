@@ -26,7 +26,7 @@ Phase 0 Cloud 골격·git·푸시. Phase 1 PRD W1.
 
 ## Executor's Feedback or Assistance Requests
 
-2026-08-28 P0-1 완료. 로그: `doc/progress/2026-08-28-executor-start.md`
+P0-3 완료(`84578d1`). clone+install 증거는 `doc/progress/2026-08-28-clone-install-evidence.md`. Cloud 검증 에이전트 대기 중. P0-4는 사람 확인.
 
 ## Lessons
 

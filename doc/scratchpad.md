@@ -34,10 +34,11 @@ Phase 1: PRD W1 (타임아웃 수정 + keepalive 라우트).
 
 ## Executor's Feedback or Assistance Requests
 
-2026-08-28: P0-1 완료. `doc/` 생성, PRD 이동, Cloud 파일 작성, MCP 실측.
-- GitHub `hem`은 빈 리포로 존재 확인 (`git ls-remote` refs 없음).
-- `gh` CLI는 미로그인. HTTPS 푸시가 되면 P0-3 진행, 실패 시 `gh auth login` 요청.
-- Supabase 활성 2/2. Boardroom DB는 기존 `boam79_patient_data`와 합치지 말 것.
+2026-08-28: P0-1~P0-3 완료. 푸시 SHA `84578d1`.
+- GitHub API가 `doc/` 목록을 반환함. 빈 폴더에 clone 후 조건부 install exit 0. 로그: `doc/progress/2026-08-28-clone-install-evidence.md`.
+- Cloud VM 증거용 에이전트 실행 중: `bc-6d1df64c-752f-4e04-b1e1-e6de202ce3d8`. 끝나기 전 P0-5 미완료.
+- P0-4는 대시보드에서 `boam79/hem` 허용이 필요. 사람 확인 요청.
+- Supabase 활성 2/2. Boardroom DB는 `boam79_patient_data`와 합치지 말 것.
 
 ## Lessons
 
