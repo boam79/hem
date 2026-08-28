@@ -30,5 +30,5 @@ HTTPS 라운드1(P2qYqy) 29883ms. 3셀 실패: haiku JSON 없음, nano JSON 깨�
 
 Supabase MCP는 service role 키를 반환하지 않는다. URL만 자동화 가능.
 MVP는 RLS off가 PRD. anon을 NEXT_PUBLIC에 넣지 않는다.
-gpt-5.4-nano는 responses 추론 모델. temperature 넣으면 경고만 나고, maxOutputTokens 400이 추론에 쓰여 JSON이 잘린다. reasoningEffort minimal.
+gpt-5.4-nano는 responses 추론 모델. temperature 넣으면 경고만 나고, maxOutputTokens 400이 추론에 쓰여 JSON이 잘린다. reasoningEffort는 `none`만 허용(`minimal`은 거부).
 Output.object가 22초 abort를 다 쓰면 텍스트 JSON 재시도가 없다. structuredAbortMs로 8초를 남긴다.

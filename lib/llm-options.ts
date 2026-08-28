@@ -4,7 +4,7 @@ export function callOptions(p: Persona, temperature: number) {
   if (p.provider === "openai") {
     return {
       providerOptions: {
-        openai: { reasoningEffort: "minimal" as const },
+        openai: { reasoningEffort: "none" as const },
       },
     };
   }

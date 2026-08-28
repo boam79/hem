@@ -144,12 +144,12 @@ describe("json helpers", () => {
 });
 
 describe("cheap-model call options", () => {
-  it("omits temperature for OpenAI and sets minimal reasoning", async () => {
+  it("omits temperature for OpenAI and sets none reasoning", async () => {
     const { callOptions, structuredAbortMs } = await import("@/lib/llm-options");
     const openai = PERSONAS.find((p) => p.provider === "openai")!;
     const anthropic = PERSONAS.find((p) => p.provider === "anthropic")!;
     expect(callOptions(openai, 0.7)).toEqual({
-      providerOptions: { openai: { reasoningEffort: "minimal" } },
+      providerOptions: { openai: { reasoningEffort: "none" } },
     });
     expect(callOptions(anthropic, 0.4)).toEqual({ temperature: 0.4 });
     expect(structuredAbortMs(22_000)).toBe(14_000);
