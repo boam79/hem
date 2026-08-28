@@ -10,10 +10,11 @@ import {
 import type { Persona } from "@/config/personas";
 import { extractJsonObject, humanizeModelError, textFromUnknownError } from "@/lib/json";
 import { callOptions, structuredAbortMs } from "@/lib/llm-options";
-import { jsonOnlySuffix } from "@/lib/prompt";
+import { jsonOnlySuffix, retrySystemPrompt, round2SystemHint } from "@/lib/prompt";
 import {
   TurnLlmSchema,
   TurnRound2LlmSchema,
+  isRound2EmptyFieldError,
   parseTurnPayload,
   type TurnPayload,
 } from "@/lib/schema";
@@ -65,10 +66,14 @@ async function once(
   const t0 = Date.now();
   const options = callOptions(p, temperature);
   const llmSchema = round === 2 ? TurnRound2LlmSchema : TurnLlmSchema;
+  const firstSystem =
+    round === 2
+      ? `${system}\n${round2SystemHint(p.provider)}\n${jsonOnlySuffix(2)}`
+      : system;
   try {
     const { output, usage } = await generateText({
       model: modelFor(p),
-      system,
+      system: firstSystem,
       prompt: user,
       output: Output.object({ schema: llmSchema, name: "turn" }),
       maxOutputTokens: MAX_OUTPUT_TOKENS,
@@ -81,6 +86,7 @@ async function once(
       usage: usageOf(usage),
     };
   } catch (err) {
+    let emptyR2 = round === 2 && isRound2EmptyFieldError(err);
     const recovered = textFromUnknownError(err);
     if (recovered) {
       try {
@@ -90,15 +96,19 @@ async function once(
           latencyMs: Date.now() - t0,
           usage: { input: 0, output: 0 },
         };
-      } catch {
-        /* fall through to a text JSON retry */
+      } catch (parseErr) {
+        emptyR2 = emptyR2 || isRound2EmptyFieldError(parseErr);
       }
     }
     const remaining = abortMs - (Date.now() - t0);
     if (remaining < 2_000) throw err;
     const { text, usage } = await generateText({
       model: modelFor(p),
-      system: `${system}\n${jsonOnlySuffix(round)}`,
+      system: retrySystemPrompt(
+        firstSystem,
+        round,
+        emptyR2 ? "empty-r2" : "json",
+      ),
       prompt: user,
       maxOutputTokens: MAX_OUTPUT_TOKENS,
       abortSignal: AbortSignal.timeout(remaining),

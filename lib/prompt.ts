@@ -40,13 +40,41 @@ export function buildRound1UserPrompt(
   return `안건: ${agenda}\n\n[지표]\n${table}`;
 }
 
+/** R2 min JSON: objection/changed first so a 400-token cap still keeps F4 fields. */
+export const ROUND2_MIN_EXAMPLE =
+  '{"objection":"마케팅의 회수 가정이 없습니다","changed":"유지: 현금흐름 우선","position":"보류","evidence":["inflow.search_ad 2026-07"],"risks":[],"needs_data":[]}';
+
+export function round2SystemHint(provider: Persona["provider"] | string): string {
+  const common =
+    "라운드2 JSON은 objection과 changed를 맨 앞에 채웁니다. 둘 다 빈 문자열 금지. objection은 따옴표 없는 짧은 한국어 한 문장.";
+  if (provider === "anthropic") {
+    return `${common} 재무(Haiku): objection 예) 회수 가정이 지표에 없습니다. changed 예) 유지: 현금흐름 우선. position은 짧게 남겨 토큰을 objection에 씁니다.`;
+  }
+  return common;
+}
+
 export function jsonOnlySuffix(round: 1 | 2): string {
   const base =
     "반드시 JSON 객체만 출력합니다. 다른 문장 금지. 문자열 안에 큰따옴표와 줄바꿈 금지.";
   if (round === 2) {
-    return `${base} objection과 changed는 빈 문자열 금지.\n예: {"position":"보류","evidence":["inflow.search_ad 2026-07"],"risks":[],"needs_data":[],"objection":"회수 가정이 없습니다","changed":"유지: 현금흐름 우선"}`;
+    return `${base} objection과 changed는 빈 문자열 금지. 최소 예:\n${ROUND2_MIN_EXAMPLE}`;
   }
   return `${base}\n예: {"position":"보류","evidence":["inflow.search_ad 2026-07"],"risks":[],"needs_data":[]}`;
+}
+
+export function round2EmptyRetrySuffix(): string {
+  return `이전 출력이 거부됨: objection 또는 changed가 비었습니다. 아래 최소 예시처럼 두 칸을 한국어 한 문장으로 채운 JSON만 출력합니다. 다른 문장 금지.\n예: ${ROUND2_MIN_EXAMPLE}`;
+}
+
+export function retrySystemPrompt(
+  system: string,
+  round: 1 | 2,
+  reason: "json" | "empty-r2",
+): string {
+  if (round === 2 && reason === "empty-r2") {
+    return `${system}\n${round2EmptyRetrySuffix()}`;
+  }
+  return `${system}\n${jsonOnlySuffix(round)}`;
 }
 
 export function buildRound2UserPrompt(

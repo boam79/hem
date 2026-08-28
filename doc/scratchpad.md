@@ -22,7 +22,7 @@ Gemini 실측: `doc/progress/2026-08-28-gemini-credit-check.md`
 JSON 실측: `doc/progress/2026-08-28-haiku-nano-json.md`
 R2 실측: `doc/progress/2026-08-28-round2-json.md`
 AC 감사: `doc/progress/2026-08-28-ac-audit.md`
-현재(Executor): AC 감사 테스트·E2E 11·안건 5종 1회 실측 기록. 사용자 확인 요청. 다음 한 가지 = Haiku R2 빈 objection.
+현재(Executor): Haiku R2 빈 objection — 경량 유지, 프롬프트·재시도만. 큰 모델 금지. W3 keepalive는 손대지 않음.
 
 ## Project Status Board
 
@@ -33,7 +33,7 @@ AC 감사: `doc/progress/2026-08-28-ac-audit.md`
 - [x] Vercel LLM 3키 + DB (값은 문서에 없음). `/api/health` 4 true
 - [x] Gemini 크레딧: HTTPS 세션 `LNIDoe` md ok (1236ms). 크레딧 에러 없음
 - [ ] Haiku·nano JSON 복구 — Executor HTTPS 세션 `4fyIcc` R1 ok=3. 사용자 수동 확인 대기
-- [ ] 라운드 2 JSON/objection 수정 — Executor HTTPS 세션 `uE7m2G` R2 ok=3. 사용자 수동 확인 대기
+- [ ] Haiku R2 빈 objection — 진행 중. 성공 셀은 `uE7m2G`·`MJg8Zz`. 5안건 중 4건 cfo failed. 큰 모델 올리지 않음.
 - [ ] HTTPS 실토론 F3–F6 (R1·R2 Executor 실측됨, 사용자 확인 남음)
 - [x] AC 감사 단위 테스트·E2E 11 (프로덕션 HTTPS, localhost 아님)
 - [ ] W3 안건 5종×10회 — 이번 턴은 5×1만. Haiku R2 빈 objection 재발

@@ -35,6 +35,14 @@ export type TurnPayload = z.infer<typeof TurnSchema> & {
   changed?: string;
 };
 
+export const ROUND2_EMPTY_FIELDS_ERROR =
+  "round2 requires non-empty objection and changed";
+
+export function isRound2EmptyFieldError(err: unknown): boolean {
+  const msg = err instanceof Error ? err.message : String(err ?? "");
+  return msg.includes(ROUND2_EMPTY_FIELDS_ERROR);
+}
+
 export const TurnRound2Schema = TurnSchema.extend({
   objection: z.string().min(1).max(200),
   changed: z.string().min(1).max(120),
@@ -50,9 +58,13 @@ export const TurnLlmSchema = z.object({
 
 /** objection/changed first so cheap models fill F4 fields before the token cap. */
 export const TurnRound2LlmSchema = z.object({
-  objection: z.string(),
-  changed: z.string(),
-  position: z.string(),
+  objection: z
+    .string()
+    .describe("다른 부서 발언에 대한 짧은 한국어 반대 한 문장. 빈 문자열 금지."),
+  changed: z
+    .string()
+    .describe('입장 변경 여부. 예: "유지: 현금흐름 우선". 빈 문자열 금지.'),
+  position: z.string().describe("결론 1문장. objection보다 짧게."),
   evidence: z.array(z.string()),
   risks: z.array(z.string()),
   needs_data: z.array(z.string()),
@@ -85,7 +97,7 @@ export function parseTurnPayload(raw: unknown, round: 1 | 2): TurnPayload {
     const objection = clipStr(o.objection, 200);
     const changed = clipStr(o.changed, 120);
     if (!objection || !changed) {
-      throw new Error("round2 requires non-empty objection and changed");
+      throw new Error(ROUND2_EMPTY_FIELDS_ERROR);
     }
     return TurnRound2Schema.parse({
       ...base,

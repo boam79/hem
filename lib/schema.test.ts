@@ -7,8 +7,17 @@ import {
   TurnRound2Schema,
   TurnSchema,
   parseTurnPayload,
+  isRound2EmptyFieldError,
+  ROUND2_EMPTY_FIELDS_ERROR,
 } from "@/lib/schema";
-import { jsonOnlySuffix, loadMetrics, metricsToMarkdownTable } from "@/lib/prompt";
+import {
+  jsonOnlySuffix,
+  loadMetrics,
+  metricsToMarkdownTable,
+  retrySystemPrompt,
+  round2EmptyRetrySuffix,
+  round2SystemHint,
+} from "@/lib/prompt";
 import { estimateTokens } from "@/lib/tokens";
 import { clientIp, hourKey, wouldExceed } from "@/lib/ratelimit";
 import { PERSONAS, ROUND2_RULES } from "@/config/personas";
@@ -121,13 +130,24 @@ describe("TurnSchema", () => {
     };
     expect(() =>
       parseTurnPayload({ ...base, objection: "" }, 2),
-    ).toThrow();
+    ).toThrow(ROUND2_EMPTY_FIELDS_ERROR);
     expect(() =>
       parseTurnPayload({ ...base, objection: "   " }, 2),
-    ).toThrow();
+    ).toThrow(ROUND2_EMPTY_FIELDS_ERROR);
     expect(() =>
       parseTurnPayload({ ...base, objection: "회수 가정이 없습니다", changed: "" }, 2),
-    ).toThrow();
+    ).toThrow(ROUND2_EMPTY_FIELDS_ERROR);
+    expect(() =>
+      parseTurnPayload({ ...base, objection: "\t", changed: "  " }, 2),
+    ).toThrow(ROUND2_EMPTY_FIELDS_ERROR);
+  });
+  it("jsonrepair of empty objection still fails parse (not a recovery)", () => {
+    const recovered = extractJsonObject(
+      '{"objection":"","changed":"","position":"보류","evidence":["a"],"risks":[],"needs_data":[]}',
+    );
+    expect(() => parseTurnPayload(recovered, 2)).toThrow(
+      ROUND2_EMPTY_FIELDS_ERROR,
+    );
   });
 });
 
@@ -194,6 +214,8 @@ describe("personas", () => {
   it("round 2 rules require objection and changed", () => {
     expect(ROUND2_RULES).toMatch(/objection/);
     expect(ROUND2_RULES).toMatch(/changed/);
+    expect(ROUND2_RULES).toMatch(/한 문장/);
+    expect(ROUND2_RULES).toMatch(/맨 앞/);
   });
 });
 
@@ -205,6 +227,51 @@ describe("json-only retry hint", () => {
     expect(r2).toMatch(/"objection":"[^"]+"/);
     expect(r2).toMatch(/"changed":"[^"]+"/);
     expect(r2).toMatch(/빈 문자열 금지|비우지 않습니다/);
+  });
+  it("round 2 min example puts objection and changed first", () => {
+    const r2 = jsonOnlySuffix(2);
+    expect(r2).toMatch(
+      /\{"objection":"[^"]+","changed":"[^"]+","position":/,
+    );
+  });
+});
+
+describe("round 2 empty-field retry path", () => {
+  it("classifies empty objection/changed errors for a dedicated retry", () => {
+    expect(isRound2EmptyFieldError(new Error(ROUND2_EMPTY_FIELDS_ERROR))).toBe(
+      true,
+    );
+    expect(isRound2EmptyFieldError(new Error("no json object in model text"))).toBe(
+      false,
+    );
+    expect(isRound2EmptyFieldError("round2 requires non-empty objection and changed")).toBe(
+      true,
+    );
+  });
+  it("empty R2 error selects the filled Korean min example retry prompt", () => {
+    const err = new Error(ROUND2_EMPTY_FIELDS_ERROR);
+    const reason = isRound2EmptyFieldError(err) ? "empty-r2" : "json";
+    expect(reason).toBe("empty-r2");
+    const sys = retrySystemPrompt("base-system", 2, reason);
+    expect(sys).toMatch(/이전 출력이 거부/);
+    expect(sys).toMatch(/"objection":"마케팅의 회수 가정이 없습니다"/);
+    expect(sys).toMatch(/"changed":"유지: 현금흐름 우선"/);
+    expect(sys.indexOf('"objection"')).toBeLessThan(sys.indexOf('"position"'));
+  });
+  it("json parse failures keep the generic JSON suffix, not the empty-field one", () => {
+    const err = new Error("no json object in model text");
+    const reason = isRound2EmptyFieldError(err) ? "empty-r2" : "json";
+    expect(reason).toBe("json");
+    const sys = retrySystemPrompt("base-system", 2, reason);
+    expect(sys).toMatch(/반드시 JSON 객체만/);
+    expect(sys).not.toMatch(/이전 출력이 거부/);
+  });
+  it("Haiku R2 hint forbids empty objection in one short Korean sentence", () => {
+    const hint = round2SystemHint("anthropic");
+    expect(hint).toMatch(/objection/);
+    expect(hint).toMatch(/한 문장/);
+    expect(hint).toMatch(/따옴표/);
+    expect(round2EmptyRetrySuffix()).toMatch(/마케팅의 회수 가정이 없습니다/);
   });
 });
 
