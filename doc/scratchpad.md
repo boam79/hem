@@ -10,14 +10,15 @@
 
 `qr-asset-manager` pause 후 `boardroom` DB 생성됨. 실토론은 service role + 3사 키.
 경량 모델 유지: haiku / gpt-5.4-nano / flash-lite. nano는 reasoning 모델이라 temperature 미지원. reasoningEffort는 `none`만 허용.
-Gemini 크레딧 결제 후 md 셀은 프로덕션에서 성공. Haiku·nano JSON 복구 커밋 `32168f5` 후 세션 `4fyIcc` R1 okCount=3. 사용자 수동 확인 대기(지우지 않음). R2는 cfo `Colon expected`, mkt 빈 objection으로 ok=1.
+Gemini 크레딧 결제 후 md 셀은 프로덕션에서 성공. Haiku·nano JSON 복구 커밋 `32168f5` 후 세션 `4fyIcc` R1 okCount=3. 사용자 수동 확인 대기(지우지 않음). R2 수정 커밋 `7eda3e3` 후 세션 `uE7m2G` R1 ok=3, R2 ok=3.
 
 ## High-level Task Breakdown
 
 모바일 이어서: `doc/progress/2026-08-28-mobile-handoff.md`
 Gemini 실측: `doc/progress/2026-08-28-gemini-credit-check.md`
 JSON 실측: `doc/progress/2026-08-28-haiku-nano-json.md`
-현재(Executor): 라운드 2만 수정. cfo 전각 콜론 JSON, mkt 빈 objection. R1은 깨뜨리지 않음.
+R2 실측: `doc/progress/2026-08-28-round2-json.md`
+현재(Executor): 라운드 2 HTTPS 실측 기록. 사용자에게 세션 `uE7m2G` R2 수동 확인 요청.
 
 ## Project Status Board
 
@@ -27,15 +28,15 @@ JSON 실측: `doc/progress/2026-08-28-haiku-nano-json.md`
 - [x] Vercel Production 키 연결됨 (`/api/health` 4 true). 값은 문서에 적지 않음.
 - [x] Gemini 크레딧: HTTPS 세션 `LNIDoe` md ok (1236ms). 크레딧 에러 없음
 - [ ] Haiku·nano JSON 복구 — Executor HTTPS 세션 `4fyIcc` R1 ok=3. 사용자 수동 확인 대기
-- [ ] 라운드 2 JSON/objection 수정 — Executor 진행 중 (okCount>=2 목표)
-- [ ] HTTPS 실토론 F3–F6 (R1은 실측됨, R2·사용자 확인 남음)
+- [ ] 라운드 2 JSON/objection 수정 — Executor HTTPS 세션 `uE7m2G` R2 ok=3. 사용자 수동 확인 대기
+- [ ] HTTPS 실토론 F3–F6 (R1·R2 Executor 실측됨, 사용자 확인 남음)
 
 ## Executor's Feedback or Assistance Requests
 
 세션 `LNIDoe` R1 22966ms. md ok. cfo/mkt JSON 실패로 ok=1.
 Executor 실측 세션 `4fyIcc` R1 10067ms okCount=3 (cfo 5824 / mkt 6386 / md 1309). R2는 cfo JSON·mkt objection 빈값으로 ok=1.
-현재 작업: R2만. 전각 콜론(`：`)은 jsonrepair가 `Colon expected`를 던짐. R2 재시도 예시가 objection을 빼면 nano가 빈 문자열을 냄.
-R1 확인은 그대로: https://boardroom-six-delta.vercel.app/s/4fyIcc 라운드 1 세 칸.
+Executor 실측 세션 `uE7m2G` R1 9709ms ok=3 (cfo 5205 / mkt 3096 / md 1398). R2 10963ms ok=3 (cfo 7783 / mkt 4592 / md 1905). 메모 PUT 200.
+완료라고 단정하지 않음. Planner/사용자: https://boardroom-six-delta.vercel.app/s/uE7m2G 에서 라운드 2 세 칸에 반대(objection)가 보이는지 확인해 주세요.
 
 ## Lessons
 
