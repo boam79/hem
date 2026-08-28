@@ -16,15 +16,14 @@ PRD 가정과 MCP로 본 계정 상태를 맞춰 둔다. 시크릿 값은 적지
 
 ## Supabase (Free)
 
-활성 2/2:
-
 | 이름 | ref | 상태 |
 |---|---|---|
-| qr-asset-manager | hiwspxrnkuvqkujvwjro | ACTIVE_HEALTHY, ap-northeast-2 |
-| boam79_patient_data | bkmzuabmkbtxtetuzyaq | ACTIVE_HEALTHY, ap-northeast-2 |
+| qr-asset-manager | hiwspxrnkuvqkujvwjro | pause 요청 (PAUSING→INACTIVE) |
+| boam79_patient_data | bkmzuabmkbtxtetuzyaq | ACTIVE — Boardroom과 합치지 않음 |
 | policyfund-ai-v2 | hwqsxarzgodpsvwahzae | INACTIVE |
+| **boardroom** | **tbtjdfayqgcdywybczjr** | ACTIVE_HEALTHY, ap-northeast-2 |
 
-W1-4에서 Boardroom DB를 만들 때 **활성 한도를 먼저 확인**한다. 기존 병원 데이터 프로젝트(`boam79_patient_data`)를 재사용하지 않는다 — 합성 데이터 + RLS 없음 전제와 섞이면 안 된다.
+URL: `https://tbtjdfayqgcdywybczjr.supabase.co`. service role은 커밋하지 않음. Vercel Production에 URL만 넣음.
 
 ## Render
 

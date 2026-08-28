@@ -17,7 +17,7 @@
 시크릿·GitHub 연결은 폰에서 못한다. [cursor.com/dashboard](https://cursor.com/dashboard)
 
 1. GitHub 연결은 Cloud 클론으로 확인됨. 폰 앱은 목록을 당겨 새로고침.
-2. (W1 이후) Cloud Secrets: `.env.example`과 같은 이름
+2. Cloud Secrets: `.env.example`과 같은 이름. 이어서 할 작업은 **`doc/progress/2026-08-28-mobile-handoff.md`**.
 3. App Store에서 Cursor 설치, 같은 계정
 4. 웹 [cursor.com/agents](https://cursor.com/agents)에서도 동일 리포가 보여야 한다
 

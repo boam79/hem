@@ -13,6 +13,6 @@
 | [w3-eval-protocol.md](w3-eval-protocol.md) | 안건 5종×10회 실측 절차 |
 | [demo/90s-script.md](demo/90s-script.md) | 90초 데모 대사 |
 | [demo/slides-outline.md](demo/slides-outline.md) | Du·PoLL 슬라이드 1장 |
-| [progress/](progress/) | 일자별 Executor 로그 |
+| [progress/2026-08-28-mobile-handoff.md](progress/2026-08-28-mobile-handoff.md) | 노트북 종료 후 Cloud/모바일 이어서 |
 
 루트 `PRD.md`는 여기로 가는 포인터다.
