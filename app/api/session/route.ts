@@ -2,7 +2,7 @@ import { PERSONAS } from "@/config/personas";
 import { AGENDA_MAX, AGENDA_MIN, DEFAULT_DAILY_SESSION_CAP } from "@/config/limits";
 import { newSessionId } from "@/lib/id";
 import { clientIp, hourKey, wouldExceed } from "@/lib/ratelimit";
-import { SessionCreateSchema } from "@/lib/schema";
+import { MetricsSchema, SessionCreateSchema } from "@/lib/schema";
 import { getSupabase, supabaseConfigured } from "@/lib/supabase";
 
 void PERSONAS;
@@ -15,6 +15,18 @@ export async function POST(req: Request) {
       {
         error: "invalid_agenda",
         message: `agenda는 ${AGENDA_MIN}~${AGENDA_MAX}자, category는 investment|marketing|staffing|pricing`,
+      },
+      { status: 400 },
+    );
+  }
+  const uploaded = parsed.data.metrics
+    ? MetricsSchema.safeParse(parsed.data.metrics)
+    : { success: true as const, data: undefined };
+  if (!uploaded.success) {
+    return Response.json(
+      {
+        error: "invalid_metrics",
+        message: "업로드한 지표가 스키마와 맞지 않습니다.",
       },
       { status: 400 },
     );
@@ -65,6 +77,7 @@ export async function POST(req: Request) {
     id,
     agenda: parsed.data.agenda,
     category: parsed.data.category,
+    metrics: uploaded.data ?? null,
     created_at: createdAt,
   });
   if (error) {

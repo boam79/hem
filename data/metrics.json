@@ -36,7 +36,12 @@
         "japan": 0.04,
         "other": 0.03
       },
-      "consult_to_surgery_rate": 0.63
+      "consult_to_surgery_rate": 0.63,
+      "cashflow": {
+        "in_man": 14490,
+        "out_man": 11270,
+        "net_man": 3220
+      }
     },
     {
       "month": "2025-09",
@@ -64,7 +69,12 @@
         "japan": 0.04,
         "other": 0.03
       },
-      "consult_to_surgery_rate": 0.61
+      "consult_to_surgery_rate": 0.61,
+      "cashflow": {
+        "in_man": 10764,
+        "out_man": 8372,
+        "net_man": 2392
+      }
     },
     {
       "month": "2025-10",
@@ -92,7 +102,12 @@
         "japan": 0.05,
         "other": 0.03
       },
-      "consult_to_surgery_rate": 0.6399999999999999
+      "consult_to_surgery_rate": 0.6399999999999999,
+      "cashflow": {
+        "in_man": 10908,
+        "out_man": 8484,
+        "net_man": 2424
+      }
     },
     {
       "month": "2025-11",
@@ -120,7 +135,12 @@
         "japan": 0.05,
         "other": 0.03
       },
-      "consult_to_surgery_rate": 0.58
+      "consult_to_surgery_rate": 0.58,
+      "cashflow": {
+        "in_man": 11052,
+        "out_man": 8596,
+        "net_man": 2456
+      }
     },
     {
       "month": "2025-12",
@@ -148,7 +168,12 @@
         "japan": 0.05,
         "other": 0.03
       },
-      "consult_to_surgery_rate": 0.61
+      "consult_to_surgery_rate": 0.61,
+      "cashflow": {
+        "in_man": 11196,
+        "out_man": 8708,
+        "net_man": 2488
+      }
     },
     {
       "month": "2026-01",
@@ -176,7 +201,12 @@
         "japan": 0.06,
         "other": 0.03
       },
-      "consult_to_surgery_rate": 0.63
+      "consult_to_surgery_rate": 0.63,
+      "cashflow": {
+        "in_man": 14490,
+        "out_man": 11270,
+        "net_man": 3220
+      }
     },
     {
       "month": "2026-02",
@@ -204,7 +234,12 @@
         "japan": 0.06,
         "other": 0.03
       },
-      "consult_to_surgery_rate": 0.63
+      "consult_to_surgery_rate": 0.63,
+      "cashflow": {
+        "in_man": 14634,
+        "out_man": 11382,
+        "net_man": 3252
+      }
     },
     {
       "month": "2026-03",
@@ -232,7 +267,12 @@
         "japan": 0.06,
         "other": 0.03
       },
-      "consult_to_surgery_rate": 0.61
+      "consult_to_surgery_rate": 0.61,
+      "cashflow": {
+        "in_man": 10908,
+        "out_man": 8484,
+        "net_man": 2424
+      }
     },
     {
       "month": "2026-04",
@@ -260,7 +300,12 @@
         "japan": 0.06,
         "other": 0.03
       },
-      "consult_to_surgery_rate": 0.6399999999999999
+      "consult_to_surgery_rate": 0.6399999999999999,
+      "cashflow": {
+        "in_man": 11052,
+        "out_man": 8596,
+        "net_man": 2456
+      }
     },
     {
       "month": "2026-05",
@@ -288,7 +333,12 @@
         "japan": 0.07,
         "other": 0.03
       },
-      "consult_to_surgery_rate": 0.58
+      "consult_to_surgery_rate": 0.58,
+      "cashflow": {
+        "in_man": 11196,
+        "out_man": 8708,
+        "net_man": 2488
+      }
     },
     {
       "month": "2026-06",
@@ -316,7 +366,12 @@
         "japan": 0.07,
         "other": 0.03
       },
-      "consult_to_surgery_rate": 0.61
+      "consult_to_surgery_rate": 0.61,
+      "cashflow": {
+        "in_man": 10620,
+        "out_man": 8260,
+        "net_man": 2360
+      }
     },
     {
       "month": "2026-07",
@@ -344,7 +399,12 @@
         "japan": 0.07,
         "other": 0.03
       },
-      "consult_to_surgery_rate": 0.63
+      "consult_to_surgery_rate": 0.63,
+      "cashflow": {
+        "in_man": 14634,
+        "out_man": 11382,
+        "net_man": 3252
+      }
     }
   ]
 }

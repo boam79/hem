@@ -4,7 +4,7 @@ import {
   buildRound1UserPrompt,
   buildRound2UserPrompt,
   buildSystemPrompt,
-  loadMetrics,
+  metricsForSession,
   metricsToMarkdownTable,
 } from "@/lib/prompt";
 import { canStartRound2 } from "@/lib/round-gate";
@@ -60,7 +60,7 @@ export async function POST(req: Request) {
     }
   }
 
-  const metrics = loadMetrics();
+  const metrics = metricsForSession(session);
   const table = metricsToMarkdownTable(metrics);
 
   const results = await Promise.allSettled(

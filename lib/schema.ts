@@ -17,6 +17,7 @@ export type Provider = z.infer<typeof ProviderSchema>;
 export const SessionCreateSchema = z.object({
   agenda: z.string().trim().min(10).max(200),
   category: CategorySchema,
+  metrics: z.unknown().optional(),
 });
 
 export const RoundRequestSchema = z.object({
@@ -162,6 +163,11 @@ export const MonthlyMetricsSchema = z.object({
     other: z.number(),
   }),
   consult_to_surgery_rate: z.number().min(0.55).max(0.7),
+  cashflow: z.object({
+    in_man: z.number(),
+    out_man: z.number(),
+    net_man: z.number(),
+  }),
 });
 
 export const MetricsSchema = z.object({

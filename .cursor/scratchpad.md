@@ -23,7 +23,7 @@ JSON 실측: `doc/progress/2026-08-28-haiku-nano-json.md`
 R2 실측: `doc/progress/2026-08-28-round2-json.md`
 AC 감사: `doc/progress/2026-08-28-ac-audit.md`
 Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
-현재(Executor): W3 5×10 **50/50 완료**. 표 `doc/progress/2026-08-28-w3-close.md`. 제품 잔여 없음. GH Actions keepalive 시크릿만 사용자 몫.
+현재(Executor): 엑셀·CSV 지표 업로드. 더미 재무흐름·환자통계로 parse·세션 연결 검증.
 
 ## Project Status Board
 
@@ -38,6 +38,7 @@ Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
 - [x] HTTPS 실토론 F3–F6 — 위 세션 + `uE7m2G` 메모. Playwright 12
 - [x] AC 감사 단위 47 · E2E 12 (프로덕션 HTTPS, localhost 아님)
 - [x] W3 안건 5종×10회 — **50/50**. objection 50/50, 셀 실패 0, R1 전부 ≤30s. 표 `doc/progress/2026-08-28-w3-close.md`
+- [ ] 엑셀·CSV 지표 업로드 — 더미 재무흐름·환자통계로 토론 근거 데이터.
 - [x] keepalive 주 2회 — 스케줄 `0 3 * * 1,4`. HTTPS POST 12:12:22Z, Vercel Cron 12:16:07Z. GH Actions 시크릿은 사용자 몫.
 - [x] 제한 429 HTTPS — 세션 POST만, 라운드 없음. `rate_limited` 429 (이번 턴 재확인).
 

@@ -29,6 +29,8 @@ const CATEGORIES: { value: Category; label: string }[] = [
 export default function Home() {
   const [agenda, setAgenda] = useState("백내장 검색광고 예산 30% 증액");
   const [category, setCategory] = useState<Category>("marketing");
+  const [metrics, setMetrics] = useState<unknown | null>(null);
+  const [metricsLabel, setMetricsLabel] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [round1, setRound1] = useState<DebateCell[]>([]);
   const [round2, setRound2] = useState<DebateCell[]>([]);
@@ -53,7 +55,11 @@ export default function Home() {
       const s = await fetch("/api/session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ agenda: agenda.trim(), category }),
+        body: JSON.stringify({
+          agenda: agenda.trim(),
+          category,
+          ...(metrics ? { metrics } : {}),
+        }),
       });
       const sj = await s.json();
       if (!s.ok) {
@@ -134,6 +140,56 @@ export default function Home() {
           ))}
         </SelectContent>
       </Select>
+      <label className="mb-2 block text-sm" htmlFor="metrics-file">
+        경영 지표 (엑셀 또는 CSV, 선택)
+      </label>
+      <input
+        id="metrics-file"
+        type="file"
+        accept=".csv,.xlsx"
+        className="mb-2 block text-sm"
+        disabled={loadingRound !== 0}
+        onChange={async (e) => {
+          const file = e.target.files?.[0];
+          if (!file) {
+            setMetrics(null);
+            setMetricsLabel(null);
+            return;
+          }
+          setError(null);
+          const body = new FormData();
+          body.append("file", file);
+          const res = await fetch("/api/metrics/parse", {
+            method: "POST",
+            body,
+          });
+          const json = await res.json();
+          if (!res.ok) {
+            setMetrics(null);
+            setMetricsLabel(null);
+            setError(apiErrorMessage(json));
+            e.target.value = "";
+            return;
+          }
+          setMetrics(json.metrics);
+          setMetricsLabel(
+            `${json.hospital} · ${json.months}개월 (업로드)`,
+          );
+        }}
+      />
+      <p className="text-muted-foreground mb-3 text-xs">
+        {metricsLabel
+          ? metricsLabel
+          : "없으면 기본 합성 지표를 씁니다."}{" "}
+        더미:{" "}
+        <a className="underline" href="/dummy/patient-and-cashflow.csv">
+          CSV
+        </a>
+        {" · "}
+        <a className="underline" href="/dummy/patient-and-cashflow.xlsx">
+          엑셀
+        </a>
+      </p>
       <div>
         <Button
           type="button"

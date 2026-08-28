@@ -8,3 +8,4 @@ export const AGENDA_MAX = 200;
 export const IP_SESSION_PER_HOUR = 10;
 export const DEFAULT_DAILY_SESSION_CAP = 100;
 export const NANOID_SIZE = 6;
+export const MAX_METRICS_UPLOAD_BYTES = 400_000;

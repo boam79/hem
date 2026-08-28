@@ -49,6 +49,14 @@ describe("SessionCreateSchema", () => {
     });
     expect(r.success).toBe(true);
   });
+  it("accepts optional uploaded metrics", () => {
+    const r = SessionCreateSchema.safeParse({
+      agenda: "업로드 지표로 백내장 검색광고를 검토한다",
+      category: "marketing",
+      metrics: loadMetrics(),
+    });
+    expect(r.success).toBe(true);
+  });
 });
 
 describe("TurnSchema", () => {

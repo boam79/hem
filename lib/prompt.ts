@@ -9,12 +9,19 @@ export function loadMetrics(): Metrics {
   return MetricsSchema.parse(rawMetrics);
 }
 
+export function metricsForSession(session: { metrics?: unknown } | null): Metrics {
+  if (session?.metrics) {
+    return MetricsSchema.parse(session.metrics);
+  }
+  return loadMetrics();
+}
+
 export function metricsToMarkdownTable(metrics: Metrics): string {
   const header =
-    "| month | lasik | smile | icl | cataract | per_doctor | rev_ref | rev_cat | inflow_ad | inflow_social | inflow_ref | inflow_ov | nat_dom | nat_cn | nat_jp | consult |";
-  const sep = "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|";
+    "| month | lasik | smile | icl | cataract | per_doctor | rev_ref | rev_cat | inflow_ad | inflow_social | inflow_ref | inflow_ov | nat_dom | nat_cn | nat_jp | consult | cash_in | cash_out | cash_net |";
+  const sep = "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|";
   const rows = metrics.monthly.map((m) => {
-    return `| ${m.month} | ${m.surgeries.lasik} | ${m.surgeries.smile} | ${m.surgeries.icl} | ${m.surgeries.cataract} | ${m.per_doctor_surgeries} | ${m.revenue_mix.refractive} | ${m.revenue_mix.cataract} | ${m.inflow.search_ad} | ${m.inflow.social} | ${m.inflow.referral} | ${m.inflow.overseas_agency} | ${m.nationality_mix.domestic} | ${m.nationality_mix.china} | ${m.nationality_mix.japan} | ${m.consult_to_surgery_rate} |`;
+    return `| ${m.month} | ${m.surgeries.lasik} | ${m.surgeries.smile} | ${m.surgeries.icl} | ${m.surgeries.cataract} | ${m.per_doctor_surgeries} | ${m.revenue_mix.refractive} | ${m.revenue_mix.cataract} | ${m.inflow.search_ad} | ${m.inflow.social} | ${m.inflow.referral} | ${m.inflow.overseas_agency} | ${m.nationality_mix.domestic} | ${m.nationality_mix.china} | ${m.nationality_mix.japan} | ${m.consult_to_surgery_rate} | ${m.cashflow.in_man} | ${m.cashflow.out_man} | ${m.cashflow.net_man} |`;
   });
   const table = [header, sep, ...rows].join("\n");
   const tokens = estimateTokens(table);

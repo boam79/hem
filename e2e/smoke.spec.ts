@@ -135,6 +135,42 @@ test("health endpoint reports booleans only", async ({ request }) => {
   expect(body.supabase).toBe(true);
 });
 
+test("home has csv/xlsx upload and dummy links", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("#metrics-file")).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "CSV" }),
+  ).toHaveAttribute("href", "/dummy/patient-and-cashflow.csv");
+  await expect(
+    page.getByRole("link", { name: "엑셀" }),
+  ).toHaveAttribute("href", "/dummy/patient-and-cashflow.xlsx");
+});
+
+test("metrics parse accepts dummy csv with cashflow and patient stats", async ({
+  request,
+}) => {
+  const fs = await import("node:fs");
+  const path = await import("node:path");
+  const file = fs.readFileSync(
+    path.resolve(process.cwd(), "public/dummy/patient-and-cashflow.csv"),
+  );
+  const res = await request.post("/api/metrics/parse", {
+    multipart: {
+      file: {
+        name: "patient-and-cashflow.csv",
+        mimeType: "text/csv",
+        buffer: file,
+      },
+    },
+  });
+  expect(res.status()).toBe(200);
+  const body = await res.json();
+  expect(body.hospital).toBe("업로드안과(가상)");
+  expect(body.months).toBe(12);
+  expect(body.metrics.monthly[0].surgeries.lasik).toBe(99);
+  expect(body.metrics.monthly[0].cashflow.in_man).toBeGreaterThan(0);
+});
+
 test("keepalive without secret is 401", async ({ request }) => {
   const post = await request.post("/api/keepalive", { data: {} });
   expect(post.status()).toBe(401);

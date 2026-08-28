@@ -3,6 +3,8 @@ const MESSAGES: Record<string, string> = {
     "데이터베이스가 아직 연결되지 않았습니다. Supabase 환경 변수를 설정해야 합니다.",
   invalid_agenda: "안건 길이나 유형이 올바르지 않습니다.",
   invalid_memo: "메모 항목을 확인하세요.",
+  invalid_metrics: "업로드한 지표가 스키마와 맞지 않습니다.",
+  invalid_metrics_file: "csv 또는 xlsx 파일을 확인하세요.",
   invalid_request: "요청 형식이 올바르지 않습니다.",
   rate_limited: "같은 주소에서 너무 많이 요청했습니다. 한 시간 뒤에 다시 시도하세요.",
   daily_cap: "오늘 세션 한도에 도달했습니다.",

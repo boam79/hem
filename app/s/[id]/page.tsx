@@ -3,7 +3,7 @@ import { Disclaimer } from "@/components/disclaimer";
 import { MemoView } from "@/components/memo-view";
 import demoShare from "@/data/demo-share.json";
 import { DEMO_SHARE_ID, type DebateCell } from "@/lib/debate";
-import { MemoSchema, type Memo, type TurnPayload } from "@/lib/schema";
+import { MemoSchema, MetricsSchema, type Memo, type TurnPayload } from "@/lib/schema";
 import { getSupabase, supabaseConfigured } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
@@ -34,17 +34,22 @@ function ShareBody({
   turns,
   memo,
   extra,
+  metricsNote,
 }: {
   agenda: string;
   turns: TurnRow[];
   memo?: Memo | null;
   extra?: string;
+  metricsNote?: string;
 }) {
   return (
     <main className="mx-auto max-w-6xl p-6">
       <Disclaimer extra={extra} />
       <h1 className="mb-2 text-2xl font-semibold">안건</h1>
-      <p className="mb-6">{agenda}</p>
+      <p className={metricsNote ? "mb-2" : "mb-6"}>{agenda}</p>
+      {metricsNote ? (
+        <p className="text-muted-foreground mb-6 text-sm">{metricsNote}</p>
+      ) : null}
       <DebateGrid round1={cellsFor(turns, 1)} round2={cellsFor(turns, 2)} />
       {memo ? <MemoView memo={memo} /> : null}
     </main>
@@ -103,12 +108,19 @@ export default async function SharePage({
     .eq("session_id", id);
 
   const memo = session.memo ? MemoSchema.safeParse(session.memo) : null;
+  const uploaded = session.metrics
+    ? MetricsSchema.safeParse(session.metrics)
+    : null;
+  const metricsNote = uploaded?.success
+    ? `지표: ${uploaded.data.hospital.name} · ${uploaded.data.monthly.length}개월 (업로드)`
+    : undefined;
 
   return (
     <ShareBody
       agenda={session.agenda}
       turns={(turns ?? []) as TurnRow[]}
       memo={memo?.success ? memo.data : null}
+      metricsNote={metricsNote}
     />
   );
 }
