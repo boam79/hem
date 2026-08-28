@@ -112,6 +112,39 @@ describe("agenda client guard", () => {
   });
 });
 
+describe("health gate", () => {
+  it("requires all four flags for live debate", async () => {
+    const { isLiveDebateReady } = await import("@/lib/health");
+    expect(
+      isLiveDebateReady({
+        anthropic: true,
+        openai: true,
+        google: true,
+        supabase: true,
+      }),
+    ).toBe(true);
+    expect(
+      isLiveDebateReady({
+        anthropic: true,
+        openai: true,
+        google: true,
+        supabase: false,
+      }),
+    ).toBe(false);
+  });
+});
+
+describe("demo replay fixture", () => {
+  it("maps two rounds and a four-field memo", async () => {
+    const { demoAgenda, demoCells, demoMemo } = await import("@/lib/demo-share");
+    expect(demoAgenda()).toBe("백내장 검색광고 예산 30% 증액");
+    expect(demoCells(1)).toHaveLength(3);
+    expect(demoCells(2)).toHaveLength(3);
+    expect(demoCells(2).every((cell) => cell.payload?.objection)).toBe(true);
+    expect(demoMemo().options).toHaveLength(2);
+  });
+});
+
 describe("memo and demo fixture", () => {
   it("accepts a four-field memo", () => {
     const r = MemoSchema.safeParse(demoShare.memo);

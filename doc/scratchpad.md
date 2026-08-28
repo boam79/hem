@@ -10,12 +10,13 @@ GitHub: **https://github.com/boam79/hem**
 
 ## Key Challenges and Analysis
 
-(Planner 기록 유지) Cloud install은 `package.json`이 있을 때만 pnpm. 모바일은 GitHub 연결 필수. 시크릿 미커밋. PRD 타임아웃은 22s/28s/60s. E2E는 배포 URL만. Supabase Free 활성 2칸이 이미 찼음.
+(Planner 기록 유지) Cloud install은 `package.json`이 있을 때만 pnpm. 모바일은 GitHub 연결 필수. 시크릿 미커밋. PRD 타임아웃은 22s/28s/60s. E2E는 배포 URL만. Supabase Free 활성 2칸이 이미 찼음. Vercel env 0개.
+키 없이 90초 발표가 가능해야 한다 → 홈 데모 재생.
 
 ## High-level Task Breakdown
 
 Phase 0: Cloud 골격 → git → push → Cursor GitHub 연결 → Cloud 스모크.
-Phase 1: PRD W1 (타임아웃 수정 + keepalive 라우트).
+Phase 1: PRD W1–W4. 실토론은 키·DB 대기. W4 발표 경로는 홈 데모 재생.
 
 상세: `doc/cloud-mobile-setup.md`, `doc/prd-review.md`.
 
@@ -33,7 +34,8 @@ Phase 1: PRD W1 (타임아웃 수정 + keepalive 라우트).
 - [x] W1-5 keep-alive Actions 파일
 - [x] W2 그리드·메모 폼·공유 페리·`/s/w4demo` (실DB 없는 AC F3–F6는 미통과)
 - [x] W3 평가 프로토콜·스크립트 (실측 10회는 키 대기)
-- [x] W4 90초 스크립트·`/demo/slide` (실발표 영상은 미촬영)
+- [x] W4 90초 스크립트·`/demo/slide`
+- [x] W4 홈 데모 재생·상태 배너 (사람 확인 대기)
 
 ## Executor's Feedback or Assistance Requests
 
@@ -44,6 +46,7 @@ Phase 1: PRD W1 (타임아웃 수정 + keepalive 라우트).
 실토론 AC는 Supabase 슬롯(사용자 pause 선택)과 3사 키가 필요하다. 새 프로젝트 비용 조회는 월 $0.
 HTTPS Playwright 3/3 통과. `/api/health`는 키·DB 모두 없음. Vercel env 0개.
 실토론을 열려면 `qr-asset-manager` pause 여부와 3사+Supabase 키를 Vercel에 넣어야 한다.
+2026-08-28 W4: 홈 **데모 재생**으로 키 없이 90초 발표 경로를 열었다. 프리뷰 HTTPS 스모크 후 사람 확인을 요청한다.
 
 ## Lessons
 
