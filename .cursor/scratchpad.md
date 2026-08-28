@@ -10,10 +10,12 @@
 ## Key Challenges and Analysis
 
 Cloud 조건부 pnpm. 모바일은 GitHub 연결 필수. 타임아웃 22s/28s/60s. Supabase Free 활성 2칸 점유. Vercel env 0개.
+키 없이 90초 발표가 가능해야 한다 → 홈 데모 재생.
 
 ## High-level Task Breakdown
 
 Phase 0 Cloud 골격·git·푸시. Phase 1 PRD W1–W4. 실토론은 키·DB 대기.
+W4 발표 경로는 홈 데모 재생으로 키 없이 이어간다.
 
 ## Project Status Board
 
@@ -30,10 +32,12 @@ Phase 0 Cloud 골격·git·푸시. Phase 1 PRD W1–W4. 실토론은 키·DB 대
 - [x] W2 UI·메모·공유 백업 `/s/w4demo`
 - [x] W3 평가 프로토콜·스크립트
 - [x] W4 `/demo/slide`
+- [x] W4 홈 데모 재생·상태 배너 (프리뷰 HTTPS 스모크 6/6, 사람 확인 대기)
 
 ## Executor's Feedback or Assistance Requests
 
 실토론 AC를 열려면 `qr-asset-manager` pause 여부와 Vercel 키 5종이 필요하다.
+2026-08-28: 키 없이 홈 **데모 재생**으로 90초 발표 경로를 열었다. 프리뷰 HTTPS 스모크 후 사람 확인을 요청한다.
 
 ## Lessons
 

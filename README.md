@@ -20,6 +20,7 @@ pnpm dev
 시크릿은 `.env`와 Vercel 환경변수 (커밋 금지). 이름은 `.env.example` 참고. Supabase 키가 없으면 API는 503을 반환한다.
 
 배포 HTTPS: https://boardroom-six-delta.vercel.app
+키·DB가 없으면 홈의 **데모 재생** 또는 `/s/w4demo`로 90초 발표를 한다.
 
 ## Cursor Cloud · 모바일
 
