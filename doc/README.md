@@ -14,5 +14,6 @@
 | [demo/90s-script.md](demo/90s-script.md) | 90초 데모 대사 |
 | [demo/slides-outline.md](demo/slides-outline.md) | Du·PoLL 슬라이드 1장 |
 | [progress/2026-08-28-mobile-handoff.md](progress/2026-08-28-mobile-handoff.md) | 노트북 종료 후 Cloud/모바일 이어서 |
+| [progress/2026-08-28-gemini-credit-check.md](progress/2026-08-28-gemini-credit-check.md) | Gemini 크레딧 결제 후 HTTPS md 셀 실측 |
 
 루트 `PRD.md`는 여기로 가는 포인터다.
