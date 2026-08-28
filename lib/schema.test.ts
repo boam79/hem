@@ -121,10 +121,38 @@ describe("json helpers", () => {
     const value = extractJsonObject('말\n{"position":"보류","evidence":["a"]}');
     expect(value).toEqual({ position: "보류", evidence: ["a"] });
   });
+  it("strips markdown fences and trailing commas", () => {
+    const value = extractJsonObject(
+      '```json\n{"position":"보류","evidence":["a"],}\n```',
+    );
+    expect(value).toEqual({ position: "보류", evidence: ["a"] });
+  });
+  it("reads JSON text off a structured-output error", async () => {
+    const { textFromUnknownError } = await import("@/lib/json");
+    expect(
+      textFromUnknownError({
+        text: '{"position":"보류","evidence":["a"]}',
+      }),
+    ).toContain("position");
+    expect(textFromUnknownError(new Error("fail"))).toBeUndefined();
+  });
   it("humanizes credit errors", () => {
     expect(humanizeModelError("Failed: prepayment credits are exhausted")).toBe(
       "모델 크레딧이 부족합니다.",
     );
+  });
+});
+
+describe("cheap-model call options", () => {
+  it("omits temperature for OpenAI and sets minimal reasoning", async () => {
+    const { callOptions, structuredAbortMs } = await import("@/lib/llm-options");
+    const openai = PERSONAS.find((p) => p.provider === "openai")!;
+    const anthropic = PERSONAS.find((p) => p.provider === "anthropic")!;
+    expect(callOptions(openai, 0.7)).toEqual({
+      providerOptions: { openai: { reasoningEffort: "minimal" } },
+    });
+    expect(callOptions(anthropic, 0.4)).toEqual({ temperature: 0.4 });
+    expect(structuredAbortMs(22_000)).toBe(14_000);
   });
 });
 

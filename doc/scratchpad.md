@@ -8,26 +8,27 @@
 
 ## Key Challenges and Analysis
 
-Supabase Free 2칸. 사용자 지시로 `qr-asset-manager` pause 완료. Boardroom DB 생성·마이그레이션됨. Vercel Production에 `SUPABASE_URL`만 있음. service role·LLM 키 없음.
+`qr-asset-manager` pause 후 `boardroom` DB 생성됨. 실토론은 service role + 3사 키.
+경량 모델 유지: haiku / gpt-5.4-nano / flash-lite. nano는 reasoning 모델이라 temperature 미지원, 400토큰이 생각에 쓰이면 JSON이 잘린다. OpenAI는 reasoningEffort minimal, 구조화 실패 시 error.text에서 JSON 복구.
 
 ## High-level Task Breakdown
 
-Phase 0 완료. W1–W2 코드·배포. W1-4 DB 생성됨, Vercel 연결 남음. W3 실측·W4 영상은 키 대기.
+모바일 이어서: `doc/progress/2026-08-28-mobile-handoff.md`
 
 ## Project Status Board
 
 - [x] P0 Cloud·git·푸시
 - [x] W1-1~2 앱·스키마
-- [x] W1-3 경량 ID: haiku / gpt-5.4-nano / flash-lite (키 실측은 배포 HTTPS)
+- [x] W1-3 경량 ID: haiku / gpt-5.4-nano / flash-lite
 - [x] Vercel Production 키 연결됨 (`/api/health` 4 true). 값은 문서에 적지 않음.
-- [ ] 배포 HTTPS 실토론 F3–F6 (스키마 수정 배포 후 재시도)
+- [ ] HTTPS 실토론 F3–F6 (nano JSON/reasoning 수정 배포 후 재시도)
 
 ## Executor's Feedback or Assistance Requests
 
-2026-08-28: `qr-asset-manager` INACTIVE. 환자 DB 유지. Boardroom 테이블 4개.
-폰에서 Vercel 프로젝트 boardroom → Environment Variables에 URL과 service_role을 넣으면 `/api/health`의 supabase가 true가 된다.
-Anthropic 키는 계정에 없음. OpenAI·Gemini는 다른 프로젝트에 있음.
+HTTPS 라운드1(P2qYqy) 29883ms. 3셀 실패: haiku JSON 없음, nano JSON 깨짐(추론 토큰), Gemini 크레딧. 코드 우회 없음. reasoningEffort·JSON 복구 푸시 후 재시도.
 
 ## Lessons
 
 MCP `get_publishable_keys`는 anon만 준다. service_role은 대시보드. RLS off는 PRD MVP.
+gpt-5.4-nano는 responses 추론 모델. temperature 넣으면 경고만 나고, maxOutputTokens 400이 추론에 쓰여 JSON이 잘린다. reasoningEffort minimal.
+Output.object가 22초 abort를 다 쓰면 텍스트 JSON 재시도가 없다. structuredAbortMs로 8초를 남긴다.

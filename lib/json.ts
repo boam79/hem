@@ -1,10 +1,32 @@
 export function extractJsonObject(text: string): unknown {
-  const start = text.indexOf("{");
-  const end = text.lastIndexOf("}");
+  const stripped = text
+    .replace(/```json\s*/gi, "")
+    .replace(/```/g, "")
+    .trim();
+  const start = stripped.indexOf("{");
+  const end = stripped.lastIndexOf("}");
   if (start < 0 || end <= start) {
     throw new Error("no json object in model text");
   }
-  return JSON.parse(text.slice(start, end + 1));
+  const slice = stripped.slice(start, end + 1);
+  try {
+    return JSON.parse(slice);
+  } catch {
+    const repaired = slice.replace(/,\s*([}\]])/g, "$1");
+    return JSON.parse(repaired);
+  }
+}
+
+export function textFromUnknownError(err: unknown): string | undefined {
+  if (!err || typeof err !== "object") return undefined;
+  const rec = err as { text?: unknown; cause?: { text?: unknown } };
+  if (typeof rec.text === "string" && rec.text.includes("{")) {
+    return rec.text;
+  }
+  if (typeof rec.cause?.text === "string" && rec.cause.text.includes("{")) {
+    return rec.cause.text;
+  }
+  return undefined;
 }
 
 export function humanizeModelError(message: string): string {

@@ -8,7 +8,8 @@ import {
   PERSONA_RETRY_BUDGET_MS,
 } from "@/config/limits";
 import type { Persona } from "@/config/personas";
-import { extractJsonObject, humanizeModelError } from "@/lib/json";
+import { extractJsonObject, humanizeModelError, textFromUnknownError } from "@/lib/json";
+import { callOptions, structuredAbortMs } from "@/lib/llm-options";
 import { TurnRound2Schema, TurnSchema, type TurnPayload } from "@/lib/schema";
 
 function modelFor(p: Persona) {
@@ -40,6 +41,13 @@ type OnceOk = {
   usage: { input: number; output: number };
 };
 
+function usageOf(usage: { inputTokens?: number; outputTokens?: number } | undefined) {
+  return {
+    input: usage?.inputTokens ?? 0,
+    output: usage?.outputTokens ?? 0,
+  };
+}
+
 async function once(
   p: Persona,
   system: string,
@@ -49,43 +57,51 @@ async function once(
   abortMs: number,
 ): Promise<OnceOk> {
   const t0 = Date.now();
+  const options = callOptions(p, temperature);
   try {
     const { output, usage } = await generateText({
       model: modelFor(p),
       system,
       prompt: user,
       output: Output.object({ schema, name: "turn" }),
-      temperature,
       maxOutputTokens: MAX_OUTPUT_TOKENS,
-      abortSignal: AbortSignal.timeout(abortMs),
+      abortSignal: AbortSignal.timeout(structuredAbortMs(abortMs)),
+      ...options,
     });
     return {
       output: output as TurnPayload,
       latencyMs: Date.now() - t0,
-      usage: {
-        input: usage?.inputTokens ?? 0,
-        output: usage?.outputTokens ?? 0,
-      },
+      usage: usageOf(usage),
     };
   } catch (err) {
+    const recovered = textFromUnknownError(err);
+    if (recovered) {
+      try {
+        const parsed = schema.parse(extractJsonObject(recovered)) as TurnPayload;
+        return {
+          output: parsed,
+          latencyMs: Date.now() - t0,
+          usage: { input: 0, output: 0 },
+        };
+      } catch {
+        /* fall through to a text JSON retry */
+      }
+    }
     const remaining = abortMs - (Date.now() - t0);
     if (remaining < 2_000) throw err;
     const { text, usage } = await generateText({
       model: modelFor(p),
-      system: `${system}\n반드시 JSON 객체만 출력합니다.`,
+      system: `${system}\n반드시 JSON 객체만 출력합니다. 다른 문장 금지.`,
       prompt: user,
-      temperature,
       maxOutputTokens: MAX_OUTPUT_TOKENS,
       abortSignal: AbortSignal.timeout(remaining),
+      ...options,
     });
     const parsed = schema.parse(extractJsonObject(text)) as TurnPayload;
     return {
       output: parsed,
       latencyMs: Date.now() - t0,
-      usage: {
-        input: usage?.inputTokens ?? 0,
-        output: usage?.outputTokens ?? 0,
-      },
+      usage: usageOf(usage),
     };
   }
 }
