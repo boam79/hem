@@ -32,7 +32,7 @@ W4 발표 경로는 홈 데모 재생으로 키 없이 이어간다.
 - [x] W2 UI·메모·공유 백업 `/s/w4demo`
 - [x] W3 평가 프로토콜·스크립트
 - [x] W4 `/demo/slide`
-- [x] W4 홈 데모 재생·상태 배너 (사람 확인 대기)
+- [x] W4 홈 데모 재생·상태 배너 (프리뷰 HTTPS 스모크 6/6, 사람 확인 대기)
 
 ## Executor's Feedback or Assistance Requests
 

@@ -35,7 +35,7 @@ Phase 1: PRD W1–W4. 실토론은 키·DB 대기. W4 발표 경로는 홈 데�
 - [x] W2 그리드·메모 폼·공유 페리·`/s/w4demo` (실DB 없는 AC F3–F6는 미통과)
 - [x] W3 평가 프로토콜·스크립트 (실측 10회는 키 대기)
 - [x] W4 90초 스크립트·`/demo/slide`
-- [x] W4 홈 데모 재생·상태 배너 (사람 확인 대기)
+- [x] W4 홈 데모 재생·상태 배너 (프리뷰 HTTPS 스모크 6/6, 사람 확인 대기)
 
 ## Executor's Feedback or Assistance Requests
 

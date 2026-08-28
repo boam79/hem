@@ -13,4 +13,6 @@
 
 ## 배포 후
 
-- Playwright에 `home header and demo replay` 케이스를 추가했다. 프리뷰 HTTPS에서만 돌린다.
+- 프리뷰 HTTPS: `https://boardroom-non01jcuk-ckadltmfxhrxhrxhr-5008s-projects.vercel.app`
+- Playwright 6/6 통과. baseURL은 위 프리뷰(localhost 아님).
+- 홈에서 데모 재생 → Anthropic/OpenAI/Google 배지 3개, R2 `반대:` 3개, 사회자 메모.
