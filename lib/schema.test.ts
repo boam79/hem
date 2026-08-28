@@ -8,7 +8,7 @@ import {
   TurnSchema,
   parseTurnPayload,
 } from "@/lib/schema";
-import { loadMetrics, metricsToMarkdownTable } from "@/lib/prompt";
+import { jsonOnlySuffix, loadMetrics, metricsToMarkdownTable } from "@/lib/prompt";
 import { estimateTokens } from "@/lib/tokens";
 import { hourKey, wouldExceed } from "@/lib/ratelimit";
 import { PERSONAS, ROUND2_RULES } from "@/config/personas";
@@ -110,6 +110,24 @@ describe("TurnSchema", () => {
       }).success,
     ).toBe(true);
   });
+  it("round 2 rejects empty or whitespace objection", () => {
+    const base = {
+      position: "반대합니다",
+      evidence: ["inflow.search_ad 2026-07"],
+      risks: ["고정비"],
+      needs_data: [],
+      changed: "유지: 현금흐름 우선",
+    };
+    expect(() =>
+      parseTurnPayload({ ...base, objection: "" }, 2),
+    ).toThrow();
+    expect(() =>
+      parseTurnPayload({ ...base, objection: "   " }, 2),
+    ).toThrow();
+    expect(() =>
+      parseTurnPayload({ ...base, objection: "회수 가정이 없습니다", changed: "" }, 2),
+    ).toThrow();
+  });
 });
 
 describe("metrics", () => {
@@ -150,6 +168,17 @@ describe("personas", () => {
   it("round 2 rules require objection and changed", () => {
     expect(ROUND2_RULES).toMatch(/objection/);
     expect(ROUND2_RULES).toMatch(/changed/);
+  });
+});
+
+describe("json-only retry hint", () => {
+  it("round 2 example includes non-empty objection and changed", () => {
+    const r1 = jsonOnlySuffix(1);
+    const r2 = jsonOnlySuffix(2);
+    expect(r1).not.toMatch(/objection/);
+    expect(r2).toMatch(/"objection":"[^"]+"/);
+    expect(r2).toMatch(/"changed":"[^"]+"/);
+    expect(r2).toMatch(/빈 문자열 금지|비우지 않습니다/);
   });
 });
 
@@ -224,6 +253,27 @@ describe("json helpers", () => {
     expect(value).toMatchObject({
       position: "보류합니다.\n현금 우선",
       evidence: ["a"],
+    });
+  });
+  it("recovers fullwidth colon that jsonrepair reports as Colon expected", () => {
+    const value = extractJsonObject(
+      '{"position":"보류","evidence":["inflow.search_ad 2026-07"],"risks":[],"needs_data":[],"objection"："회수 가정이 없습니다","changed":"유지: 현금흐름"}',
+    );
+    expect(value).toMatchObject({
+      position: "보류",
+      evidence: ["inflow.search_ad 2026-07"],
+      objection: "회수 가정이 없습니다",
+      changed: "유지: 현금흐름",
+    });
+  });
+  it("recovers missing colon before an unquoted Korean R2 value", () => {
+    const value = extractJsonObject(
+      '{"position":"보류","evidence":["a"],"risks":[],"needs_data":[],"objection" 회수 가정이 없습니다,"changed":"유지: 현금흐름"}',
+    );
+    expect(value).toMatchObject({
+      position: "보류",
+      objection: "회수 가정이 없습니다",
+      changed: "유지: 현금흐름",
     });
   });
 });

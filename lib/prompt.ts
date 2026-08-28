@@ -40,6 +40,15 @@ export function buildRound1UserPrompt(
   return `안건: ${agenda}\n\n[지표]\n${table}`;
 }
 
+export function jsonOnlySuffix(round: 1 | 2): string {
+  const base =
+    "반드시 JSON 객체만 출력합니다. 다른 문장 금지. 문자열 안에 큰따옴표와 줄바꿈 금지.";
+  if (round === 2) {
+    return `${base} objection과 changed는 빈 문자열 금지.\n예: {"position":"보류","evidence":["inflow.search_ad 2026-07"],"risks":[],"needs_data":[],"objection":"회수 가정이 없습니다","changed":"유지: 현금흐름 우선"}`;
+  }
+  return `${base}\n예: {"position":"보류","evidence":["inflow.search_ad 2026-07"],"risks":[],"needs_data":[]}`;
+}
+
 export function buildRound2UserPrompt(
   agenda: string,
   table: string,

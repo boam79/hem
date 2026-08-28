@@ -48,13 +48,18 @@ export const TurnLlmSchema = z.object({
   needs_data: z.array(z.string()),
 });
 
-export const TurnRound2LlmSchema = TurnLlmSchema.extend({
+/** objection/changed first so cheap models fill F4 fields before the token cap. */
+export const TurnRound2LlmSchema = z.object({
   objection: z.string(),
   changed: z.string(),
+  position: z.string(),
+  evidence: z.array(z.string()),
+  risks: z.array(z.string()),
+  needs_data: z.array(z.string()),
 });
 
 function clipStr(v: unknown, max: number): string {
-  return typeof v === "string" ? v.slice(0, max) : "";
+  return typeof v === "string" ? v.trim().slice(0, max) : "";
 }
 
 function clipArr(v: unknown, maxItems: number, maxLen: number): string[] {
@@ -77,10 +82,15 @@ export function parseTurnPayload(raw: unknown, round: 1 | 2): TurnPayload {
     needs_data: clipArr(o.needs_data, 3, 80),
   };
   if (round === 2) {
+    const objection = clipStr(o.objection, 200);
+    const changed = clipStr(o.changed, 120);
+    if (!objection || !changed) {
+      throw new Error("round2 requires non-empty objection and changed");
+    }
     return TurnRound2Schema.parse({
       ...base,
-      objection: clipStr(o.objection, 200),
-      changed: clipStr(o.changed, 120),
+      objection,
+      changed,
     });
   }
   return TurnSchema.parse(base);

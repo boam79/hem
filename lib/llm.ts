@@ -10,15 +10,13 @@ import {
 import type { Persona } from "@/config/personas";
 import { extractJsonObject, humanizeModelError, textFromUnknownError } from "@/lib/json";
 import { callOptions, structuredAbortMs } from "@/lib/llm-options";
+import { jsonOnlySuffix } from "@/lib/prompt";
 import {
   TurnLlmSchema,
   TurnRound2LlmSchema,
   parseTurnPayload,
   type TurnPayload,
 } from "@/lib/schema";
-
-const JSON_ONLY =
-  '반드시 JSON 객체만 출력합니다. 다른 문장 금지. 문자열 안에 큰따옴표와 줄바꿈 금지.\n예: {"position":"보류","evidence":["inflow.search_ad 2026-07"],"risks":[],"needs_data":[]}';
 
 function modelFor(p: Persona) {
   if (p.provider === "anthropic") return anthropic(p.modelId);
@@ -100,7 +98,7 @@ async function once(
     if (remaining < 2_000) throw err;
     const { text, usage } = await generateText({
       model: modelFor(p),
-      system: `${system}\n${JSON_ONLY}`,
+      system: `${system}\n${jsonOnlySuffix(round)}`,
       prompt: user,
       maxOutputTokens: MAX_OUTPUT_TOKENS,
       abortSignal: AbortSignal.timeout(remaining),
