@@ -10,9 +10,10 @@ import {
 } from "@/lib/schema";
 import { jsonOnlySuffix, loadMetrics, metricsToMarkdownTable } from "@/lib/prompt";
 import { estimateTokens } from "@/lib/tokens";
-import { hourKey, wouldExceed } from "@/lib/ratelimit";
+import { clientIp, hourKey, wouldExceed } from "@/lib/ratelimit";
 import { PERSONAS, ROUND2_RULES } from "@/config/personas";
 import { METRICS_TABLE_TOKEN_LIMIT } from "@/config/limits";
+import { apiErrorMessage } from "@/lib/api-errors";
 import { agendaError, isAgendaValid } from "@/lib/agenda";
 import { extractJsonObject, humanizeModelError } from "@/lib/json";
 import demoShare from "@/data/demo-share.json";
@@ -131,11 +132,16 @@ describe("TurnSchema", () => {
 });
 
 describe("metrics", () => {
-  it("validates and stays under token budget", () => {
+  it("validates MetricsSchema and stays under 1000-token table budget", () => {
     const m = loadMetrics();
     const table = metricsToMarkdownTable(m);
+    expect(m._note).toMatch(/유사성 없음/);
+    expect(m.hospital.name).toBe("S안과(가상)");
+    expect(m.hospital.doctors).toBe(4);
+    expect(m.period).toEqual({ from: "2025-08", to: "2026-07" });
     expect(m.monthly).toHaveLength(12);
     expect(estimateTokens(table)).toBeLessThanOrEqual(METRICS_TABLE_TOKEN_LIMIT);
+    expect(METRICS_TABLE_TOKEN_LIMIT).toBe(1_000);
   });
 });
 
@@ -145,6 +151,21 @@ describe("ratelimit", () => {
     expect(key).toBe("ip:1.2.3.4:2026082715");
     expect(wouldExceed(10)).toBe(true);
     expect(wouldExceed(9)).toBe(false);
+  });
+  it("uses the first x-forwarded-for hop as the client IP", () => {
+    const headers = new Headers({
+      "x-forwarded-for": "203.0.113.9, 10.0.0.1",
+    });
+    expect(clientIp(headers)).toBe("203.0.113.9");
+  });
+});
+
+describe("api errors", () => {
+  it("maps 409, 422, and 429 codes to Korean copy", () => {
+    expect(apiErrorMessage({ error: "round_already_run" })).toMatch(/이미 실행/);
+    expect(apiErrorMessage({ error: "round1_insufficient" })).toMatch(/2개 미만/);
+    expect(apiErrorMessage({ error: "rate_limited" })).toMatch(/한 시간/);
+    expect(apiErrorMessage({ error: "invalid_agenda" })).toMatch(/안건/);
   });
 });
 
@@ -164,6 +185,11 @@ describe("personas", () => {
       "gpt-5.4-nano",
       "gemini-3.1-flash-lite",
     ]);
+  });
+  it("uses three distinct providers so the F5 build guard stays armed", () => {
+    const providers = PERSONAS.map((p) => p.provider);
+    expect(providers).toEqual(["anthropic", "openai", "google"]);
+    expect(new Set(providers).size).toBe(3);
   });
   it("round 2 rules require objection and changed", () => {
     expect(ROUND2_RULES).toMatch(/objection/);
