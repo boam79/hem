@@ -29,10 +29,11 @@ export const TurnSchema = z.object({
   evidence: z.array(z.string().max(60)).min(1).max(4),
   risks: z.array(z.string().max(120)).max(3),
   needs_data: z.array(z.string().max(80)).max(3),
-  objection: z.string().max(200).optional(),
-  changed: z.string().max(120).optional(),
 });
-export type TurnPayload = z.infer<typeof TurnSchema>;
+export type TurnPayload = z.infer<typeof TurnSchema> & {
+  objection?: string;
+  changed?: string;
+};
 
 export const TurnRound2Schema = TurnSchema.extend({
   objection: z.string().min(1).max(200),

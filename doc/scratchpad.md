@@ -18,14 +18,9 @@ Phase 0 완료. W1–W2 코드·배포. W1-4 DB 생성됨, Vercel 연결 남음.
 
 - [x] P0 Cloud·git·푸시
 - [x] W1-1~2 앱·스키마
-- [ ] W1-3 모델 ID 키 실측
-- [x] W1-4 Boardroom 프로젝트 `tbtjdfayqgcdywybczjr` + SQL
-- [x] W1-5 keepalive 워크플로 파일
-- [x] W2 UI·`/s/w4demo`
-- [x] W3 프로토콜·스크립트
-- [x] W4 `/demo/slide` · PR #2 데모 재생 프리뷰
-- [x] Vercel Production(+Dev) `SUPABASE_URL` (service role·3사 키는 대시보드)
-- [ ] 배포 HTTPS 실토론 F3–F6
+- [x] W1-3 경량 ID: haiku / gpt-5.4-nano / flash-lite (키 실측은 배포 HTTPS)
+- [x] Vercel Production 키 연결됨 (`/api/health` 4 true). 값은 문서에 적지 않음.
+- [ ] 배포 HTTPS 실토론 F3–F6 (스키마 수정 배포 후 재시도)
 
 ## Executor's Feedback or Assistance Requests
 

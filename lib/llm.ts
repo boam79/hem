@@ -8,6 +8,7 @@ import {
   PERSONA_RETRY_BUDGET_MS,
 } from "@/config/limits";
 import type { Persona } from "@/config/personas";
+import { extractJsonObject, humanizeModelError } from "@/lib/json";
 import { TurnRound2Schema, TurnSchema, type TurnPayload } from "@/lib/schema";
 
 function modelFor(p: Persona) {
@@ -48,23 +49,45 @@ async function once(
   abortMs: number,
 ): Promise<OnceOk> {
   const t0 = Date.now();
-  const { output, usage } = await generateText({
-    model: modelFor(p),
-    system,
-    prompt: user,
-    output: Output.object({ schema }),
-    temperature,
-    maxOutputTokens: MAX_OUTPUT_TOKENS,
-    abortSignal: AbortSignal.timeout(abortMs),
-  });
-  return {
-    output: output as TurnPayload,
-    latencyMs: Date.now() - t0,
-    usage: {
-      input: usage?.inputTokens ?? 0,
-      output: usage?.outputTokens ?? 0,
-    },
-  };
+  try {
+    const { output, usage } = await generateText({
+      model: modelFor(p),
+      system,
+      prompt: user,
+      output: Output.object({ schema, name: "turn" }),
+      temperature,
+      maxOutputTokens: MAX_OUTPUT_TOKENS,
+      abortSignal: AbortSignal.timeout(abortMs),
+    });
+    return {
+      output: output as TurnPayload,
+      latencyMs: Date.now() - t0,
+      usage: {
+        input: usage?.inputTokens ?? 0,
+        output: usage?.outputTokens ?? 0,
+      },
+    };
+  } catch (err) {
+    const remaining = abortMs - (Date.now() - t0);
+    if (remaining < 2_000) throw err;
+    const { text, usage } = await generateText({
+      model: modelFor(p),
+      system: `${system}\n반드시 JSON 객체만 출력합니다.`,
+      prompt: user,
+      temperature,
+      maxOutputTokens: MAX_OUTPUT_TOKENS,
+      abortSignal: AbortSignal.timeout(remaining),
+    });
+    const parsed = schema.parse(extractJsonObject(text)) as TurnPayload;
+    return {
+      output: parsed,
+      latencyMs: Date.now() - t0,
+      usage: {
+        input: usage?.inputTokens ?? 0,
+        output: usage?.outputTokens ?? 0,
+      },
+    };
+  }
 }
 
 export async function callPersona(
@@ -90,7 +113,9 @@ export async function callPersona(
     if (remaining < 3_000) {
       return {
         status: "failed",
-        error: err instanceof Error ? err.message : "call failed",
+        error: humanizeModelError(
+          err instanceof Error ? err.message : "call failed",
+        ),
         latencyMs: Date.now() - budgetStart,
         model: p.modelId,
         provider: p.provider,
@@ -110,7 +135,9 @@ export async function callPersona(
     } catch (err2) {
       return {
         status: "failed",
-        error: err2 instanceof Error ? err2.message : "retry failed",
+        error: humanizeModelError(
+          err2 instanceof Error ? err2.message : "retry failed",
+        ),
         latencyMs: Date.now() - budgetStart,
         model: p.modelId,
         provider: p.provider,

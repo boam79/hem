@@ -11,6 +11,7 @@ import { hourKey, wouldExceed } from "@/lib/ratelimit";
 import { PERSONAS, ROUND2_RULES } from "@/config/personas";
 import { METRICS_TABLE_TOKEN_LIMIT } from "@/config/limits";
 import { agendaError, isAgendaValid } from "@/lib/agenda";
+import { extractJsonObject, humanizeModelError } from "@/lib/json";
 import demoShare from "@/data/demo-share.json";
 
 describe("SessionCreateSchema", () => {
@@ -46,6 +47,15 @@ describe("TurnSchema", () => {
       needs_data: [],
     });
     expect(r.success).toBe(false);
+  });
+  it("round 1 schema has no optional keys", () => {
+    const r = TurnSchema.safeParse({
+      position: "보류",
+      evidence: ["inflow.search_ad 2026-07"],
+      risks: [],
+      needs_data: [],
+    });
+    expect(r.success).toBe(true);
   });
   it("round 2 requires objection and changed", () => {
     const base = {
@@ -93,13 +103,28 @@ describe("round 2 gate", () => {
 });
 
 describe("personas", () => {
-  it("uses three distinct providers", () => {
-    const set = new Set(PERSONAS.map((p) => p.provider));
-    expect(set.size).toBe(3);
+  it("uses three distinct cheap models", () => {
+    expect(PERSONAS.map((p) => p.modelId)).toEqual([
+      "claude-haiku-4-5-20251001",
+      "gpt-5.4-nano",
+      "gemini-3.1-flash-lite",
+    ]);
   });
   it("round 2 rules require objection and changed", () => {
     expect(ROUND2_RULES).toMatch(/objection/);
     expect(ROUND2_RULES).toMatch(/changed/);
+  });
+});
+
+describe("json helpers", () => {
+  it("extracts an object from fenced text", () => {
+    const value = extractJsonObject('말\n{"position":"보류","evidence":["a"]}');
+    expect(value).toEqual({ position: "보류", evidence: ["a"] });
+  });
+  it("humanizes credit errors", () => {
+    expect(humanizeModelError("Failed: prepayment credits are exhausted")).toBe(
+      "모델 크레딧이 부족합니다.",
+    );
   });
 });
 
