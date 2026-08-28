@@ -13,7 +13,7 @@ PRD AC 감사: `doc/progress/2026-08-28-ac-audit.md`
 `qr-asset-manager` pause 후 `boardroom` DB 생성됨. 실토론은 service role + 3사 키.
 경량 모델 유지: haiku / gpt-5.4-nano / flash-lite. nano는 reasoning 모델이라 temperature 미지원. reasoningEffort는 `none`만 허용.
 Gemini 크레딧 결제 후 md 셀은 프로덕션에서 성공. Haiku·nano JSON 복구 커밋 `32168f5` 후 세션 `4fyIcc` R1 okCount=3. 사용자 수동 확인 대기(지우지 않음). R2 수정 커밋 `7eda3e3` 후 세션 `uE7m2G` R1 ok=3, R2 ok=3.
-2026-08-28 AC 감사: F1–F3·F5–F6·W4는 코드+테스트+HTTPS 증거가 있음. F4는 성공 셀 objection·422는 있으나 Haiku R2 빈 objection으로 셀 실패가 5안건 중 4건. W3는 5×1만(5×10 아님). keepalive 주 2회 성공 로그는 미확인.
+2026-08-28 AC 감사: F1–F3·F5–F6·W4는 코드+테스트+HTTPS 증거가 있음. F4는 성공 셀 objection·422는 있으나 Haiku R2 빈 objection으로 셀 실패가 5안건 중 4건(이후 `ba66843`로 3세션 R2 ok=3). W3 keepalive는 HTTPS+Cron pinged_at 있음. eval은 5×10 중 20/50.
 
 ## High-level Task Breakdown
 
@@ -23,7 +23,7 @@ JSON 실측: `doc/progress/2026-08-28-haiku-nano-json.md`
 R2 실측: `doc/progress/2026-08-28-round2-json.md`
 AC 감사: `doc/progress/2026-08-28-ac-audit.md`
 Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
-현재(Executor): Haiku R2 빈 objection — 커밋 `ba66843` 배포 READY. HTTPS 3세션 R2 ok=3. 사용자 확인 대기. 완료 단정 금지. W3 keepalive는 손대지 않음.
+현재(Executor): W3 keepalive HTTPS+Cron 성공. eval 5×10 중 20/50(투자·마케팅). 나머지 시간당 10으로 재개 중. 전체 완료 단정 금지.
 
 ## Project Status Board
 
@@ -37,8 +37,8 @@ Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
 - [ ] Haiku R2 빈 objection — Executor 실측 3세션 R2 ok=3(`cA_9I2` `4e4XEM` `NQSmdi`). 사용자 확인 대기. 경량 3사 유지.
 - [ ] HTTPS 실토론 F3–F6 (R1·R2 Executor 실측됨, 사용자 확인 남음)
 - [x] AC 감사 단위 테스트·E2E 11 (프로덕션 HTTPS, localhost 아님)
-- [ ] W3 안건 5종×10회 — 이번 턴은 5×1만. Haiku R2는 재수정 후 3세션 ok=3. 5×10은 범위 밖.
-- [ ] keepalive 주 2회 성공 로그 — 워크플로 파일+401은 있음. gh 미인증으로 실행 로그 미확인
+- [ ] W3 안건 5종×10회 — HTTPS 20/50 (투자·마케팅 각 10, R1·R2 ok=3·objection 있음). 인력·가격·해외 대기. 축소 아님.
+- [x] keepalive 주 2회 — 스케줄 `0 3 * * 1,4`. HTTPS POST 12:12:22Z, Vercel Cron 12:16:07Z. DB pinged_at 갱신. GH Actions 실행 로그는 gh 미인증.
 
 ## Executor's Feedback or Assistance Requests
 
@@ -47,6 +47,7 @@ Executor 실측 세션 `4fyIcc` R1 10067ms okCount=3. R2는 cfo JSON·mkt object
 Executor 실측 세션 `uE7m2G` R1 9709ms ok=3. R2 10963ms ok=3. 메모 PUT 200.
 이번 eval(5×1): `yl91gj` `ZxiwXC` `MJg8Zz` `6FWsGv` `PGzDOA`. R1 전부 ok=3·30초 이내. R2는 `MJg8Zz`만 ok=3, 나머지 4건은 cfo(Haiku) 빈 objection으로 failed. `yl91gj` 메모 PUT 200.
 Haiku R2 재시도 수정 후(`ba66843`): `cA_9I2` `4e4XEM` `NQSmdi` — 세 세션 R1 ok=3·30초 이내, R2 ok=3(cfo 포함). 문서 `doc/progress/2026-08-28-haiku-r2-empty-objection.md`.
+W3 keepalive: HTTPS POST 200 `2026-08-28T12:12:22.673Z`, Cron `2026-08-28T12:16:07.567Z`. eval 20/50 표는 `doc/progress/2026-08-28-w3-close.md`. 남은 30회는 IP 시간당 10 때문에 14:00Z부터 재개.
 완료라고 단정하지 않음. Planner/사용자 확인 요청:
 1. https://boardroom-six-delta.vercel.app/s/cA_9I2 — 리스 안건 R2 세 칸 반대
 2. https://boardroom-six-delta.vercel.app/s/4e4XEM — 검색광고 R2 세 칸 반대
@@ -67,4 +68,4 @@ Haiku R2는 전각 콜론(`：`)이나 키 뒤 한국어 값에 `:`를 빼 jsonr
 R2 JSON 재시도 예시에 objection/changed가 없으면 nano가 빈 문자열을 낸다. R2 전용 예시를 쓴다.
 프로덕션 E2E에서 유효 안건으로 “토론 시작”을 누르면 실 LLM이 돈다. DB 미연결을 가정한 클릭 테스트는 HTTPS에서 쓰지 않는다.
 Haiku R2 빈 objection은 전각 콜론 수정 후에도 재발한다(5안건 중 4, 에러 `round2 requires non-empty objection and changed`). 성공 셀 F4와 별개로 셀 실패율이 높다.
-R2 첫 호출에 objection-first 최소 예시가 없으면 Haiku가 빈 문자열을 낸다. jsonrepair는 빈 값을 성공으로 만들지 않는다. 빈 필드 전용 재시도 문구가 필요하다.
+IP 시간당 10은 50회 eval을 시각마다 10건+대기로 만든다. 프로세스 sleep은 hang이 아니다. jsonl resume과 fetch 90초 타임아웃을 둔다.

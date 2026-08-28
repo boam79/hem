@@ -6,7 +6,13 @@
  * IP hour cap 10 / daily cap 100: waits until the next UTC hour on 429.
  * Does not use localhost.
  */
-import { readFileSync, writeFileSync, appendFileSync, mkdirSync } from "node:fs";
+import {
+  readFileSync,
+  writeFileSync,
+  appendFileSync,
+  mkdirSync,
+  existsSync,
+} from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -40,7 +46,6 @@ const outSummary =
   process.env.EVAL_SUMMARY ||
   resolve(root, "doc/progress/2026-08-28-w3-eval-summary.json");
 mkdirSync(dirname(outJsonl), { recursive: true });
-writeFileSync(outJsonl, "");
 
 const agendas = protocol.agendas;
 const rehearsalMemo = {
@@ -74,9 +79,21 @@ function msUntilNextUtcHour() {
 }
 
 async function fetchJson(url, init) {
-  const res = await fetch(url, init);
-  const body = await res.json().catch(() => ({}));
-  return { res, body };
+  try {
+    const res = await fetch(url, {
+      ...init,
+      signal: AbortSignal.timeout(90_000),
+    });
+    const body = await res.json().catch(() => ({}));
+    return { res, body };
+  } catch (err) {
+    const timedOut =
+      err?.name === "TimeoutError" || err?.name === "AbortError";
+    return {
+      res: { ok: false, status: timedOut ? 0 : 599 },
+      body: { error: timedOut ? "timeout_90s" : String(err?.message || err) },
+    };
+  }
 }
 
 const health = await fetch(`${appUrl}/api/health`).then((r) => r.json());
@@ -86,8 +103,20 @@ if (!health.anthropic || !health.openai || !health.google || !health.supabase) {
 }
 
 const rows = [];
+const done = new Set();
+if (existsSync(outJsonl)) {
+  for (const line of readFileSync(outJsonl, "utf8").split("\n")) {
+    if (!line.trim()) continue;
+    const row = JSON.parse(line);
+    if (row.waitMs) continue;
+    rows.push(row);
+    if (row.label && row.run) done.add(`${row.label}:${row.run}`);
+  }
+  console.error(JSON.stringify({ resumeFrom: done.size }));
+}
 let consecutiveTotalFail = 0;
-let rehearsalDone = 0;
+let rehearsalDone = rows.filter((r) => typeof r.memoMs === "number" && r.memoMs > 0)
+  .length;
 let stopReason = null;
 
 async function createSession(item) {
@@ -144,6 +173,7 @@ for (const item of agendas) {
   if (stopReason) break;
   for (let i = 0; i < runs; i++) {
     if (stopReason) break;
+    if (done.has(`${item.label}:${i + 1}`)) continue;
     const session = await createSession(item);
     if (session === null) break;
     if (session.error) {
@@ -154,6 +184,7 @@ for (const item of agendas) {
         error: session.error,
       };
       rows.push(row);
+      done.add(`${item.label}:${i + 1}`);
       appendFileSync(outJsonl, `${JSON.stringify(row)}\n`);
       console.log(JSON.stringify(row));
       continue;
@@ -235,6 +266,7 @@ for (const item of agendas) {
       memoMs,
     };
     rows.push(row);
+    done.add(`${item.label}:${i + 1}`);
     appendFileSync(outJsonl, `${JSON.stringify(row)}\n`);
     console.log(JSON.stringify(row));
   }
