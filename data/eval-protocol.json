@@ -1,0 +1,30 @@
+{
+  "runsPerAgenda": 10,
+  "agendas": [
+    {
+      "label": "투자",
+      "category": "investment",
+      "agenda": "스마일 전용 레이저 리스 계약 12개월"
+    },
+    {
+      "label": "마케팅",
+      "category": "marketing",
+      "agenda": "백내장 검색광고 예산 30% 증액"
+    },
+    {
+      "label": "인력",
+      "category": "staffing",
+      "agenda": "상담 간호사 1명 충원으로 설명 시간 확보"
+    },
+    {
+      "label": "가격",
+      "category": "pricing",
+      "agenda": "ICL 패키지 가격 8% 인하"
+    },
+    {
+      "label": "해외환자",
+      "category": "marketing",
+      "agenda": "중국 에이전시 수수료 구간 상향"
+    }
+  ]
+}

@@ -101,6 +101,8 @@ test("health endpoint reports booleans only", async ({ request }) => {
 });
 
 test("keepalive without secret is 401", async ({ request }) => {
-  const res = await request.post("/api/keepalive", { data: {} });
-  expect(res.status()).toBe(401);
+  const post = await request.post("/api/keepalive", { data: {} });
+  expect(post.status()).toBe(401);
+  const get = await request.get("/api/keepalive");
+  expect(get.status()).toBe(401);
 });

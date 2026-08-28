@@ -12,7 +12,10 @@
 
 ## 반복
 
-각 안건을 배포 URL에서 10회. 기록 열:
+각 안건을 배포 URL에서 **10회**(축소 금지). `scripts/eval-agendas.mjs` 기본값 = `data/eval-protocol.json`의 `runsPerAgenda: 10`.
+IP 시간당 10·전역 일일 100을 넘기지 않게, 세션 `429`면 다음 UTC 시각까지 대기한다. localhost 금지.
+
+기록 열:
 
 | 회차 | 안건 | R1 성공 셀 | R2 objection 충족 | 셀 실패 | R1 지연 ms | 비고 |
 |---|---|---|---|---|---|---|

@@ -1,21 +1,33 @@
+import { keepaliveAuthorized } from "@/lib/keepalive-auth";
 import { getSupabase, supabaseConfigured } from "@/lib/supabase";
 
-export async function POST(req: Request) {
-  const secret = process.env.KEEPALIVE_SECRET;
-  const got = req.headers.get("x-keepalive-secret");
-  if (!secret || got !== secret) {
-    return Response.json({ error: "unauthorized" }, { status: 401 });
-  }
+async function ping() {
   if (!supabaseConfigured()) {
     return Response.json({ error: "supabase_unconfigured" }, { status: 503 });
   }
+  const pinged_at = new Date().toISOString();
   const db = getSupabase();
   const { error } = await db.from("keepalive").upsert({
     id: 1,
-    pinged_at: new Date().toISOString(),
+    pinged_at,
   });
   if (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
-  return Response.json({ ok: true });
+  return Response.json({ ok: true, pinged_at });
+}
+
+export async function POST(req: Request) {
+  if (!keepaliveAuthorized(req.headers)) {
+    return Response.json({ error: "unauthorized" }, { status: 401 });
+  }
+  return ping();
+}
+
+/** Vercel Cron is GET + Authorization: Bearer CRON_SECRET. */
+export async function GET(req: Request) {
+  if (!keepaliveAuthorized(req.headers)) {
+    return Response.json({ error: "unauthorized" }, { status: 401 });
+  }
+  return ping();
 }

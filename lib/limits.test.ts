@@ -19,3 +19,10 @@ describe("timeout literals", () => {
     expect(roundRoute).toMatch(/export const maxDuration = 60;/);
   });
 });
+
+describe("W3 failure handling literals", () => {
+  it("schema retry uses temperature 0.2", () => {
+    const llm = readFileSync(resolve(process.cwd(), "lib/llm.ts"), "utf8");
+    expect(llm).toMatch(/once\(p, system, user, 0\.2, round, retryAbort\)/);
+  });
+});
