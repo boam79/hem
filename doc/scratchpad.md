@@ -16,6 +16,7 @@ Gemini 크레딧 결제 후 md 셀은 프로덕션에서 성공. Haiku·nano JSO
 
 모바일 이어서: `doc/progress/2026-08-28-mobile-handoff.md`
 Gemini 실측: `doc/progress/2026-08-28-gemini-credit-check.md`
+현재(Executor): Haiku·nano JSON 파싱 실패 수정. 경량 3사 유지. 프로덕션 HTTPS에서 R1 okCount≥2.
 
 ## Project Status Board
 
@@ -24,11 +25,13 @@ Gemini 실측: `doc/progress/2026-08-28-gemini-credit-check.md`
 - [x] W1-3 경량 ID: haiku / gpt-5.4-nano / flash-lite
 - [x] Vercel Production 키 연결됨 (`/api/health` 4 true). 값은 문서에 적지 않음.
 - [x] Gemini 크레딧: HTTPS 세션 `LNIDoe` md ok (1236ms). 크레딧 에러 없음
+- [ ] Haiku·nano JSON 복구 (현재 작업). 깨진 JSON 픽스처 TDD → 배포 HTTPS 새 세션 R1
 - [ ] HTTPS 실토론 F3–F6 (cfo/mkt JSON 수정 후 재시도)
 
 ## Executor's Feedback or Assistance Requests
 
 세션 `LNIDoe` R1 22966ms. md(gemini-3.1-flash-lite) ok. cfo/mkt JSON 파싱 실패로 ok=1, R2 스킵. Gemini 결제는 사용자 추가 작업 없음.
+Executor 착수: cfo `Expected ',' or ']' after array element`, mkt `Expected ',' or '}' after property value`. 모델 ID는 올리지 않고 추출/스키마/재시도 지시만 고친다. 완료라고 단정하지 않음 — 배포 후 사용자 수동 확인 필요.
 
 ## Lessons
 

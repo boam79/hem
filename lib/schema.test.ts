@@ -2,8 +2,11 @@ import { describe, expect, it } from "vitest";
 import {
   MemoSchema,
   SessionCreateSchema,
+  TurnLlmSchema,
+  TurnRound2LlmSchema,
   TurnRound2Schema,
   TurnSchema,
+  parseTurnPayload,
 } from "@/lib/schema";
 import { loadMetrics, metricsToMarkdownTable } from "@/lib/prompt";
 import { estimateTokens } from "@/lib/tokens";
@@ -56,6 +59,40 @@ describe("TurnSchema", () => {
       needs_data: [],
     });
     expect(r.success).toBe(true);
+  });
+  it("llm schemas require every property (OpenAI structured output)", () => {
+    const r1 = {
+      position: "보류",
+      evidence: ["inflow.search_ad 2026-07"],
+      risks: [],
+      needs_data: [],
+    };
+    expect(TurnLlmSchema.safeParse(r1).success).toBe(true);
+    expect(TurnLlmSchema.safeParse({ position: "보류" }).success).toBe(false);
+    expect(TurnRound2LlmSchema.safeParse(r1).success).toBe(false);
+    expect(
+      TurnRound2LlmSchema.safeParse({
+        ...r1,
+        objection: "회수 가정이 없습니다",
+        changed: "유지: 현금흐름 우선",
+      }).success,
+    ).toBe(true);
+  });
+  it("clips overlong cheap-model fields after JSON recovery", () => {
+    const parsed = parseTurnPayload(
+      {
+        position: "가".repeat(500),
+        evidence: ["b".repeat(100), "c", "d", "e", "f"],
+        risks: ["r".repeat(200)],
+        needs_data: ["n".repeat(120)],
+      },
+      1,
+    );
+    expect(parsed.position).toHaveLength(200);
+    expect(parsed.evidence).toHaveLength(4);
+    expect(parsed.evidence[0]).toHaveLength(60);
+    expect(parsed.risks[0]).toHaveLength(120);
+    expect(parsed.needs_data[0]).toHaveLength(80);
   });
   it("round 2 requires objection and changed", () => {
     const base = {
@@ -140,6 +177,54 @@ describe("json helpers", () => {
     expect(humanizeModelError("Failed: prepayment credits are exhausted")).toBe(
       "모델 크레딧이 부족합니다.",
     );
+  });
+  it("recovers unescaped quotes in array elements (Haiku)", () => {
+    const value = extractJsonObject(
+      '{"position":"보류","evidence":["inflow.search_ad 2026-07 "검색광고""],"risks":[],"needs_data":[]}',
+    );
+    expect(value).toMatchObject({
+      position: "보류",
+      evidence: ['inflow.search_ad 2026-07 "검색광고"'],
+    });
+  });
+  it("recovers missing commas between array elements", () => {
+    const value = extractJsonObject(
+      '{"position":"보류","evidence":["inflow.search_ad 2026-07" "revenue_mix.cataract 2026-07"],"risks":[],"needs_data":[]}',
+    );
+    expect(value).toEqual({
+      position: "보류",
+      evidence: ["inflow.search_ad 2026-07", "revenue_mix.cataract 2026-07"],
+      risks: [],
+      needs_data: [],
+    });
+  });
+  it("recovers unescaped quotes in property values (nano)", () => {
+    const value = extractJsonObject(
+      '{"position":"회수 "불확실"이라 보류","evidence":["inflow.search_ad 2026-07"],"risks":[],"needs_data":[]}',
+    );
+    expect(value).toMatchObject({
+      position: '회수 "불확실"이라 보류',
+      evidence: ["inflow.search_ad 2026-07"],
+    });
+  });
+  it("recovers truncated JSON without a closing brace", () => {
+    const value = extractJsonObject(
+      '{"position":"보류합니다","evidence":["inflow.search_ad 2026-07"],"risks":["고정비 증가',
+    );
+    expect(value).toMatchObject({
+      position: "보류합니다",
+      evidence: ["inflow.search_ad 2026-07"],
+      risks: ["고정비 증가"],
+    });
+  });
+  it("recovers unescaped newlines inside strings", () => {
+    const value = extractJsonObject(
+      '{"position":"보류합니다.\n현금 우선","evidence":["a"],"risks":[],"needs_data":[]}',
+    );
+    expect(value).toMatchObject({
+      position: "보류합니다.\n현금 우선",
+      evidence: ["a"],
+    });
   });
 });
 

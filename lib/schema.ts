@@ -40,6 +40,52 @@ export const TurnRound2Schema = TurnSchema.extend({
   changed: z.string().min(1).max(120),
 });
 
+/** OpenAI structured output: every property required, no .optional() / min / max. */
+export const TurnLlmSchema = z.object({
+  position: z.string(),
+  evidence: z.array(z.string()),
+  risks: z.array(z.string()),
+  needs_data: z.array(z.string()),
+});
+
+export const TurnRound2LlmSchema = TurnLlmSchema.extend({
+  objection: z.string(),
+  changed: z.string(),
+});
+
+function clipStr(v: unknown, max: number): string {
+  return typeof v === "string" ? v.slice(0, max) : "";
+}
+
+function clipArr(v: unknown, maxItems: number, maxLen: number): string[] {
+  if (!Array.isArray(v)) return [];
+  return v
+    .filter((x): x is string => typeof x === "string")
+    .slice(0, maxItems)
+    .map((s) => s.slice(0, maxLen));
+}
+
+export function parseTurnPayload(raw: unknown, round: 1 | 2): TurnPayload {
+  if (!raw || typeof raw !== "object") {
+    throw new Error("turn payload is not an object");
+  }
+  const o = raw as Record<string, unknown>;
+  const base = {
+    position: clipStr(o.position, 200),
+    evidence: clipArr(o.evidence, 4, 60),
+    risks: clipArr(o.risks, 3, 120),
+    needs_data: clipArr(o.needs_data, 3, 80),
+  };
+  if (round === 2) {
+    return TurnRound2Schema.parse({
+      ...base,
+      objection: clipStr(o.objection, 200),
+      changed: clipStr(o.changed, 120),
+    });
+  }
+  return TurnSchema.parse(base);
+}
+
 export const MemoSchema = z.object({
   consensus: z.array(z.string()),
   open_issues: z.array(

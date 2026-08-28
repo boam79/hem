@@ -10,7 +10,15 @@ import {
 import type { Persona } from "@/config/personas";
 import { extractJsonObject, humanizeModelError, textFromUnknownError } from "@/lib/json";
 import { callOptions, structuredAbortMs } from "@/lib/llm-options";
-import { TurnRound2Schema, TurnSchema, type TurnPayload } from "@/lib/schema";
+import {
+  TurnLlmSchema,
+  TurnRound2LlmSchema,
+  parseTurnPayload,
+  type TurnPayload,
+} from "@/lib/schema";
+
+const JSON_ONLY =
+  '반드시 JSON 객체만 출력합니다. 다른 문장 금지. 문자열 안에 큰따옴표와 줄바꿈 금지.\n예: {"position":"보류","evidence":["inflow.search_ad 2026-07"],"risks":[],"needs_data":[]}';
 
 function modelFor(p: Persona) {
   if (p.provider === "anthropic") return anthropic(p.modelId);
@@ -53,23 +61,24 @@ async function once(
   system: string,
   user: string,
   temperature: number,
-  schema: typeof TurnSchema | typeof TurnRound2Schema,
+  round: 1 | 2,
   abortMs: number,
 ): Promise<OnceOk> {
   const t0 = Date.now();
   const options = callOptions(p, temperature);
+  const llmSchema = round === 2 ? TurnRound2LlmSchema : TurnLlmSchema;
   try {
     const { output, usage } = await generateText({
       model: modelFor(p),
       system,
       prompt: user,
-      output: Output.object({ schema, name: "turn" }),
+      output: Output.object({ schema: llmSchema, name: "turn" }),
       maxOutputTokens: MAX_OUTPUT_TOKENS,
       abortSignal: AbortSignal.timeout(structuredAbortMs(abortMs)),
       ...options,
     });
     return {
-      output: output as TurnPayload,
+      output: parseTurnPayload(output, round),
       latencyMs: Date.now() - t0,
       usage: usageOf(usage),
     };
@@ -77,7 +86,7 @@ async function once(
     const recovered = textFromUnknownError(err);
     if (recovered) {
       try {
-        const parsed = schema.parse(extractJsonObject(recovered)) as TurnPayload;
+        const parsed = parseTurnPayload(extractJsonObject(recovered), round);
         return {
           output: parsed,
           latencyMs: Date.now() - t0,
@@ -91,13 +100,13 @@ async function once(
     if (remaining < 2_000) throw err;
     const { text, usage } = await generateText({
       model: modelFor(p),
-      system: `${system}\n반드시 JSON 객체만 출력합니다. 다른 문장 금지.`,
+      system: `${system}\n${JSON_ONLY}`,
       prompt: user,
       maxOutputTokens: MAX_OUTPUT_TOKENS,
       abortSignal: AbortSignal.timeout(remaining),
       ...options,
     });
-    const parsed = schema.parse(extractJsonObject(text)) as TurnPayload;
+    const parsed = parseTurnPayload(extractJsonObject(text), round);
     return {
       output: parsed,
       latencyMs: Date.now() - t0,
@@ -112,10 +121,9 @@ export async function callPersona(
   user: string,
   round: 1 | 2,
 ): Promise<PersonaCallResult> {
-  const schema = round === 2 ? TurnRound2Schema : TurnSchema;
   const budgetStart = Date.now();
   try {
-    const first = await once(p, system, user, p.temperature, schema, PERSONA_ABORT_MS);
+    const first = await once(p, system, user, p.temperature, round, PERSONA_ABORT_MS);
     return {
       status: "ok",
       payload: first.output,
@@ -139,7 +147,7 @@ export async function callPersona(
     }
     try {
       const retryAbort = Math.min(PERSONA_ABORT_MS, remaining);
-      const second = await once(p, system, user, 0.2, schema, retryAbort);
+      const second = await once(p, system, user, 0.2, round, retryAbort);
       return {
         status: "ok",
         payload: second.output,

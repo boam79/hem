@@ -1,18 +1,21 @@
+import { jsonrepair } from "jsonrepair";
+
 export function extractJsonObject(text: string): unknown {
   const stripped = text
     .replace(/```json\s*/gi, "")
     .replace(/```/g, "")
     .trim();
   const start = stripped.indexOf("{");
-  const end = stripped.lastIndexOf("}");
-  if (start < 0 || end <= start) {
+  if (start < 0) {
     throw new Error("no json object in model text");
   }
-  const slice = stripped.slice(start, end + 1);
+  const fromBrace = stripped.slice(start);
+  const end = fromBrace.lastIndexOf("}");
+  const slice = end > 0 ? fromBrace.slice(0, end + 1) : fromBrace;
   try {
     return JSON.parse(slice);
   } catch {
-    const repaired = slice.replace(/,\s*([}\]])/g, "$1");
+    const repaired = jsonrepair(fromBrace);
     return JSON.parse(repaired);
   }
 }
