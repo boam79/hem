@@ -13,7 +13,7 @@ PRD AC 감사: `doc/progress/2026-08-28-prd-final-audit.md`
 `qr-asset-manager` pause 후 `boardroom` DB 생성됨. 실토론은 service role + 3사 키.
 경량 모델 유지: haiku / gpt-5.4-nano / flash-lite. nano는 reasoning 모델이라 temperature 미지원. reasoningEffort는 `none`만 허용.
 Gemini 크레딧 결제 후 md 셀은 프로덕션에서 성공. Haiku·nano JSON 복구 커밋 `32168f5` 후 세션 `4fyIcc` R1 okCount=3. 사용자 수동 확인 대기(지우지 않음). R2 수정 커밋 `7eda3e3` 후 세션 `uE7m2G` R1 ok=3, R2 ok=3.
-2026-08-28 AC 감사: F1–F3·F5–F6·W4는 코드+테스트+HTTPS 증거가 있음. F4는 `ba66843` 후 3세션 R2 ok=3. W3 keepalive HTTPS+Cron pinged_at 있음. **W3 5×10은 사용자가 20/50에서 중단(축소 아님, 완료 아님).** 제한 429는 HTTPS 세션 POST만으로 실측.
+2026-08-28 AC 감사: F1–F6·W1–W4 코드+테스트+HTTPS. **W3 5×10은 `/goal` 재개 후 50/50** (objection 50/50, 셀 실패 0). keepalive Vercel Cron 성공. GH Actions 시크릿은 사용자 몫.
 
 ## High-level Task Breakdown
 
@@ -23,7 +23,7 @@ JSON 실측: `doc/progress/2026-08-28-haiku-nano-json.md`
 R2 실측: `doc/progress/2026-08-28-round2-json.md`
 AC 감사: `doc/progress/2026-08-28-ac-audit.md`
 Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
-현재(Executor): PRD 문장 단위 감사 `doc/progress/2026-08-28-prd-final-audit.md`. 제품 AC는 HTTPS+코드로 증명. **5×10 실행은 사용자 중단(완료 아님).** eval 재시작 안 함.
+현재(Executor): W3 5×10 **50/50 완료**. 표 `doc/progress/2026-08-28-w3-close.md`. 제품 잔여 없음. GH Actions keepalive 시크릿만 사용자 몫.
 
 ## Project Status Board
 
@@ -37,7 +37,7 @@ Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
 - [x] Haiku R2 빈 objection — 3세션 R2 ok=3(`cA_9I2` `4e4XEM` `NQSmdi`). GET+페이지 E2E
 - [x] HTTPS 실토론 F3–F6 — 위 세션 + `uE7m2G` 메모. Playwright 12
 - [x] AC 감사 단위 47 · E2E 12 (프로덕션 HTTPS, localhost 아님)
-- [ ] W3 안건 5종×10회 — **사용자 중단**. 축소 아님, 완료 아님. 증거: `cA_9I2` `4e4XEM` `NQSmdi` + 투자·마케팅 20/50. 인력·가격·해외 안 함. eval 프로세스 종료.
+- [x] W3 안건 5종×10회 — **50/50**. objection 50/50, 셀 실패 0, R1 전부 ≤30s. 표 `doc/progress/2026-08-28-w3-close.md`
 - [x] keepalive 주 2회 — 스케줄 `0 3 * * 1,4`. HTTPS POST 12:12:22Z, Vercel Cron 12:16:07Z. GH Actions 시크릿은 사용자 몫.
 - [x] 제한 429 HTTPS — 세션 POST만, 라운드 없음. `rate_limited` 429 (이번 턴 재확인).
 
@@ -48,9 +48,8 @@ Executor 실측 세션 `4fyIcc` R1 10067ms okCount=3. R2는 cfo JSON·mkt object
 Executor 실측 세션 `uE7m2G` R1 9709ms ok=3. R2 10963ms ok=3. 메모 PUT 200.
 이번 eval(5×1): `yl91gj` `ZxiwXC` `MJg8Zz` `6FWsGv` `PGzDOA`. R1 전부 ok=3·30초 이내. R2는 `MJg8Zz`만 ok=3, 나머지 4건은 cfo(Haiku) 빈 objection으로 failed. `yl91gj` 메모 PUT 200.
 Haiku R2 재시도 수정 후(`ba66843`): `cA_9I2` `4e4XEM` `NQSmdi` — 세 세션 R1 ok=3·30초 이내, R2 ok=3(cfo 포함). 문서 `doc/progress/2026-08-28-haiku-r2-empty-objection.md`.
-W3 keepalive: HTTPS POST 200 `2026-08-28T12:12:22.673Z`, Cron `2026-08-28T12:16:07.567Z`. eval 20/50은 `doc/progress/2026-08-28-w3-close.md`. **사용자는 남은 30회를 중단함.** 제한 429 HTTPS: 세션 POST → 429 `rate_limited` (라운드 없음, 이번 감사 턴 재확인).
-최종 감사: `doc/progress/2026-08-28-prd-final-audit.md`. 제품 AC 증명. 5×10 실행은 사용자 중단. 셀 배지+GET E2E만 보강.
-URL: `/s/cA_9I2` `/s/4e4XEM` `/s/NQSmdi` `/s/uE7m2G` `/s/w4demo` `/demo/slide`
+사용자가 `/goal`로 5×10을 재개함. 인력·가격·해외 30회 HTTPS 완료 → **50/50**. 집계: objection 50/50, R2 실패 셀 0, collapse 0, 리허설 메모 3. 샘플 `/s/3lySX3` `/s/CASf5k` `/s/z3sYGk`.
+최종 감사: `doc/progress/2026-08-28-prd-final-audit.md`. 제품 AC + W3 실행 증명. GH Actions 시크릿은 사용자 몫.
 
 ## Lessons
 
