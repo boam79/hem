@@ -1,10 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { SessionCreateSchema, TurnRound2Schema, TurnSchema } from "@/lib/schema";
+import {
+  MemoSchema,
+  SessionCreateSchema,
+  TurnRound2Schema,
+  TurnSchema,
+} from "@/lib/schema";
 import { loadMetrics, metricsToMarkdownTable } from "@/lib/prompt";
 import { estimateTokens } from "@/lib/tokens";
 import { hourKey, wouldExceed } from "@/lib/ratelimit";
-import { PERSONAS } from "@/config/personas";
+import { PERSONAS, ROUND2_RULES } from "@/config/personas";
 import { METRICS_TABLE_TOKEN_LIMIT } from "@/config/limits";
+import { agendaError, isAgendaValid } from "@/lib/agenda";
+import demoShare from "@/data/demo-share.json";
 
 describe("SessionCreateSchema", () => {
   it("rejects agenda shorter than 10", () => {
@@ -80,5 +87,32 @@ describe("personas", () => {
   it("uses three distinct providers", () => {
     const set = new Set(PERSONAS.map((p) => p.provider));
     expect(set.size).toBe(3);
+  });
+  it("round 2 rules require objection and changed", () => {
+    expect(ROUND2_RULES).toMatch(/objection/);
+    expect(ROUND2_RULES).toMatch(/changed/);
+  });
+});
+
+describe("agenda client guard", () => {
+  it("rejects short and long agendas", () => {
+    expect(isAgendaValid("짧다")).toBe(false);
+    expect(agendaError("짧다")).toMatch(/10자/);
+    expect(isAgendaValid("가".repeat(201))).toBe(false);
+    expect(isAgendaValid("백내장 검색광고 예산 30% 증액")).toBe(true);
+  });
+});
+
+describe("memo and demo fixture", () => {
+  it("accepts a four-field memo", () => {
+    const r = MemoSchema.safeParse(demoShare.memo);
+    expect(r.success).toBe(true);
+  });
+  it("demo round 2 cells include objection and changed", () => {
+    const r2 = demoShare.turns.filter((t) => t.round === 2);
+    expect(r2).toHaveLength(3);
+    for (const turn of r2) {
+      expect(TurnRound2Schema.safeParse(turn.payload).success).toBe(true);
+    }
   });
 });

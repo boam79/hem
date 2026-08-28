@@ -1,9 +1,23 @@
 "use client";
 
 import { useState } from "react";
+import { DebateGrid } from "@/components/debate-grid";
+import { Disclaimer } from "@/components/disclaimer";
+import { MemoForm } from "@/components/memo-form";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { AGENDA_MAX, AGENDA_MIN } from "@/config/limits";
-import { PERSONAS } from "@/config/personas";
-import type { Category, TurnPayload } from "@/lib/schema";
+import { agendaError, agendaLength, isAgendaValid } from "@/lib/agenda";
+import { apiErrorMessage } from "@/lib/api-errors";
+import type { DebateCell } from "@/lib/debate";
+import type { Category } from "@/lib/schema";
 
 const CATEGORIES: { value: Category; label: string }[] = [
   { value: "investment", label: "투자" },
@@ -12,32 +26,27 @@ const CATEGORIES: { value: Category; label: string }[] = [
   { value: "pricing", label: "가격" },
 ];
 
-type Cell = {
-  persona: string;
-  provider: string;
-  status: string;
-  payload?: TurnPayload;
-  error?: string;
-};
-
 export default function Home() {
   const [agenda, setAgenda] = useState("백내장 검색광고 예산 30% 증액");
   const [category, setCategory] = useState<Category>("marketing");
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const [round1, setRound1] = useState<Cell[]>([]);
-  const [round2, setRound2] = useState<Cell[]>([]);
-  const [busy, setBusy] = useState(false);
+  const [round1, setRound1] = useState<DebateCell[]>([]);
+  const [round2, setRound2] = useState<DebateCell[]>([]);
+  const [loadingRound, setLoadingRound] = useState<0 | 1 | 2>(0);
   const [error, setError] = useState<string | null>(null);
-
-  const agendaOk = agenda.trim().length >= AGENDA_MIN && agenda.trim().length <= AGENDA_MAX;
+  const clientAgendaError = agendaError(agenda);
+  const agendaOk = isAgendaValid(agenda);
 
   async function start() {
     setError(null);
     if (!agendaOk) {
-      setError(`안건은 ${AGENDA_MIN}~${AGENDA_MAX}자여야 합니다.`);
+      setError(clientAgendaError);
       return;
     }
-    setBusy(true);
+    setSessionId(null);
+    setRound1([]);
+    setRound2([]);
+    setLoadingRound(1);
     try {
       const s = await fetch("/api/session", {
         method: "POST",
@@ -46,7 +55,7 @@ export default function Home() {
       });
       const sj = await s.json();
       if (!s.ok) {
-        throw new Error(sj.error || s.statusText);
+        throw new Error(apiErrorMessage(sj));
       }
       setSessionId(sj.id);
       const r1 = await fetch("/api/round", {
@@ -55,8 +64,9 @@ export default function Home() {
         body: JSON.stringify({ sessionId: sj.id, round: 1 }),
       });
       const r1j = await r1.json();
-      if (!r1.ok) throw new Error(r1j.error || r1.statusText);
+      if (!r1.ok) throw new Error(apiErrorMessage(r1j));
       setRound1(r1j.turns);
+      setLoadingRound(2);
       const r2 = await fetch("/api/round", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -64,55 +74,77 @@ export default function Home() {
       });
       const r2j = await r2.json();
       if (r2.status === 422) {
-        setError("라운드 1 성공 셀이 2개 미만이라 라운드 2를 건너뜁니다.");
+        setError(apiErrorMessage(r2j));
+        setRound2([]);
         return;
       }
-      if (!r2.ok) throw new Error(r2j.error || r2.statusText);
+      if (!r2.ok) throw new Error(apiErrorMessage(r2j));
       setRound2(r2j.turns);
     } catch (e) {
       setError(e instanceof Error ? e.message : "실패");
     } finally {
-      setBusy(false);
+      setLoadingRound(0);
     }
   }
 
   return (
-    <main className="mx-auto max-w-5xl p-6">
-      <p className="mb-2 text-sm text-neutral-600">
-        AI 토론 결과이며 결정은 사람이 합니다.
-      </p>
+    <main className="mx-auto max-w-6xl p-6">
+      <Disclaimer />
       <h1 className="mb-4 text-2xl font-semibold">병원 경영회의 시뮬레이터</h1>
-      <label className="mb-2 block text-sm">안건</label>
-      <textarea
-        className="mb-3 w-full rounded border border-neutral-300 bg-white p-3"
+      <p className="text-muted-foreground mb-6 max-w-2xl text-sm">
+        세 회사의 모델이 서로 다른 입장을 냅니다. 결정을 대신하지 않습니다.
+      </p>
+      <label className="mb-2 block text-sm" htmlFor="agenda">
+        안건
+      </label>
+      <Textarea
+        id="agenda"
         rows={3}
+        className="mb-1"
         value={agenda}
+        aria-invalid={!agendaOk}
         onChange={(e) => setAgenda(e.target.value)}
       />
-      <label className="mb-2 block text-sm">유형</label>
-      <select
-        className="mb-4 rounded border border-neutral-300 bg-white p-2"
+      <p className="text-muted-foreground mb-3 text-xs">
+        {agendaLength(agenda)}/{AGENDA_MAX}자 (최소 {AGENDA_MIN}자)
+      </p>
+      {clientAgendaError ? (
+        <p className="text-destructive mb-3 text-sm">{clientAgendaError}</p>
+      ) : null}
+      <label className="mb-2 block text-sm" htmlFor="category">
+        유형
+      </label>
+      <Select
         value={category}
-        onChange={(e) => setCategory(e.target.value as Category)}
+        onValueChange={(value) => setCategory(value as Category)}
       >
-        {CATEGORIES.map((c) => (
-          <option key={c.value} value={c.value}>
-            {c.label}
-          </option>
-        ))}
-      </select>
+        <SelectTrigger id="category" className="mb-4 w-48">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {CATEGORIES.map((c) => (
+            <SelectItem key={c.value} value={c.value}>
+              {c.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
       <div>
-        <button
+        <Button
           type="button"
-          className="rounded bg-neutral-900 px-4 py-2 text-white disabled:opacity-50"
-          disabled={busy || !agendaOk}
+          size="lg"
+          disabled={loadingRound !== 0 || !agendaOk}
           onClick={start}
         >
-          {busy ? "토론 중…" : "토론 시작"}
-        </button>
+          {loadingRound === 0 ? "토론 시작" : "토론 중…"}
+        </Button>
       </div>
-      {error ? <p className="mt-3 text-sm text-red-700">{error}</p> : null}
-      <Grid round1={round1} round2={round2} />
+      {error ? <p className="text-destructive mt-3 text-sm">{error}</p> : null}
+      <DebateGrid
+        round1={round1}
+        round2={round2}
+        loadingRound={loadingRound}
+      />
       {sessionId ? (
         <p className="mt-6 text-sm">
           공유:{" "}
@@ -121,70 +153,7 @@ export default function Home() {
           </a>
         </p>
       ) : null}
+      {sessionId && loadingRound === 0 ? <MemoForm sessionId={sessionId} /> : null}
     </main>
-  );
-}
-
-function Grid({ round1, round2 }: { round1: Cell[]; round2: Cell[] }) {
-  if (round1.length === 0) return null;
-  return (
-    <div className="mt-8 overflow-x-auto">
-      <table className="w-full border-collapse text-sm">
-        <thead>
-          <tr>
-            <th className="border p-2" />
-            {PERSONAS.map((p) => (
-              <th key={p.key} className="border p-2">
-                {p.name}{" "}
-                <span className="rounded bg-neutral-200 px-1 text-xs">
-                  {p.provider}
-                </span>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td className="border p-2 font-medium">R1</td>
-            {PERSONAS.map((p) => (
-              <td key={p.key} className="border p-2 align-top">
-                <CellView cell={round1.find((c) => c.persona === p.key)} />
-              </td>
-            ))}
-          </tr>
-          <tr>
-            <td className="border p-2 font-medium">R2</td>
-            {PERSONAS.map((p) => (
-              <td key={p.key} className="border p-2 align-top">
-                <CellView cell={round2.find((c) => c.persona === p.key)} round2 />
-              </td>
-            ))}
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function CellView({ cell, round2 }: { cell?: Cell; round2?: boolean }) {
-  if (!cell) {
-    return <span className="text-neutral-400">대기</span>;
-  }
-  if (cell.status !== "ok") {
-    return <span>발언 불가 ({cell.error || cell.status})</span>;
-  }
-  const p = cell.payload;
-  if (!p) return null;
-  return (
-    <div>
-      <p className="font-semibold">{p.position}</p>
-      <p className="mt-1 text-xs text-neutral-600">{p.evidence.join(" · ")}</p>
-      {round2 && p.objection ? (
-        <p className="mt-2 text-xs">반대: {p.objection}</p>
-      ) : null}
-      {round2 && p.changed ? (
-        <p className="text-xs">변경: {p.changed}</p>
-      ) : null}
-    </div>
   );
 }

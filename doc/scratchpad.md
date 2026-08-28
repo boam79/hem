@@ -31,14 +31,18 @@ Phase 1: PRD W1 (타임아웃 수정 + keepalive 라우트).
 - [ ] W1-3 모델 ID 확정 (키 필요, 후보는 personas.ts)
 - [ ] W1-4 Supabase 프로젝트+마이그레이션 (SQL은 커밋됨, Free 2/2)
 - [x] W1-5 keep-alive Actions 파일
+- [x] W2 그리드·메모 폼·공유 페리·`/s/w4demo` (실DB 없는 AC F3–F6는 미통과)
+- [x] W3 평가 프로토콜 문서 (실측 10회는 키 대기)
+- [x] W4 90초 스크립트·Du/PoLL 슬라이드 초안 (실발표 영상은 미촬영)
 
 ## Executor's Feedback or Assistance Requests
 
 2026-08-28: Phase 0 목표 증거 충족.
 - Cloud VM hostname `cursor`, SHA `8134cb5`, install exit 0. 파일: `doc/progress/2026-08-28-cloud-clone-evidence.md` (`44812fd`).
 - 폰에서 리포가 안 보이면 앱 목록을 당겨 새로고침하면 된다. 연결 자체는 Cloud 클론으로 확인됨.
-2026-08-28 W1 골격: 테스트 8, build 성공. 로그 `doc/progress/2026-08-28-w1-app-skeleton.md`.
-Supabase 새 프로젝트는 Free 활성 2칸이 차서 보류. 기존 환자 DB와 합치지 말 것.
+2026-08-28 W2: shadcn 그리드·메모 4항목·셀 skeleton·`/s/w4demo` 백업·health API.
+실토론 AC는 Supabase 슬롯(사용자 pause 선택)과 3사 키가 필요하다. 새 프로젝트 비용 조회는 월 $0.
+상세 `doc/progress/2026-08-28-w2-ui.md`.
 
 ## Lessons
 

@@ -27,10 +27,13 @@ Phase 0 Cloud 골격·git·푸시. Phase 1 PRD W1.
 - [ ] W1-3 모델 ID 확정
 - [ ] W1-4 Supabase 프로젝트
 - [x] W1-5 keep-alive Actions 파일
+- [x] W2 UI·메모·공유 백업 `/s/w4demo`
+- [x] W3 평가 프로토콜 문서
+- [x] W4 데모·슬라이드 초안
 
 ## Executor's Feedback or Assistance Requests
 
-P0-3 완료. P0-5 Cloud install exit 0 (`44812fd`). W1 대기.
+P0-3 완료. P0-5 Cloud install exit 0 (`44812fd`). W2 UI 커밋 대기. 실DB·키는 사용자 확인 필요.
 
 ## Lessons
 

@@ -1,3 +1,7 @@
+import { PERSONAS } from "@/config/personas";
+
+void PERSONAS;
+
 export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {
     const { loadMetrics, metricsToMarkdownTable } = await import("@/lib/prompt");

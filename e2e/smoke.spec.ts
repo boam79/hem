@@ -1,0 +1,33 @@
+import { expect, test } from "@playwright/test";
+
+test("home shows disclaimer and rejects a short agenda", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("html")).toHaveAttribute("lang", "ko");
+  await expect(page.getByText("AI 토론 결과이며 결정은 사람이 합니다.")).toBeVisible();
+  await page.locator("#agenda").fill("짧다");
+  await expect(page.getByRole("button", { name: "토론 시작" })).toBeDisabled();
+  await expect(page.getByText(/안건은 10자 이상/)).toBeVisible();
+});
+
+test("precomputed share page is public and shows three provider badges", async ({
+  page,
+}) => {
+  await page.goto("/s/w4demo");
+  await expect(page.getByText("AI 토론 결과이며 결정은 사람이 합니다.")).toBeVisible();
+  await expect(page.getByText("백내장 검색광고 예산 30% 증액")).toBeVisible();
+  await expect(page.getByText("Anthropic")).toBeVisible();
+  await expect(page.getByText("OpenAI")).toBeVisible();
+  await expect(page.getByText("Google")).toBeVisible();
+  await expect(page.getByText("합의점")).toBeVisible();
+  await expect(page.getByText("반대:")).toHaveCount(3);
+});
+
+test("health endpoint reports booleans only", async ({ request }) => {
+  const res = await request.get("/api/health");
+  expect(res.ok()).toBeTruthy();
+  const body = await res.json();
+  expect(typeof body.anthropic).toBe("boolean");
+  expect(typeof body.openai).toBe("boolean");
+  expect(typeof body.google).toBe("boolean");
+  expect(typeof body.supabase).toBe("boolean");
+});
