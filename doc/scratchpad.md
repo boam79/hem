@@ -13,7 +13,7 @@ PRD AC 감사: `doc/progress/2026-08-28-ac-audit.md`
 `qr-asset-manager` pause 후 `boardroom` DB 생성됨. 실토론은 service role + 3사 키.
 경량 모델 유지: haiku / gpt-5.4-nano / flash-lite. nano는 reasoning 모델이라 temperature 미지원. reasoningEffort는 `none`만 허용.
 Gemini 크레딧 결제 후 md 셀은 프로덕션에서 성공. Haiku·nano JSON 복구 커밋 `32168f5` 후 세션 `4fyIcc` R1 okCount=3. 사용자 수동 확인 대기(지우지 않음). R2 수정 커밋 `7eda3e3` 후 세션 `uE7m2G` R1 ok=3, R2 ok=3.
-2026-08-28 AC 감사: F1–F3·F5–F6·W4는 코드+테스트+HTTPS 증거가 있음. F4는 성공 셀 objection·422는 있으나 Haiku R2 빈 objection으로 셀 실패가 5안건 중 4건(이후 `ba66843`로 3세션 R2 ok=3). W3 keepalive는 HTTPS+Cron pinged_at 있음. eval은 5×10 중 20/50.
+2026-08-28 AC 감사: F1–F3·F5–F6·W4는 코드+테스트+HTTPS 증거가 있음. F4는 `ba66843` 후 3세션 R2 ok=3. W3 keepalive HTTPS+Cron pinged_at 있음. **W3 5×10은 사용자가 20/50에서 중단(축소 아님, 완료 아님).** 제한 429는 HTTPS 세션 POST만으로 실측.
 
 ## High-level Task Breakdown
 
@@ -23,7 +23,7 @@ JSON 실측: `doc/progress/2026-08-28-haiku-nano-json.md`
 R2 실측: `doc/progress/2026-08-28-round2-json.md`
 AC 감사: `doc/progress/2026-08-28-ac-audit.md`
 Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
-현재(Executor): W3 keepalive HTTPS+Cron 성공. eval 5×10 중 20/50(투자·마케팅). 나머지 시간당 10으로 재개 중. 전체 완료 단정 금지.
+현재(Executor): 사용자 지시로 eval 루프 중단. 5×10 완료로 쓰지 않음. 다음 제품 항목: 제한 IP 11번째 429를 HTTPS에서 세션 POST만으로 확인. 전체 완료 단정 금지.
 
 ## Project Status Board
 
@@ -37,8 +37,9 @@ Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
 - [ ] Haiku R2 빈 objection — Executor 실측 3세션 R2 ok=3(`cA_9I2` `4e4XEM` `NQSmdi`). 사용자 확인 대기. 경량 3사 유지.
 - [ ] HTTPS 실토론 F3–F6 (R1·R2 Executor 실측됨, 사용자 확인 남음)
 - [x] AC 감사 단위 테스트·E2E 11 (프로덕션 HTTPS, localhost 아님)
-- [ ] W3 안건 5종×10회 — HTTPS 20/50 (투자·마케팅 각 10, R1·R2 ok=3·objection 있음). 인력·가격·해외 대기. 축소 아님.
-- [x] keepalive 주 2회 — 스케줄 `0 3 * * 1,4`. HTTPS POST 12:12:22Z, Vercel Cron 12:16:07Z. DB pinged_at 갱신. GH Actions 실행 로그는 gh 미인증.
+- [ ] W3 안건 5종×10회 — **사용자 중단**. 축소 아님, 완료 아님. 증거: `cA_9I2` `4e4XEM` `NQSmdi` + 투자·마케팅 20/50. 인력·가격·해외 안 함. eval 프로세스 종료.
+- [x] keepalive 주 2회 — 스케줄 `0 3 * * 1,4`. HTTPS POST 12:12:22Z, Vercel Cron 12:16:07Z. GH Actions 시크릿은 사용자 몫.
+- [x] 제한 429 HTTPS — 세션 POST만, 라운드 없음. `rate_limited` 429 (UTC hour 13, 해당 IP count=10).
 
 ## Executor's Feedback or Assistance Requests
 
@@ -47,7 +48,7 @@ Executor 실측 세션 `4fyIcc` R1 10067ms okCount=3. R2는 cfo JSON·mkt object
 Executor 실측 세션 `uE7m2G` R1 9709ms ok=3. R2 10963ms ok=3. 메모 PUT 200.
 이번 eval(5×1): `yl91gj` `ZxiwXC` `MJg8Zz` `6FWsGv` `PGzDOA`. R1 전부 ok=3·30초 이내. R2는 `MJg8Zz`만 ok=3, 나머지 4건은 cfo(Haiku) 빈 objection으로 failed. `yl91gj` 메모 PUT 200.
 Haiku R2 재시도 수정 후(`ba66843`): `cA_9I2` `4e4XEM` `NQSmdi` — 세 세션 R1 ok=3·30초 이내, R2 ok=3(cfo 포함). 문서 `doc/progress/2026-08-28-haiku-r2-empty-objection.md`.
-W3 keepalive: HTTPS POST 200 `2026-08-28T12:12:22.673Z`, Cron `2026-08-28T12:16:07.567Z`. eval 20/50 표는 `doc/progress/2026-08-28-w3-close.md`. 남은 30회는 IP 시간당 10 때문에 14:00Z부터 재개.
+W3 keepalive: HTTPS POST 200 `2026-08-28T12:12:22.673Z`, Cron `2026-08-28T12:16:07.567Z`. eval 20/50은 `doc/progress/2026-08-28-w3-close.md`. **사용자는 남은 30회를 중단함.** 제한 429 HTTPS: 세션 POST → 429 `rate_limited` (라운드 없음).
 완료라고 단정하지 않음. Planner/사용자 확인 요청:
 1. https://boardroom-six-delta.vercel.app/s/cA_9I2 — 리스 안건 R2 세 칸 반대
 2. https://boardroom-six-delta.vercel.app/s/4e4XEM — 검색광고 R2 세 칸 반대
