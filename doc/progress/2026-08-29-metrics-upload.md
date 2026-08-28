@@ -17,6 +17,8 @@ GitHub: https://github.com/boam79/hem
 
 ## 검증
 
-- `pnpm test` (csv/xlsx 왕복, 토큰 ≤1000)
-- `pnpm build`
-- HTTPS: parse + 홈 파일 입력 (E2E). 일일 세션 한도에 걸리면 라운드는 생략하고 parse만 실측.
+- `pnpm test` 53 passed (csv/xlsx 왕복, 토큰 ≤1000)
+- `pnpm build` 통과
+- HTTPS parse CSV·xlsx 200, 병원 `업로드안과(가상)`, 라식 99, cashflow 있음
+- 실토론 세션 **`dohUks`**: R1 ok=3, R2 ok=3, GET metrics.hospital.name = 업로드안과(가상)
+  https://boardroom-six-delta.vercel.app/s/dohUks

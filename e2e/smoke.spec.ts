@@ -33,9 +33,9 @@ test("precomputed share page is public and shows three provider badges", async (
   await page.goto("/s/w4demo");
   await expect(page.getByText("AI 토론 결과이며 결정은 사람이 합니다.")).toBeVisible();
   await expect(page.getByText("백내장 검색광고 예산 30% 증액")).toBeVisible();
-  await expect(page.getByText("Anthropic")).toBeVisible();
-  await expect(page.getByText("OpenAI")).toBeVisible();
-  await expect(page.getByText("Google")).toBeVisible();
+  await expect(page.getByText("Anthropic").first()).toBeVisible();
+  await expect(page.getByText("OpenAI").first()).toBeVisible();
+  await expect(page.getByText("Google").first()).toBeVisible();
   await expect(page.getByText("합의점")).toBeVisible();
   await expect(page.getByText("반대:")).toHaveCount(3);
 });
@@ -52,9 +52,9 @@ test("saved live memo is public without login", async ({ page, request }) => {
   await expect(
     page.getByText("검색광고 증액은 회수 가정이 필요합니다"),
   ).toBeVisible();
-  await expect(page.getByText("Anthropic")).toBeVisible();
-  await expect(page.getByText("OpenAI")).toBeVisible();
-  await expect(page.getByText("Google")).toBeVisible();
+  await expect(page.getByText("Anthropic").first()).toBeVisible();
+  await expect(page.getByText("OpenAI").first()).toBeVisible();
+  await expect(page.getByText("Google").first()).toBeVisible();
   const objections = await page.getByText("반대:").count();
   expect(objections).toBeGreaterThanOrEqual(3);
   await expect(page.locator("input[type=password]")).toHaveCount(0);
@@ -82,9 +82,9 @@ test("F4 evidence sessions have three non-empty R2 objections", async ({
   await page.goto("/s/cA_9I2");
   await expect(page.getByText("AI 토론 결과이며 결정은 사람이 합니다.")).toBeVisible();
   await expect(page.getByText("스마일 전용 레이저 리스 계약 12개월")).toBeVisible();
-  await expect(page.getByText("Anthropic")).toBeVisible();
-  await expect(page.getByText("OpenAI")).toBeVisible();
-  await expect(page.getByText("Google")).toBeVisible();
+  await expect(page.getByText("Anthropic").first()).toBeVisible();
+  await expect(page.getByText("OpenAI").first()).toBeVisible();
+  await expect(page.getByText("Google").first()).toBeVisible();
   expect(await page.getByText("반대:").count()).toBeGreaterThanOrEqual(3);
   await expect(page.locator("input[type=password]")).toHaveCount(0);
 });
@@ -133,6 +133,19 @@ test("health endpoint reports booleans only", async ({ request }) => {
   expect(body.openai).toBe(true);
   expect(body.google).toBe(true);
   expect(body.supabase).toBe(true);
+});
+
+test("uploaded dummy metrics session shows hospital name on share page", async ({
+  page,
+  request,
+}) => {
+  const api = await request.get("/api/session?id=dohUks");
+  expect(api.ok()).toBeTruthy();
+  const body = await api.json();
+  expect(body.session.metrics.hospital.name).toBe("업로드안과(가상)");
+  await page.goto("/s/dohUks");
+  await expect(page.getByText("업로드안과(가상)")).toBeVisible();
+  await expect(page.getByText("업로드 더미 지표로 백내장 검색광고 증액을 검토한다")).toBeVisible();
 });
 
 test("home has csv/xlsx upload and dummy links", async ({ page }) => {
