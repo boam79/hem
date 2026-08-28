@@ -42,7 +42,7 @@ Phase 1: PRD W1 (타임아웃 수정 + keepalive 라우트).
 - 폰에서 리포가 안 보이면 앱 목록을 당겨 새로고침하면 된다. 연결 자체는 Cloud 클론으로 확인됨.
 2026-08-28 W2: shadcn 그리드·메모 4항목·셀 skeleton·`/s/w4demo` 백업·health API.
 실토론 AC는 Supabase 슬롯(사용자 pause 선택)과 3사 키가 필요하다. 새 프로젝트 비용 조회는 월 $0.
-상세 `doc/progress/2026-08-28-w2-ui.md`.
+HTTPS Playwright 3/3 통과. `/api/health`는 키·DB 모두 없음. 상세 `doc/progress/2026-08-28-w2-ui.md`.
 
 ## Lessons
 
