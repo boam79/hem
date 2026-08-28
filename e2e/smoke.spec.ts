@@ -42,9 +42,11 @@ test("home header and demo replay show the backup grid", async ({ page }) => {
   await expect(page.getByRole("link", { name: "데모 공유" })).toBeVisible();
   await expect(page.getByRole("link", { name: "발표 슬라이드" })).toBeVisible();
   await page.getByRole("button", { name: "데모 재생" }).click();
-  await expect(page.getByText("Anthropic")).toBeVisible({ timeout: 10_000 });
-  await expect(page.getByText("OpenAI")).toBeVisible();
-  await expect(page.getByText("Google")).toBeVisible();
+  await expect(page.getByText("Anthropic", { exact: true })).toBeVisible({
+    timeout: 10_000,
+  });
+  await expect(page.getByText("OpenAI", { exact: true })).toBeVisible();
+  await expect(page.getByText("Google", { exact: true })).toBeVisible();
   await expect(page.getByText("반대:")).toHaveCount(3);
   await expect(page.getByText("사전 계산된 데모 백업입니다")).toBeVisible();
   await expect(page.getByText("합의점")).toBeVisible();
