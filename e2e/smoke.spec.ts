@@ -40,7 +40,13 @@ test("precomputed share page is public and shows three provider badges", async (
   await expect(page.getByText("반대:")).toHaveCount(3);
 });
 
-test("saved live memo is public without login", async ({ page }) => {
+test("saved live memo is public without login", async ({ page, request }) => {
+  const api = await request.get("/api/session?id=uE7m2G");
+  expect(api.ok()).toBeTruthy();
+  const body = await api.json();
+  expect(body.session.memo.consensus).toContain(
+    "검색광고 증액은 회수 가정이 필요합니다",
+  );
   await page.goto("/s/uE7m2G");
   await expect(page.getByText("AI 토론 결과이며 결정은 사람이 합니다.")).toBeVisible();
   await expect(
@@ -51,6 +57,35 @@ test("saved live memo is public without login", async ({ page }) => {
   await expect(page.getByText("Google")).toBeVisible();
   const objections = await page.getByText("반대:").count();
   expect(objections).toBeGreaterThanOrEqual(3);
+  await expect(page.locator("input[type=password]")).toHaveCount(0);
+});
+
+test("F4 evidence sessions have three non-empty R2 objections", async ({
+  page,
+  request,
+}) => {
+  for (const id of ["cA_9I2", "4e4XEM", "NQSmdi"] as const) {
+    const res = await request.get(`/api/session?id=${id}`);
+    expect(res.ok()).toBeTruthy();
+    const body = await res.json();
+    const r2 = (body.turns ?? []).filter(
+      (t: { round: number; status: string }) =>
+        t.round === 2 && t.status === "ok",
+    );
+    expect(r2).toHaveLength(3);
+    for (const turn of r2) {
+      expect(String(turn.payload?.objection ?? "").trim().length).toBeGreaterThan(
+        0,
+      );
+    }
+  }
+  await page.goto("/s/cA_9I2");
+  await expect(page.getByText("AI 토론 결과이며 결정은 사람이 합니다.")).toBeVisible();
+  await expect(page.getByText("스마일 전용 레이저 리스 계약 12개월")).toBeVisible();
+  await expect(page.getByText("Anthropic")).toBeVisible();
+  await expect(page.getByText("OpenAI")).toBeVisible();
+  await expect(page.getByText("Google")).toBeVisible();
+  expect(await page.getByText("반대:").count()).toBeGreaterThanOrEqual(3);
   await expect(page.locator("input[type=password]")).toHaveCount(0);
 });
 

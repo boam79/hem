@@ -19,5 +19,6 @@
 | [progress/2026-08-28-round2-json.md](progress/2026-08-28-round2-json.md) | 라운드 2 전각 콜론·빈 objection 수정 후 HTTPS 실측 |
 | [progress/2026-08-28-ac-audit.md](progress/2026-08-28-ac-audit.md) | PRD F1–F6·W1–W4 감사표와 5안건 1회 실측 |
 | [progress/2026-08-28-w3-close.md](progress/2026-08-28-w3-close.md) | W3 keepalive·eval 20/50. 5×10은 사용자 중단(완료 아님) |
+| [progress/2026-08-28-prd-final-audit.md](progress/2026-08-28-prd-final-audit.md) | PRD v1.0 문장 단위 감사. 제품 AC 증명, 50회 eval은 사용자 중단 |
 
 루트 `PRD.md`는 여기로 가는 포인터다.

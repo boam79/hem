@@ -1,3 +1,4 @@
+import { ProviderBadge } from "@/components/provider-badge";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { DebateCell } from "@/lib/debate";
@@ -25,20 +26,24 @@ export function TurnCell({
   }
   if (cell.status !== "ok") {
     return (
-      <p className="text-sm">
-        발언 불가
-        {cell.error ? (
-          <span className="text-muted-foreground mt-1 block text-xs">
-            {cell.error}
-          </span>
-        ) : null}
-      </p>
+      <div className="space-y-2">
+        <ProviderBadge provider={cell.provider} />
+        <p className="text-sm">
+          발언 불가
+          {cell.error ? (
+            <span className="text-muted-foreground mt-1 block text-xs">
+              {cell.error}
+            </span>
+          ) : null}
+        </p>
+      </div>
     );
   }
   const p = cell.payload;
   if (!p) return null;
   return (
     <div className="space-y-2 text-sm">
+      <ProviderBadge provider={cell.provider} />
       <p className="font-semibold leading-snug">{p.position}</p>
       <div className="flex flex-wrap gap-1">
         {p.evidence.map((item) => (

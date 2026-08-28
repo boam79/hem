@@ -6,7 +6,7 @@
 
 원티드 AI Championship 2026 Boardroom. 원격 https://github.com/boam79/hem
 진행 문서: `doc/`
-PRD AC 감사: `doc/progress/2026-08-28-ac-audit.md`
+PRD AC 감사: `doc/progress/2026-08-28-prd-final-audit.md`
 
 ## Key Challenges and Analysis
 
@@ -23,7 +23,7 @@ JSON 실측: `doc/progress/2026-08-28-haiku-nano-json.md`
 R2 실측: `doc/progress/2026-08-28-round2-json.md`
 AC 감사: `doc/progress/2026-08-28-ac-audit.md`
 Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
-현재(Executor): 사용자 지시로 eval 루프 중단. 5×10 완료로 쓰지 않음. 다음 제품 항목: 제한 IP 11번째 429를 HTTPS에서 세션 POST만으로 확인. 전체 완료 단정 금지.
+현재(Executor): PRD 문장 단위 감사 `doc/progress/2026-08-28-prd-final-audit.md`. 제품 AC는 HTTPS+코드로 증명. **5×10 실행은 사용자 중단(완료 아님).** eval 재시작 안 함.
 
 ## Project Status Board
 
@@ -33,13 +33,13 @@ Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
 - [x] W1-4 Supabase `boardroom` / `tbtjdfayqgcdywybczjr` + 마이그레이션
 - [x] Vercel LLM 3키 + DB (값은 문서에 없음). `/api/health` 4 true
 - [x] Gemini 크레딧: HTTPS 세션 `LNIDoe` md ok (1236ms). 크레딧 에러 없음
-- [ ] Haiku·nano JSON 복구 — Executor HTTPS 세션 `4fyIcc` R1 ok=3. 사용자 수동 확인 대기
-- [ ] Haiku R2 빈 objection — Executor 실측 3세션 R2 ok=3(`cA_9I2` `4e4XEM` `NQSmdi`). 사용자 확인 대기. 경량 3사 유지.
-- [ ] HTTPS 실토론 F3–F6 (R1·R2 Executor 실측됨, 사용자 확인 남음)
-- [x] AC 감사 단위 테스트·E2E 11 (프로덕션 HTTPS, localhost 아님)
+- [x] Haiku·nano JSON 복구 — HTTPS R1 ok=3 (`4fyIcc` 및 이후 세션)
+- [x] Haiku R2 빈 objection — 3세션 R2 ok=3(`cA_9I2` `4e4XEM` `NQSmdi`). GET+페이지 E2E
+- [x] HTTPS 실토론 F3–F6 — 위 세션 + `uE7m2G` 메모. Playwright 12
+- [x] AC 감사 단위 47 · E2E 12 (프로덕션 HTTPS, localhost 아님)
 - [ ] W3 안건 5종×10회 — **사용자 중단**. 축소 아님, 완료 아님. 증거: `cA_9I2` `4e4XEM` `NQSmdi` + 투자·마케팅 20/50. 인력·가격·해외 안 함. eval 프로세스 종료.
 - [x] keepalive 주 2회 — 스케줄 `0 3 * * 1,4`. HTTPS POST 12:12:22Z, Vercel Cron 12:16:07Z. GH Actions 시크릿은 사용자 몫.
-- [x] 제한 429 HTTPS — 세션 POST만, 라운드 없음. `rate_limited` 429 (UTC hour 13, 해당 IP count=10).
+- [x] 제한 429 HTTPS — 세션 POST만, 라운드 없음. `rate_limited` 429 (이번 턴 재확인).
 
 ## Executor's Feedback or Assistance Requests
 
@@ -48,13 +48,9 @@ Executor 실측 세션 `4fyIcc` R1 10067ms okCount=3. R2는 cfo JSON·mkt object
 Executor 실측 세션 `uE7m2G` R1 9709ms ok=3. R2 10963ms ok=3. 메모 PUT 200.
 이번 eval(5×1): `yl91gj` `ZxiwXC` `MJg8Zz` `6FWsGv` `PGzDOA`. R1 전부 ok=3·30초 이내. R2는 `MJg8Zz`만 ok=3, 나머지 4건은 cfo(Haiku) 빈 objection으로 failed. `yl91gj` 메모 PUT 200.
 Haiku R2 재시도 수정 후(`ba66843`): `cA_9I2` `4e4XEM` `NQSmdi` — 세 세션 R1 ok=3·30초 이내, R2 ok=3(cfo 포함). 문서 `doc/progress/2026-08-28-haiku-r2-empty-objection.md`.
-W3 keepalive: HTTPS POST 200 `2026-08-28T12:12:22.673Z`, Cron `2026-08-28T12:16:07.567Z`. eval 20/50은 `doc/progress/2026-08-28-w3-close.md`. **사용자는 남은 30회를 중단함.** 제한 429 HTTPS: 세션 POST → 429 `rate_limited` (라운드 없음).
-완료라고 단정하지 않음. Planner/사용자 확인 요청:
-1. https://boardroom-six-delta.vercel.app/s/cA_9I2 — 리스 안건 R2 세 칸 반대
-2. https://boardroom-six-delta.vercel.app/s/4e4XEM — 검색광고 R2 세 칸 반대
-3. https://boardroom-six-delta.vercel.app/s/NQSmdi — ICL 가격 R2 세 칸 반대
-4. https://boardroom-six-delta.vercel.app/s/uE7m2G — 이전 R2 성공 세션(지우지 않음)
-5. https://boardroom-six-delta.vercel.app/s/w4demo · /demo/slide — 데모(실호출 아님)
+W3 keepalive: HTTPS POST 200 `2026-08-28T12:12:22.673Z`, Cron `2026-08-28T12:16:07.567Z`. eval 20/50은 `doc/progress/2026-08-28-w3-close.md`. **사용자는 남은 30회를 중단함.** 제한 429 HTTPS: 세션 POST → 429 `rate_limited` (라운드 없음, 이번 감사 턴 재확인).
+최종 감사: `doc/progress/2026-08-28-prd-final-audit.md`. 제품 AC 증명. 5×10 실행은 사용자 중단. 셀 배지+GET E2E만 보강.
+URL: `/s/cA_9I2` `/s/4e4XEM` `/s/NQSmdi` `/s/uE7m2G` `/s/w4demo` `/demo/slide`
 
 ## Lessons
 

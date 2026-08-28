@@ -185,6 +185,7 @@ describe("api errors", () => {
     expect(apiErrorMessage({ error: "round_already_run" })).toMatch(/이미 실행/);
     expect(apiErrorMessage({ error: "round1_insufficient" })).toMatch(/2개 미만/);
     expect(apiErrorMessage({ error: "rate_limited" })).toMatch(/한 시간/);
+    expect(apiErrorMessage({ error: "daily_cap" })).toMatch(/한도/);
     expect(apiErrorMessage({ error: "invalid_agenda" })).toMatch(/안건/);
   });
 });
