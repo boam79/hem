@@ -22,6 +22,21 @@ test("precomputed share page is public and shows three provider badges", async (
   await expect(page.getByText("반대:")).toHaveCount(3);
 });
 
+test("Du PoLL slide is public", async ({ page }) => {
+  await page.goto("/demo/slide");
+  await expect(
+    page.getByText("세 회사의 모델이 서로 다른 입장을 내고, 결정은 사람이 합니다."),
+  ).toBeVisible();
+});
+
+test("debate start without database shows a Korean error", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "토론 시작" }).click();
+  await expect(
+    page.getByText("데이터베이스가 아직 연결되지 않았습니다"),
+  ).toBeVisible();
+});
+
 test("health endpoint reports booleans only", async ({ request }) => {
   const res = await request.get("/api/health");
   expect(res.ok()).toBeTruthy();

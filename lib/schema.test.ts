@@ -83,6 +83,15 @@ describe("ratelimit", () => {
   });
 });
 
+describe("round 2 gate", () => {
+  it("blocks when fewer than two round 1 cells succeeded", async () => {
+    const { canStartRound2 } = await import("@/lib/round-gate");
+    expect(canStartRound2(1)).toBe(false);
+    expect(canStartRound2(2)).toBe(true);
+    expect(canStartRound2(3)).toBe(true);
+  });
+});
+
 describe("personas", () => {
   it("uses three distinct providers", () => {
     const set = new Set(PERSONAS.map((p) => p.provider));

@@ -9,11 +9,11 @@
 
 ## Key Challenges and Analysis
 
-Cloud 조건부 pnpm. 모바일은 GitHub 연결 필수. 타임아웃 22s/28s/60s. Supabase Free 활성 2칸 점유.
+Cloud 조건부 pnpm. 모바일은 GitHub 연결 필수. 타임아웃 22s/28s/60s. Supabase Free 활성 2칸 점유. Vercel env 0개.
 
 ## High-level Task Breakdown
 
-Phase 0 Cloud 골격·git·푸시. Phase 1 PRD W1.
+Phase 0 Cloud 골격·git·푸시. Phase 1 PRD W1–W4. 실토론은 키·DB 대기.
 
 ## Project Status Board
 
@@ -24,16 +24,16 @@ Phase 0 Cloud 골격·git·푸시. Phase 1 PRD W1.
 - [x] P0-5 Cloud Agent 스모크 (`44812fd`)
 - [x] W1-1 Next.js 최소 앱
 - [x] W1-2 스키마·페르소나·지표
-- [ ] W1-3 모델 ID 확정
+- [ ] W1-3 모델 ID 확정 (공개 ID 일치, 키 실측 전)
 - [ ] W1-4 Supabase 프로젝트
 - [x] W1-5 keep-alive Actions 파일
 - [x] W2 UI·메모·공유 백업 `/s/w4demo`
-- [x] W3 평가 프로토콜 문서
-- [x] W4 데모·슬라이드 초안
+- [x] W3 평가 프로토콜·스크립트
+- [x] W4 `/demo/slide`
 
 ## Executor's Feedback or Assistance Requests
 
-P0-3 완료. P0-5 Cloud install exit 0 (`44812fd`). W2 UI 커밋 대기. 실DB·키는 사용자 확인 필요.
+실토론 AC를 열려면 `qr-asset-manager` pause 여부와 Vercel 키 5종이 필요하다.
 
 ## Lessons
 

@@ -12,7 +12,8 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "healthcheck": "node scripts/healthcheck.mjs"
+    "healthcheck": "node scripts/healthcheck.mjs",
+    "eval:agendas": "node scripts/eval-agendas.mjs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.44",

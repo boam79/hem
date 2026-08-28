@@ -33,6 +33,7 @@ export default function Home() {
   const [round1, setRound1] = useState<DebateCell[]>([]);
   const [round2, setRound2] = useState<DebateCell[]>([]);
   const [loadingRound, setLoadingRound] = useState<0 | 1 | 2>(0);
+  const [round1Ms, setRound1Ms] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const clientAgendaError = agendaError(agenda);
   const agendaOk = isAgendaValid(agenda);
@@ -46,6 +47,7 @@ export default function Home() {
     setSessionId(null);
     setRound1([]);
     setRound2([]);
+    setRound1Ms(null);
     setLoadingRound(1);
     try {
       const s = await fetch("/api/session", {
@@ -58,11 +60,14 @@ export default function Home() {
         throw new Error(apiErrorMessage(sj));
       }
       setSessionId(sj.id);
+      const r1Started = performance.now();
       const r1 = await fetch("/api/round", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sessionId: sj.id, round: 1 }),
       });
+      const r1Ms = Math.round(performance.now() - r1Started);
+      setRound1Ms(r1Ms);
       const r1j = await r1.json();
       if (!r1.ok) throw new Error(apiErrorMessage(r1j));
       setRound1(r1j.turns);
@@ -140,6 +145,12 @@ export default function Home() {
         </Button>
       </div>
       {error ? <p className="text-destructive mt-3 text-sm">{error}</p> : null}
+      {round1Ms !== null ? (
+        <p className="text-muted-foreground mt-3 text-sm">
+          라운드 1 {round1Ms}ms
+          {round1Ms > 30_000 ? " · 30초 초과" : " · 30초 이내"}
+        </p>
+      ) : null}
       <DebateGrid
         round1={round1}
         round2={round2}

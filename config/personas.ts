@@ -25,7 +25,6 @@ export const PERSONAS: [Persona, Persona, Persona] = [
     key: "mkt",
     name: "마케팅실장",
     provider: "openai",
-    // W1 후보. GET /v1/models 실측 전 기본값.
     modelId: "gpt-5.4-mini",
     temperature: 0.7,
     role: "마케팅실장. 우선순위: ① 신환 수 증가 ② 채널별 획득비용 개선 ③ 국적별 수요 선점",

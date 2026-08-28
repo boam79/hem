@@ -28,12 +28,12 @@ Phase 1: PRD W1 (타임아웃 수정 + keepalive 라우트).
 - [x] P0-5 Cloud Agent 스모크 (`44812fd`, install exit 0, Linux `cursor`)
 - [x] W1-1 Next.js 최소 앱 (`pnpm build` 성공, 루트 앱)
 - [x] W1-2 스키마·페르소나·지표 (vitest 8)
-- [ ] W1-3 모델 ID 확정 (키 필요, 후보는 personas.ts)
+- [ ] W1-3 모델 ID 확정 (공개 ID는 후보와 일치, **키 실측 전**)
 - [ ] W1-4 Supabase 프로젝트+마이그레이션 (SQL은 커밋됨, Free 2/2)
 - [x] W1-5 keep-alive Actions 파일
 - [x] W2 그리드·메모 폼·공유 페리·`/s/w4demo` (실DB 없는 AC F3–F6는 미통과)
-- [x] W3 평가 프로토콜 문서 (실측 10회는 키 대기)
-- [x] W4 90초 스크립트·Du/PoLL 슬라이드 초안 (실발표 영상은 미촬영)
+- [x] W3 평가 프로토콜·스크립트 (실측 10회는 키 대기)
+- [x] W4 90초 스크립트·`/demo/slide` (실발표 영상은 미촬영)
 
 ## Executor's Feedback or Assistance Requests
 
@@ -42,7 +42,8 @@ Phase 1: PRD W1 (타임아웃 수정 + keepalive 라우트).
 - 폰에서 리포가 안 보이면 앱 목록을 당겨 새로고침하면 된다. 연결 자체는 Cloud 클론으로 확인됨.
 2026-08-28 W2: shadcn 그리드·메모 4항목·셀 skeleton·`/s/w4demo` 백업·health API.
 실토론 AC는 Supabase 슬롯(사용자 pause 선택)과 3사 키가 필요하다. 새 프로젝트 비용 조회는 월 $0.
-HTTPS Playwright 3/3 통과. `/api/health`는 키·DB 모두 없음. 상세 `doc/progress/2026-08-28-w2-ui.md`.
+HTTPS Playwright 3/3 통과. `/api/health`는 키·DB 모두 없음. Vercel env 0개.
+실토론을 열려면 `qr-asset-manager` pause 여부와 3사+Supabase 키를 Vercel에 넣어야 한다.
 
 ## Lessons
 

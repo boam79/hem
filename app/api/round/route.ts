@@ -7,6 +7,7 @@ import {
   loadMetrics,
   metricsToMarkdownTable,
 } from "@/lib/prompt";
+import { canStartRound2 } from "@/lib/round-gate";
 import { RoundRequestSchema, type TurnPayload } from "@/lib/schema";
 import { getSupabase, supabaseConfigured } from "@/lib/supabase";
 
@@ -51,7 +52,7 @@ export async function POST(req: Request) {
 
   if (round === 2) {
     const ok = (r1 ?? []).filter((t) => t.status === "ok").length;
-    if (ok < 2) {
+    if (!canStartRound2(ok)) {
       return Response.json(
         { error: "round1_insufficient" },
         { status: 422 },

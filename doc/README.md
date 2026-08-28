@@ -10,6 +10,9 @@
 | [cloud-mobile-setup.md](cloud-mobile-setup.md) | Cursor Cloud · 모바일 착수 체크리스트 |
 | [mcp-status.md](mcp-status.md) | MCP 연결·활용 기록 |
 | [infra-notes.md](infra-notes.md) | Supabase/Vercel/Render 실측 |
-| [progress/](progress/) | 일자별 Executor 로그 (클론·install·W1 골격) |
+| [w3-eval-protocol.md](w3-eval-protocol.md) | 안건 5종×10회 실측 절차 |
+| [demo/90s-script.md](demo/90s-script.md) | 90초 데모 대사 |
+| [demo/slides-outline.md](demo/slides-outline.md) | Du·PoLL 슬라이드 1장 |
+| [progress/](progress/) | 일자별 Executor 로그 |
 
 루트 `PRD.md`는 여기로 가는 포인터다.
