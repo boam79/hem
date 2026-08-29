@@ -26,6 +26,7 @@
 | [progress/2026-08-29-debate-bubbles.md](progress/2026-08-29-debate-bubbles.md) | 홈 말풍선 + 토론 결과 메뉴 `/debate` |
 | [progress/2026-08-29-files-waiting-bubble.md](progress/2026-08-29-files-waiting-bubble.md) | 파일 관리 `/files` · 대기 말풍선 중앙 · 대시보드 비용 분리 |
 | [progress/2026-08-29-paper-stack-pulse.md](progress/2026-08-29-paper-stack-pulse.md) | 테이블 중앙 종이더미 반투명 깜박임·쌓임 |
+| [progress/2026-08-29-clay-pile-tower.md](progress/2026-08-29-clay-pile-tower.md) | 대기 1장 타일 · 쌓임은 점토 타워 PNG |
 | [progress/2026-08-29-no-persona-bubbles.md](progress/2026-08-29-no-persona-bubbles.md) | 종이더미 위치 · 페르소나 말풍선·이름표 제거 |
 
 루트 `PRD.md`는 여기로 가는 포인터다.

@@ -3,11 +3,12 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
 import {
+  clayIdleTileWidthRem,
+  clayStackFromHeightRem,
+  clayStackHeightRem,
   sheetCountFromActivity,
-  sheetOpacity,
   stackMotion,
   stackUpDurationMs,
-  CLAY_TILE_LIFT_PX,
 } from "@/lib/forest-ui";
 
 function Sparkle({ className }: { className: string }) {
@@ -39,31 +40,35 @@ export function PaperStack({
         {
           "--stack-ms": `${stackUpDurationMs(sheets)}ms`,
           "--sheet-count": String(sheets),
-          "--tile-lift": `${CLAY_TILE_LIFT_PX}px`,
+          "--tile-w": `${clayIdleTileWidthRem()}rem`,
+          "--from-h": `${clayStackFromHeightRem()}rem`,
+          "--reveal-h": `${clayStackHeightRem(sheets)}rem`,
         } as CSSProperties
       }
     >
       <div className="paper-pile-glow" />
-      <div className="clay-tiles">
-        {Array.from({ length: sheets }, (_, i) => (
+      {waiting ? (
+        <Image
+          key="idle-tile"
+          src="/clay-paper-tile.png"
+          alt=""
+          width={520}
+          height={175}
+          className="clay-idle-tile"
+          unoptimized
+        />
+      ) : (
+        <div key={`pile-${burstId}`} className="clay-pile">
           <Image
-            key={waiting ? "idle-tile" : `${burstId}-tile-${i}`}
-            src="/clay-paper-tile.png"
+            src="/clay-paper-stack.png"
             alt=""
-            width={520}
-            height={175}
-            className={i === 0 ? "clay-tile is-base" : "clay-tile"}
+            width={587}
+            height={849}
+            className="clay-pile-img"
             unoptimized
-            style={
-              {
-                "--i": String(i),
-                "--sheet-opacity": String(sheetOpacity(i, sheets, waiting)),
-                animationDelay: waiting || i === 0 ? "0ms" : `${i * 95}ms`,
-              } as CSSProperties
-            }
           />
-        ))}
-      </div>
+        </div>
+      )}
       {stacked ? (
         <span key={`burst-${burstId}`} className="sparkle-burst-group">
           <Sparkle className="sparkle-burst sparkle-b1" />
