@@ -209,7 +209,9 @@ test("debate results live on a separate menu", async ({ page }) => {
   await expect(page.getByText("R1").first()).toBeVisible();
   await expect(page.getByText("R2").first()).toBeVisible();
   await expect(
-    page.getByText("보류. 검색광고 30% 증액의 회수기간이 12개월 안에 닫히지 않습니다."),
+    page
+      .getByText("보류. 검색광고 30% 증액의 회수기간이 12개월 안에 닫히지 않습니다.")
+      .first(),
   ).toBeVisible();
   await page.goto("/debate?id=uE7m2G");
   await expect(page.locator("[data-glance=true]")).toBeVisible();
