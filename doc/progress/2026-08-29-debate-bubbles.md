@@ -17,4 +17,6 @@
 
 ## HTTPS E2E
 
-배포 후 `pnpm test:e2e` (baseURL `https://boardroom-six-delta.vercel.app`). 홈 말풍선 3개, 홈에 glance 카드 없음, 메뉴 토론 결과, `/debate?id=w4demo` glance.
+배포 `https://boardroom-six-delta.vercel.app` 커밋 `406498f`. `pnpm test:e2e` **24 passed**. 유효 안건으로 토론 시작은 E2E에서 누르지 않음.
+
+브라우저 실토론 세션 `H_8AhS` R1 8686ms. 홈 말풍선 3개가 서로 다른 입장. `/debate?id=H_8AhS`에 R1·R2 카드.
