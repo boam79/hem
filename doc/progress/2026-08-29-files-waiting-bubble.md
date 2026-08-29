@@ -10,5 +10,6 @@
 
 ## 검증
 
-- 단위 `pnpm test` 84, `pnpm build` `/files` 라우트.
-- HTTPS E2E는 배포 후. 유효 안건으로 토론 시작은 누르지 않음.
+- 단위 `pnpm test` 84.
+- HTTPS E2E `pnpm test:e2e` **26 passed** (프로덕션 `https://boardroom-six-delta.vercel.app`). 유효 안건으로 토론 시작은 누르지 않음.
+- 브라우저: 홈은 말풍선 0·테이블 중앙 대기 문구 1, `/files` 전용 업로드, `/dashboard`에 비용 없음, `/settings`에 비용 있음.
