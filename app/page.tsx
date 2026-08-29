@@ -2,7 +2,7 @@
 
 import { useRef, useState, type ChangeEvent, type DragEvent } from "react";
 import { CloudUpload } from "lucide-react";
-import { DebateGrid } from "@/components/debate-grid";
+import { DebateGlance } from "@/components/debate-glance";
 import { Disclaimer } from "@/components/disclaimer";
 import {
   ForestDropzone,
@@ -10,7 +10,6 @@ import {
   ForestTimeline,
 } from "@/components/forest-shell";
 import { MeetingScene } from "@/components/meeting-scene";
-import { MemoForm } from "@/components/memo-form";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -30,6 +29,7 @@ import {
   formatShortDate,
   type UploadedMetricsFile,
 } from "@/lib/forest-ui";
+import { rememberSession } from "@/lib/recent-sessions";
 import type { Category } from "@/lib/schema";
 
 const CATEGORIES: { value: Category; label: string }[] = [
@@ -129,6 +129,7 @@ export default function Home() {
         throw new Error(apiErrorMessage(sj));
       }
       setSessionId(sj.id);
+      rememberSession(sj.id, agenda.trim());
       const r1Started = performance.now();
       const r1 = await fetch("/api/round", {
         method: "POST",
@@ -236,8 +237,8 @@ export default function Home() {
           <p className="dropzone-hint">CSV, XLSX 파일만 지원됩니다.</p>
         </ForestDropzone>
       }
-      sidebarExtra={
-        <section className="forest-agenda">
+      sidebarLead={
+        <section className="forest-agenda forest-agenda-lead">
           <label className="forest-field-label" htmlFor="agenda">
             안건
           </label>
@@ -262,7 +263,7 @@ export default function Home() {
             value={category}
             onValueChange={(value) => setCategory(value as Category)}
           >
-            <SelectTrigger id="category" className="mb-3 w-full">
+            <SelectTrigger id="category" className="mb-1 w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -273,6 +274,10 @@ export default function Home() {
               ))}
             </SelectContent>
           </Select>
+        </section>
+      }
+      sidebarExtra={
+        <section className="forest-agenda">
           <p className="forest-field-hint mb-3">
             {metricsLabel ? metricsLabel : "없으면 기본 합성 지표를 씁니다."}{" "}
             더미:{" "}
@@ -312,15 +317,6 @@ export default function Home() {
         />
       }
     >
-      <MeetingScene
-        fileCount={uploads.length}
-        burstId={sparkleBurst}
-        hasUploads={hasUploads}
-        loadingRound={loadingRound}
-        round1={round1}
-        round2={round2}
-        onLeave={leaveMeeting}
-      />
       {showResults ? (
         <section className="forest-results">
           <button
@@ -337,31 +333,53 @@ export default function Home() {
           {resultsOpen ? (
             <div className="forest-results-body">
               {round1Ms !== null ? (
-                <p className="text-muted-foreground mb-2 text-sm">
+                <p className="text-muted-foreground mb-2 text-xs">
                   라운드 1 {round1Ms}ms
                   {round1Ms > 30_000 ? " · 30초 초과" : " · 30초 이내"}
                 </p>
               ) : null}
-              <DebateGrid
+              <DebateGlance
                 round1={round1}
                 round2={round2}
                 loadingRound={loadingRound}
               />
-              {sessionId ? (
-                <p className="mt-6 text-sm">
-                  공유:{" "}
-                  <a className="forest-dummy-link" href={`/s/${sessionId}`}>
-                    /s/{sessionId}
-                  </a>
-                </p>
-              ) : null}
-              {sessionId && loadingRound === 0 ? (
-                <MemoForm sessionId={sessionId} />
-              ) : null}
+              <p className="forest-results-links">
+                {sessionId ? (
+                  <>
+                    전체 그리드:{" "}
+                    <a className="forest-dummy-link" href={`/s/${sessionId}`}>
+                      /s/{sessionId}
+                    </a>
+                    {loadingRound === 0 ? (
+                      <>
+                        {" · "}
+                        <a
+                          className="forest-dummy-link"
+                          href={`/decision?id=${sessionId}`}
+                        >
+                          사회자 메모 작성
+                        </a>
+                      </>
+                    ) : null}
+                  </>
+                ) : (
+                  "발언이 끝나면 공유 링크가 생깁니다."
+                )}
+              </p>
             </div>
           ) : null}
         </section>
       ) : null}
+      <MeetingScene
+        compact={showResults}
+        fileCount={uploads.length}
+        burstId={sparkleBurst}
+        hasUploads={hasUploads}
+        loadingRound={loadingRound}
+        round1={round1}
+        round2={round2}
+        onLeave={leaveMeeting}
+      />
     </ForestShell>
   );
 }

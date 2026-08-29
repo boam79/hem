@@ -1,6 +1,8 @@
 "use client";
 
 import type { DragEventHandler, ReactNode } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Bell,
   Check,
@@ -13,19 +15,26 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
+  forestNavActive,
   timelineStates,
+  type ForestNavId,
   type TimelineStepId,
   type TimelineStepState,
   type UploadedMetricsFile,
 } from "@/lib/forest-ui";
 
-const NAV = [
+const NAV: {
+  id: ForestNavId;
+  label: string;
+  href: string;
+  Icon: typeof Home;
+}[] = [
   { id: "home", label: "홈", href: "/", Icon: Home },
-  { id: "dashboard", label: "대시보드", Icon: LayoutDashboard },
-  { id: "files", label: "파일 관리", Icon: FolderOpen, active: true },
-  { id: "decision", label: "의사결정", Icon: Scale },
-  { id: "settings", label: "설정", Icon: Settings },
-] as const;
+  { id: "dashboard", label: "대시보드", href: "/dashboard", Icon: LayoutDashboard },
+  { id: "files", label: "파일 관리", href: "/#upload", Icon: FolderOpen },
+  { id: "decision", label: "의사결정", href: "/decision", Icon: Scale },
+  { id: "settings", label: "설정", href: "/settings", Icon: Settings },
+];
 
 const DUMMY_FILES = [
   "/dummy/patient-and-cashflow.csv",
@@ -77,9 +86,126 @@ function DirectorAvatar() {
   );
 }
 
+function ForestNav() {
+  const pathname = usePathname();
+  return (
+    <nav className="forest-nav" aria-label="주요 메뉴">
+      {NAV.map((item) => {
+        const active = forestNavActive(pathname, item.id);
+        return (
+          <Link
+            key={item.id}
+            href={item.href}
+            className={cn("forest-nav-item", active && "is-active")}
+            aria-current={active ? "page" : undefined}
+          >
+            <item.Icon className="size-4" strokeWidth={2.1} />
+            {item.label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
+function ForestBrand() {
+  return (
+    <Link href="/" className="forest-brand">
+      <MedicalCross />
+      <div>
+        <p className="forest-brand-title">포레스트 병원</p>
+        <p className="forest-brand-sub">의료 경영 시뮬레이션</p>
+      </div>
+    </Link>
+  );
+}
+
+function ForestHeaderBar({
+  title,
+  subtitle,
+  roundNumber,
+  disclaimer,
+}: {
+  title: string;
+  subtitle: string;
+  roundNumber?: 1 | 2;
+  disclaimer?: ReactNode;
+}) {
+  return (
+    <header className="forest-header">
+      <div className="min-w-0">
+        <div className="flex flex-wrap items-center gap-2">
+          <h1 className="forest-header-title">{title}</h1>
+          {roundNumber ? (
+            <span className="round-badge">Round {roundNumber}</span>
+          ) : null}
+        </div>
+        <p className="forest-header-sub">{subtitle}</p>
+        {disclaimer}
+      </div>
+      <div className="forest-header-tools">
+        <Link href="/dashboard" className="header-ghost-btn">
+          <LayoutDashboard className="size-4" />
+          대시보드
+        </Link>
+        <Link href="/dashboard" className="header-bell" aria-label="연결 상태">
+          <Bell className="size-4" />
+        </Link>
+        <div className="director-chip">
+          <DirectorAvatar />
+          <span>병원장</span>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+export function ForestFrame({
+  title,
+  subtitle,
+  roundNumber,
+  disclaimer,
+  sidebar,
+  footer,
+  children,
+}: {
+  title: string;
+  subtitle: string;
+  roundNumber?: 1 | 2;
+  disclaimer?: ReactNode;
+  sidebar: ReactNode;
+  footer?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <div className="forest-app">
+      <aside className="forest-sidebar">
+        <ForestBrand />
+        <ForestNav />
+        {sidebar}
+      </aside>
+      <div className="forest-main">
+        <ForestHeaderBar
+          title={title}
+          subtitle={subtitle}
+          roundNumber={roundNumber}
+          disclaimer={disclaimer}
+        />
+        <div className="forest-workspace">{children}</div>
+        {footer}
+      </div>
+    </div>
+  );
+}
+
+export function ForestPageNote({ children }: { children: ReactNode }) {
+  return <p className="forest-page-note">{children}</p>;
+}
+
 export function ForestShell({
   roundNumber,
   disclaimer,
+  sidebarLead,
   sidebarExtra,
   dropzone,
   files,
@@ -88,6 +214,7 @@ export function ForestShell({
 }: {
   roundNumber: 1 | 2;
   disclaimer: ReactNode;
+  sidebarLead: ReactNode;
   sidebarExtra: ReactNode;
   dropzone: ReactNode;
   files: UploadedMetricsFile[];
@@ -95,101 +222,40 @@ export function ForestShell({
   children: ReactNode;
 }) {
   return (
-    <div className="forest-app">
-      <aside className="forest-sidebar">
-        <div className="forest-brand">
-          <MedicalCross />
-          <div>
-            <p className="forest-brand-title">포레스트 병원</p>
-            <p className="forest-brand-sub">의료 경영 시뮬레이션</p>
-          </div>
-        </div>
-        <nav className="forest-nav" aria-label="주요 메뉴">
-          {NAV.map((item) => {
-            const active = "active" in item && item.active;
-            const inner = (
-              <>
-                <item.Icon className="size-4" strokeWidth={2.1} />
-                {item.label}
-              </>
-            );
-            if ("href" in item && item.href) {
-              return (
-                <a
-                  key={item.id}
-                  href={item.href}
-                  className={cn("forest-nav-item", active && "is-active")}
-                >
-                  {inner}
-                </a>
-              );
-            }
-            return (
-              <span
-                key={item.id}
-                className={cn("forest-nav-item", active && "is-active")}
-                aria-current={active ? "page" : undefined}
-              >
-                {inner}
-              </span>
-            );
-          })}
-        </nav>
-        <p className="upload-panel-title">파일 업로드</p>
-        {dropzone}
-        <ForestFileList files={files} />
-        <button
-          type="button"
-          className="download-all-btn"
-          onClick={() => {
-            for (const href of DUMMY_FILES) {
-              const a = document.createElement("a");
-              a.href = href;
-              a.download = href.split("/").pop() ?? "metrics";
-              a.click();
-            }
-          }}
-        >
-          모든 파일 다운로드
-        </button>
-        {sidebarExtra}
-      </aside>
-      <div className="forest-main">
-        <header className="forest-header">
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="forest-header-title">경영 라운드 회의</h1>
-              <span className="round-badge">Round {roundNumber}</span>
-            </div>
-            <p className="forest-header-sub">
-              업로드된 데이터를 바탕으로 의사결정을 내려보세요.
-            </p>
-            {disclaimer}
-          </div>
-          <div className="forest-header-tools">
-            <button type="button" className="header-ghost-btn" tabIndex={-1}>
-              <LayoutDashboard className="size-4" />
-              대시보드
-            </button>
-            <button
-              type="button"
-              className="header-bell"
-              aria-label="알림"
-              tabIndex={-1}
-            >
-              <Bell className="size-4" />
-              <span className="header-bell-badge">3</span>
-            </button>
-            <div className="director-chip">
-              <DirectorAvatar />
-              <span>병원장</span>
-            </div>
-          </div>
-        </header>
-        <div className="forest-workspace">{children}</div>
-        {footer}
-      </div>
-    </div>
+    <ForestFrame
+      title="경영 라운드 회의"
+      subtitle="업로드된 데이터를 바탕으로 의사결정을 내려보세요."
+      roundNumber={roundNumber}
+      disclaimer={disclaimer}
+      footer={footer}
+      sidebar={
+        <>
+          {sidebarLead}
+          <p className="upload-panel-title" id="upload">
+            파일 업로드
+          </p>
+          {dropzone}
+          <ForestFileList files={files} />
+          <button
+            type="button"
+            className="download-all-btn"
+            onClick={() => {
+              for (const href of DUMMY_FILES) {
+                const a = document.createElement("a");
+                a.href = href;
+                a.download = href.split("/").pop() ?? "metrics";
+                a.click();
+              }
+            }}
+          >
+            모든 파일 다운로드
+          </button>
+          {sidebarExtra}
+        </>
+      }
+    >
+      {children}
+    </ForestFrame>
   );
 }
 

@@ -32,6 +32,46 @@ export function truncateBubble(text: string, max = BUBBLE_MAX): string {
   return `${trimmed.slice(0, max).trimEnd()}…`;
 }
 
+export const GLANCE_POSITION_MAX = 72;
+export const GLANCE_NOTE_MAX = 56;
+
+export function glanceLine(cell?: DebateCell): string {
+  if (!cell) return "대기";
+  if (cell.status !== "ok") return "발언 불가";
+  return truncateBubble(cell.payload?.position ?? "", GLANCE_POSITION_MAX);
+}
+
+export function glanceNote(text: string | undefined): string | null {
+  const trimmed = text?.trim();
+  if (!trimmed) return null;
+  return truncateBubble(trimmed, GLANCE_NOTE_MAX);
+}
+
+export type ForestNavId =
+  | "home"
+  | "dashboard"
+  | "files"
+  | "decision"
+  | "settings";
+
+export function forestNavActive(
+  pathname: string,
+  id: ForestNavId,
+): boolean {
+  switch (id) {
+    case "home":
+      return pathname === "/";
+    case "files":
+      return false;
+    case "dashboard":
+      return pathname === "/dashboard";
+    case "decision":
+      return pathname === "/decision";
+    case "settings":
+      return pathname === "/settings";
+  }
+}
+
 export function fileKind(name: string): "csv" | "xlsx" {
   return name.toLowerCase().endsWith(".csv") ? "csv" : "xlsx";
 }

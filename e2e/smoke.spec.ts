@@ -162,6 +162,62 @@ test("home has csv/xlsx upload and dummy links", async ({ page }) => {
   await expect(page.getByRole("button", { name: "회의 나가기" })).toBeVisible();
 });
 
+test("agenda and category sit above the file upload panel", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const agenda = await page.locator("#agenda").boundingBox();
+  const category = await page.locator("#category").boundingBox();
+  const file = await page.locator("#metrics-file").boundingBox();
+  expect(agenda).toBeTruthy();
+  expect(category).toBeTruthy();
+  expect(file).toBeTruthy();
+  expect(agenda!.y).toBeLessThan(file!.y);
+  expect(category!.y).toBeLessThan(file!.y);
+});
+
+test("dashboard decision and settings menus open real pages", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const menu = page.getByRole("navigation", { name: "주요 메뉴" });
+  await menu.getByRole("link", { name: "대시보드" }).click();
+  await expect(page).toHaveURL(/\/dashboard/);
+  await expect(page.getByRole("heading", { name: "대시보드" })).toBeVisible();
+  await expect(page.getByText("연결 상태")).toBeVisible();
+  await expect(page.getByText("Anthropic (재무이사)")).toBeVisible();
+  await expect(page.getByText("연결됨").first()).toBeVisible();
+
+  await menu.getByRole("link", { name: "의사결정" }).click();
+  await expect(page).toHaveURL(/\/decision/);
+  await expect(page.getByRole("heading", { name: "의사결정" })).toBeVisible();
+  await expect(page.getByText("사회자 메모")).toBeVisible();
+
+  await menu.getByRole("link", { name: "설정" }).click();
+  await expect(page).toHaveURL(/\/settings/);
+  await expect(page.getByRole("heading", { name: "설정" })).toBeVisible();
+  await expect(page.getByText("재무이사")).toBeVisible();
+  await expect(
+    page.getByText("페르소나 편집 UI는 MVP 범위 밖입니다"),
+  ).toBeVisible();
+});
+
+test("decision page shows a compact two-round glance for a saved session", async ({
+  page,
+}) => {
+  await page.goto("/decision?id=uE7m2G");
+  await expect(page.locator("[data-glance=true]")).toBeVisible();
+  await expect(page.getByText("R1").first()).toBeVisible();
+  await expect(page.getByText("R2").first()).toBeVisible();
+  await expect(
+    page.locator(".glance-note").filter({ hasText: "반대:" }),
+  ).toHaveCount(3);
+  await expect(
+    page.getByText("검색광고 증액은 회수 가정이 필요합니다"),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "메모 저장" })).toBeVisible();
+});
+
 test("metrics parse accepts dummy csv with cashflow and patient stats", async ({
   request,
 }) => {

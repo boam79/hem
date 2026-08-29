@@ -21,6 +21,7 @@ const NAME_SLOT: Record<PersonaKey, string> = {
 };
 
 export function MeetingScene({
+  compact = false,
   fileCount,
   burstId,
   hasUploads,
@@ -29,6 +30,7 @@ export function MeetingScene({
   round2,
   onLeave,
 }: {
+  compact?: boolean;
   fileCount: number;
   burstId: number;
   hasUploads: boolean;
@@ -38,7 +40,7 @@ export function MeetingScene({
   onLeave: () => void;
 }) {
   return (
-    <div className="forest-scene-frame">
+    <div className={compact ? "forest-scene-frame is-compact" : "forest-scene-frame"}>
       <div className="forest-scene">
         <Image
           src="/forest-room.png"

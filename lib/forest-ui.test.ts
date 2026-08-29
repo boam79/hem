@@ -3,6 +3,11 @@ import type { DebateCell } from "@/lib/debate";
 import {
   BUBBLE_MAX,
   fileKind,
+  forestNavActive,
+  glanceLine,
+  glanceNote,
+  GLANCE_NOTE_MAX,
+  GLANCE_POSITION_MAX,
   formatBytes,
   LOADING_BUBBLE,
   personaBubbleText,
@@ -150,5 +155,51 @@ describe("file helpers", () => {
     expect(formatBytes(800)).toBe("800B");
     expect(formatBytes(2048)).toBe("2.0KB");
     expect(formatBytes(12_288)).toBe("12KB");
+  });
+});
+
+describe("glanceLine", () => {
+  it("summarizes waiting, failed, and long positions", () => {
+    expect(glanceLine(undefined)).toBe("대기");
+    expect(
+      glanceLine({
+        persona: "cfo",
+        provider: "anthropic",
+        status: "failed",
+      }),
+    ).toBe("발언 불가");
+    const long = "가".repeat(90);
+    const line = glanceLine({
+      persona: "cfo",
+      provider: "anthropic",
+      status: "ok",
+      payload: {
+        position: long,
+        evidence: [],
+        risks: [],
+        needs_data: [],
+      },
+    });
+    expect(line.endsWith("…")).toBe(true);
+    expect(line.length).toBe(GLANCE_POSITION_MAX + 1);
+  });
+
+  it("clips round-2 notes and skips blanks", () => {
+    expect(glanceNote("")).toBeNull();
+    expect(glanceNote("   ")).toBeNull();
+    const note = glanceNote("가".repeat(80));
+    expect(note?.endsWith("…")).toBe(true);
+    expect(note?.length).toBe(GLANCE_NOTE_MAX + 1);
+  });
+});
+
+describe("forestNavActive", () => {
+  it("highlights one workspace item per path", () => {
+    expect(forestNavActive("/", "home")).toBe(true);
+    expect(forestNavActive("/", "files")).toBe(false);
+    expect(forestNavActive("/", "dashboard")).toBe(false);
+    expect(forestNavActive("/dashboard", "dashboard")).toBe(true);
+    expect(forestNavActive("/decision", "decision")).toBe(true);
+    expect(forestNavActive("/settings", "settings")).toBe(true);
   });
 });
