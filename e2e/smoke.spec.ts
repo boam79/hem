@@ -148,8 +148,9 @@ test("uploaded dummy metrics session shows hospital name on share page", async (
   await expect(page.getByText("업로드 더미 지표로 백내장 검색광고 증액을 검토한다")).toBeVisible();
 });
 
-test("home has csv/xlsx upload and dummy links", async ({ page }) => {
-  await page.goto("/");
+test("files page has csv/xlsx upload and dummy links", async ({ page }) => {
+  await page.goto("/files");
+  await expect(page.getByRole("heading", { name: "파일 관리" })).toBeVisible();
   await expect(page.locator("#metrics-file")).toBeVisible();
   await expect(
     page.getByRole("link", { name: "CSV" }),
@@ -157,45 +158,63 @@ test("home has csv/xlsx upload and dummy links", async ({ page }) => {
   await expect(
     page.getByRole("link", { name: "엑셀" }),
   ).toHaveAttribute("href", "/dummy/patient-and-cashflow.xlsx");
-  await expect(page.getByText("포레스트 병원").first()).toBeVisible();
   await expect(page.getByRole("button", { name: "파일 선택" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "회의 나가기" })).toBeVisible();
 });
 
-test("agenda and category sit above the file upload panel", async ({
+test("home has agenda and the meeting room, not the file picker", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect(page.locator("#agenda")).toBeVisible();
+  await expect(page.locator("#metrics-file")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "회의 나가기" })).toBeVisible();
+  await expect(page.getByText("포레스트 병원").first()).toBeVisible();
+});
+
+test("agenda and category sit above the start button", async ({
   page,
 }) => {
   await page.goto("/");
   const agenda = await page.locator("#agenda").boundingBox();
   const category = await page.locator("#category").boundingBox();
-  const file = await page.locator("#metrics-file").boundingBox();
+  const start = await page.getByRole("button", { name: "토론 시작" }).boundingBox();
   expect(agenda).toBeTruthy();
   expect(category).toBeTruthy();
-  expect(file).toBeTruthy();
-  expect(agenda!.y).toBeLessThan(file!.y);
-  expect(category!.y).toBeLessThan(file!.y);
+  expect(start).toBeTruthy();
+  expect(agenda!.y).toBeLessThan(start!.y);
+  expect(category!.y).toBeLessThan(start!.y);
 });
 
-test("home keeps the meeting room and speech bubbles, not result cards", async ({
+test("home keeps the meeting room without waiting speech bubbles", async ({
   page,
 }) => {
   await page.goto("/");
-  await expect(page.locator("[data-bubble=cfo]")).toBeVisible();
-  await expect(page.locator("[data-bubble=mkt]")).toBeVisible();
-  await expect(page.locator("[data-bubble=md]")).toBeVisible();
-  await expect(page.getByText("자료를 올려 주세요.")).toHaveCount(3);
+  await expect(page.locator("[data-bubble=cfo]")).toHaveCount(0);
+  await expect(page.locator("[data-bubble=mkt]")).toHaveCount(0);
+  await expect(page.locator("[data-bubble=md]")).toHaveCount(0);
+  await expect(page.locator("[data-table-prompt=true]")).toBeVisible();
+  await expect(page.getByText("자료를 올려 주세요.")).toHaveCount(1);
   await expect(page.getByRole("button", { name: "토론 결과" })).toHaveCount(0);
   await expect(page.locator("[data-glance=true]")).toHaveCount(0);
 });
 
-test("upload panel sits left of the meeting room", async ({ page }) => {
+test("agenda panel sits left of the meeting room", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
-  const upload = await page.locator("#upload").boundingBox();
+  const agenda = await page.locator("#agenda").boundingBox();
   const scene = await page.locator(".forest-scene").boundingBox();
-  expect(upload).toBeTruthy();
+  expect(agenda).toBeTruthy();
   expect(scene).toBeTruthy();
-  expect(upload!.x).toBeLessThan(scene!.x);
+  expect(agenda!.x).toBeLessThan(scene!.x);
+});
+
+test("file management is a dedicated menu", async ({ page }) => {
+  await page.goto("/");
+  const menu = page.getByRole("navigation", { name: "주요 메뉴" });
+  await menu.getByRole("link", { name: "파일 관리" }).click();
+  await expect(page).toHaveURL(/\/files/);
+  await expect(page.getByRole("heading", { name: "파일 관리" })).toBeVisible();
+  await expect(page.locator("#metrics-file")).toBeVisible();
 });
 
 test("debate results live on a separate menu", async ({ page }) => {
@@ -228,8 +247,7 @@ test("dashboard decision and settings menus open real pages", async ({
   await expect(page).toHaveURL(/\/dashboard/);
   await expect(page.getByRole("heading", { name: "대시보드", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "연결 상태" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "비용 대시보드" })).toBeVisible();
-  await expect(page.getByText("남은 예산").first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: "비용 대시보드" })).toHaveCount(0);
   await expect(page.getByText("Anthropic (재무이사)")).toBeVisible();
   await expect(page.getByText("연결됨").first()).toBeVisible();
 

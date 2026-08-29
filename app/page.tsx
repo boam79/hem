@@ -1,10 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from "react";
-import { CloudUpload } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { Disclaimer } from "@/components/disclaimer";
 import {
-  ForestDropzone,
   ForestShell,
   ForestTimeline,
 } from "@/components/forest-shell";
@@ -22,13 +20,8 @@ import { AGENDA_MAX, AGENDA_MIN } from "@/config/limits";
 import { agendaError, agendaLength, isAgendaValid } from "@/lib/agenda";
 import { apiErrorMessage } from "@/lib/api-errors";
 import type { DebateCell } from "@/lib/debate";
-import {
-  fileKind,
-  formatBytes,
-  formatShortDate,
-  type UploadedMetricsFile,
-} from "@/lib/forest-ui";
 import { rememberSession } from "@/lib/recent-sessions";
+import { readMetricsUploadStore } from "@/lib/metrics-upload-store";
 import { readRoundTurns } from "@/lib/round-client";
 import type { Category, PersonaKey } from "@/lib/schema";
 
@@ -44,9 +37,8 @@ export default function Home() {
   const [category, setCategory] = useState<Category>("marketing");
   const [metrics, setMetrics] = useState<unknown | null>(null);
   const [metricsLabel, setMetricsLabel] = useState<string | null>(null);
-  const [uploads, setUploads] = useState<UploadedMetricsFile[]>([]);
+  const [fileCount, setFileCount] = useState(0);
   const [sparkleBurst, setSparkleBurst] = useState(0);
-  const [dragOver, setDragOver] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [round1, setRound1] = useState<DebateCell[]>([]);
   const [round2, setRound2] = useState<DebateCell[]>([]);
@@ -60,10 +52,9 @@ export default function Home() {
     Partial<Record<PersonaKey, string>>
   >({});
   const runId = useRef(0);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const clientAgendaError = agendaError(agenda);
   const agendaOk = isAgendaValid(agenda);
-  const hasUploads = uploads.length > 0;
+  const hasUploads = fileCount > 0;
   const roundNumber: 1 | 2 =
     round2.length > 0 || loadingRound === 2 ? 2 : 1;
 
@@ -80,41 +71,23 @@ export default function Home() {
       .catch(() => undefined);
   }, []);
 
-  async function parseMetricsFile(file: File) {
-    setError(null);
-    const body = new FormData();
-    body.append("file", file);
-    const res = await fetch("/api/metrics/parse", {
-      method: "POST",
-      body,
-    });
-    const json = await res.json();
-    if (!res.ok) {
-      setError(apiErrorMessage(json));
-      return;
+  useEffect(() => {
+    function hydrate() {
+      const stored = readMetricsUploadStore();
+      if (!stored) {
+        setMetrics(null);
+        setMetricsLabel(null);
+        setFileCount(0);
+        return;
+      }
+      setMetrics(stored.metrics);
+      setMetricsLabel(stored.label);
+      setFileCount(stored.files.length);
     }
-    setMetrics(json.metrics);
-    setMetricsLabel(`${json.hospital} · ${json.months}개월 (업로드)`);
-    setUploads((prev) => [
-      ...prev,
-      {
-        id: `${Date.now()}-${file.name}`,
-        name: file.name,
-        uploadedAt: formatShortDate(),
-        sizeLabel: formatBytes(file.size),
-        kind: fileKind(file.name),
-      },
-    ]);
-    setSparkleBurst((n) => n + 1);
-  }
-
-  function onFileInputChange(e: ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    void parseMetricsFile(file).finally(() => {
-      e.target.value = "";
-    });
-  }
+    hydrate();
+    window.addEventListener("storage", hydrate);
+    return () => window.removeEventListener("storage", hydrate);
+  }, []);
 
   async function start() {
     setError(null);
@@ -199,71 +172,14 @@ export default function Home() {
     setRound1Ms(null);
     setLoadingRound(0);
     setStreamPreview({});
-    setMetrics(null);
-    setMetricsLabel(null);
-    setUploads([]);
     setSparkleBurst(0);
     setError(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
   return (
     <ForestShell
       roundNumber={roundNumber}
       disclaimer={<Disclaimer />}
-      files={uploads}
-      dropzone={
-        <ForestDropzone
-          dragOver={dragOver}
-          onDragOver={(e: DragEvent<HTMLDivElement>) => {
-            e.preventDefault();
-            setDragOver(true);
-          }}
-          onDragLeave={(e) => {
-            if (e.currentTarget.contains(e.relatedTarget as Node)) return;
-            setDragOver(false);
-          }}
-          onDrop={(e) => {
-            e.preventDefault();
-            setDragOver(false);
-            if (loadingRound !== 0) return;
-            const dropped = [...e.dataTransfer.files].filter((file) =>
-              /\.(csv|xlsx)$/i.test(file.name),
-            );
-            if (dropped.length === 0) {
-              setError("CSV, XLSX 파일만 지원됩니다.");
-              return;
-            }
-            void (async () => {
-              for (const file of dropped) {
-                await parseMetricsFile(file);
-              }
-            })();
-          }}
-        >
-          <input
-            ref={fileInputRef}
-            id="metrics-file"
-            type="file"
-            accept=".csv,.xlsx"
-            aria-label="경영 지표 파일"
-            className="metrics-file-hit"
-            disabled={loadingRound !== 0}
-            onChange={onFileInputChange}
-          />
-          <CloudUpload className="dropzone-cloud" strokeWidth={1.75} />
-          <p className="dropzone-lead">파일을 드래그하거나</p>
-          <button
-            type="button"
-            className="file-pick-btn"
-            disabled={loadingRound !== 0}
-            onClick={() => fileInputRef.current?.click()}
-          >
-            파일 선택
-          </button>
-          <p className="dropzone-hint">CSV, XLSX 파일만 지원됩니다.</p>
-        </ForestDropzone>
-      }
       sidebarLead={
         <section className="forest-agenda forest-agenda-lead">
           <label className="forest-field-label" htmlFor="agenda">
@@ -307,17 +223,10 @@ export default function Home() {
         <section className="forest-agenda">
           <p className="forest-field-hint mb-3">
             {metricsLabel ? metricsLabel : "없으면 기본 합성 지표를 씁니다."}{" "}
-            더미:{" "}
-            <a className="forest-dummy-link" href="/dummy/patient-and-cashflow.csv">
-              CSV
+            <a className="forest-dummy-link" href="/files">
+              파일 관리
             </a>
-            {" · "}
-            <a
-              className="forest-dummy-link"
-              href="/dummy/patient-and-cashflow.xlsx"
-            >
-              엑셀
-            </a>
+            에서 올립니다.
           </p>
           <Button
             type="button"
@@ -355,7 +264,7 @@ export default function Home() {
       }
     >
       <MeetingScene
-        fileCount={uploads.length}
+        fileCount={fileCount}
         burstId={sparkleBurst}
         hasUploads={hasUploads}
         loadingRound={loadingRound}

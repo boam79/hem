@@ -8,7 +8,7 @@
 진행 문서: `doc/`
 PRD AC 감사: `doc/progress/2026-08-28-prd-final-audit.md`
 
-2026-08-29: 홈은 02 회의실+말풍선만. 토론 결과 카드는 사이드바 별도 메뉴. 완료는 Planner가 표시한다.
+2026-08-29: 파일 관리 `/files` 전용. 대시보드에서 비용 패널 제거. 대기 말풍선은 테이블 중앙 1개. 완료는 Planner가 표시한다.
 
 ## Key Challenges and Analysis
 
@@ -45,7 +45,7 @@ Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
 - [x] keepalive 주 2회 — 스케줄 `0 3 * * 1,4`. HTTPS POST 12:12:22Z, Vercel Cron 12:16:07Z. GH Actions 시크릿은 사용자 몫.
 - [x] 제한 429 HTTPS — 세션 POST만, 라운드 없음. `rate_limited` 429 (이번 턴 재확인).
 - [x] 홈 UI를 `doc/design/02.png`와 같게 (민트 셸 + 회의실 + 업로드 종이더미·스파클). HTTPS E2E 15. 배포 https://boardroom-six-delta.vercel.app
-- [x] 홈 말풍선에 AI 답변, 토론 결과는 `/debate` 메뉴. HTTPS E2E 24. 배포 https://boardroom-six-delta.vercel.app 세션 `H_8AhS`
+- [ ] 파일 관리 `/files`, 대시보드 비용 제거, 대기 말풍선 테이블 중앙. HTTPS 검증 전.
 
 ## Executor's Feedback or Assistance Requests
 
@@ -64,6 +64,8 @@ Haiku R2 재시도 수정 후(`ba66843`): `cA_9I2` `4e4XEM` `NQSmdi` — 세 세
 2026-08-29 사용량·페르소나·스트리밍: `/api/usage` 월 집계+예산 잔여, `persona_overrides`로 이름·역할·습관·temperature 편집(프로바이더 고정), 홈은 `/api/round/stream` SSE. 계정 잔액 API는 키만으로 불가 → 콘솔 링크. 실토론 버튼은 E2E에서 누르지 않음. HTTPS E2E 21. 배포 https://boardroom-six-delta.vercel.app
 
 2026-08-29 말풍선·토론결과: 홈에서 glance 카드·compact 제거. 업로드 패널을 회의실 왼쪽으로. `/debate` 메뉴. 단위 81·빌드 통과. HTTPS E2E 24. 실토론 `H_8AhS` 말풍선 3입장.
+
+2026-08-29 파일관리·대기문구: `/files` 전용, 대시보드 CostPanel 제거, 테이블 중앙 `자료를 올려 주세요.` 1개. 단위 84. HTTPS 배포 후.
 
 ## Lessons
 

@@ -12,6 +12,8 @@ import {
   LOADING_BUBBLE,
   personaBubbleText,
   sheetCountFromUploads,
+  shouldShowPersonaBubble,
+  showTableWaitingPrompt,
   spokenFromStream,
   timelineStates,
   truncateBubble,
@@ -37,16 +39,46 @@ describe("sheetCountFromUploads", () => {
 describe("personaBubbleText", () => {
   const empty: DebateCell[] = [];
 
-  it("asks for files before upload", () => {
+  it("hides persona bubbles until a file or a debate starts", () => {
+    const waiting = {
+      persona: "cfo" as const,
+      hasUploads: false,
+      loadingRound: 0 as const,
+      round1: empty,
+      round2: empty,
+    };
+    expect(showTableWaitingPrompt(waiting)).toBe(true);
+    expect(shouldShowPersonaBubble(waiting)).toBe(false);
+    expect(personaBubbleText(waiting)).toBe(WAITING_BUBBLE);
+  });
+
+  it("shows persona bubbles after upload or while a round runs", () => {
     expect(
-      personaBubbleText({
+      shouldShowPersonaBubble({
         persona: "cfo",
-        hasUploads: false,
+        hasUploads: true,
         loadingRound: 0,
         round1: empty,
         round2: empty,
       }),
-    ).toBe(WAITING_BUBBLE);
+    ).toBe(true);
+    expect(
+      showTableWaitingPrompt({
+        hasUploads: true,
+        loadingRound: 0,
+        round1: empty,
+        round2: empty,
+      }),
+    ).toBe(false);
+    expect(
+      shouldShowPersonaBubble({
+        persona: "cfo",
+        hasUploads: false,
+        loadingRound: 1,
+        round1: empty,
+        round2: empty,
+      }),
+    ).toBe(true);
   });
 
   it("uses the upload lines after a successful parse", () => {
@@ -257,6 +289,7 @@ describe("forestNavActive", () => {
     expect(forestNavActive("/", "files")).toBe(false);
     expect(forestNavActive("/", "debate")).toBe(false);
     expect(forestNavActive("/debate", "debate")).toBe(true);
+    expect(forestNavActive("/files", "files")).toBe(true);
     expect(forestNavActive("/", "dashboard")).toBe(false);
     expect(forestNavActive("/dashboard", "dashboard")).toBe(true);
     expect(forestNavActive("/decision", "decision")).toBe(true);

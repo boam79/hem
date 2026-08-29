@@ -615,8 +615,8 @@ body {
 }
 
 .bubble-cfo {
-  top: 14%;
-  left: 7%;
+  top: 24%;
+  left: 11%;
   background: #fff7ea;
 }
 
@@ -627,7 +627,7 @@ body {
 }
 
 .bubble-mkt {
-  top: 5.5%;
+  top: 8%;
   left: 50%;
   transform: translateX(-50%);
   background: #e9f8f0;
@@ -641,8 +641,8 @@ body {
 }
 
 .bubble-md {
-  top: 13%;
-  right: 6%;
+  top: 22%;
+  right: 9%;
   left: auto;
   background: #fff;
 }
@@ -656,28 +656,48 @@ body {
   position: absolute;
   z-index: 5;
   border-radius: 999px;
-  background: rgb(255 255 255 / 0.92);
-  padding: 0.18rem 0.55rem;
-  font-size: 0.65rem;
+  background: rgb(255 255 255 / 0.95);
+  padding: 0.2rem 0.62rem;
+  font-size: 0.68rem;
   font-weight: 750;
   color: #245c40;
   box-shadow: 0 2px 8px rgb(20 40 30 / 0.12);
+  white-space: nowrap;
 }
 
 .name-cfo {
-  top: 62%;
-  left: 18%;
+  top: 46.5%;
+  left: 28%;
 }
 
 .name-mkt {
-  top: 36%;
+  top: 36.5%;
   left: 50%;
   transform: translateX(-50%);
 }
 
 .name-md {
-  top: 61%;
-  right: 15%;
+  top: 44.5%;
+  left: 70%;
+  right: auto;
+}
+
+.table-waiting {
+  position: absolute;
+  top: 56%;
+  left: 50%;
+  z-index: 6;
+  max-width: 11.5rem;
+  transform: translate(-50%, -50%);
+  border-radius: 16px;
+  background: rgb(255 255 255 / 0.96);
+  padding: 0.7rem 1rem;
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: #24332c;
+  box-shadow: 0 10px 24px rgb(20 40 30 / 0.16);
 }
 
 .leave-meeting-btn {

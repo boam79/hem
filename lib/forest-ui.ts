@@ -65,7 +65,7 @@ export function forestNavActive(
     case "debate":
       return pathname === "/debate";
     case "files":
-      return false;
+      return pathname === "/files";
     case "dashboard":
       return pathname === "/dashboard";
     case "decision":
@@ -77,6 +77,21 @@ export function forestNavActive(
 
 export function fileKind(name: string): "csv" | "xlsx" {
   return name.toLowerCase().endsWith(".csv") ? "csv" : "xlsx";
+}
+
+export const DUMMY_METRICS_HREFS = [
+  "/dummy/patient-and-cashflow.csv",
+  "/dummy/patient-and-cashflow.xlsx",
+] as const;
+
+export function downloadDummyMetricsFiles(): void {
+  if (typeof document === "undefined") return;
+  for (const href of DUMMY_METRICS_HREFS) {
+    const a = document.createElement("a");
+    a.href = href;
+    a.download = href.split("/").pop() ?? "metrics";
+    a.click();
+  }
 }
 
 export function formatBytes(bytes: number): string {
@@ -112,6 +127,32 @@ export function spokenFromStream(streamPreview?: string): string | undefined {
   const match = raw.match(/"position"\s*:\s*"((?:\\.|[^"\\])*)/);
   if (!match?.[1]) return undefined;
   return match[1].replace(/\\n/g, " ").replace(/\\"/g, '"').trim() || undefined;
+}
+
+export function showTableWaitingPrompt(opts: {
+  hasUploads: boolean;
+  loadingRound: 0 | 1 | 2;
+  round1: DebateCell[];
+  round2: DebateCell[];
+}): boolean {
+  return (
+    opts.loadingRound === 0 &&
+    !opts.hasUploads &&
+    opts.round1.length === 0 &&
+    opts.round2.length === 0
+  );
+}
+
+export function shouldShowPersonaBubble(opts: {
+  persona: PersonaKey;
+  hasUploads: boolean;
+  loadingRound: 0 | 1 | 2;
+  round1: DebateCell[];
+  round2: DebateCell[];
+  streamPreview?: string;
+}): boolean {
+  if (showTableWaitingPrompt(opts)) return false;
+  return true;
 }
 
 export function personaBubbleText(opts: {

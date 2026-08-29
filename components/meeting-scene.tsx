@@ -5,7 +5,12 @@ import { LogOut } from "lucide-react";
 import { PaperStack } from "@/components/paper-stack";
 import { PERSONAS } from "@/config/personas";
 import type { DebateCell } from "@/lib/debate";
-import { personaBubbleText } from "@/lib/forest-ui";
+import {
+  personaBubbleText,
+  shouldShowPersonaBubble,
+  showTableWaitingPrompt,
+  WAITING_BUBBLE,
+} from "@/lib/forest-ui";
 import type { PersonaKey } from "@/lib/schema";
 
 const BUBBLE_SLOT: Record<PersonaKey, string> = {
@@ -58,22 +63,36 @@ export function MeetingScene({
             {names?.[p.key] ?? p.name}
           </div>
         ))}
-        {PERSONAS.map((p) => (
-          <div
-            key={`bubble-${p.key}`}
-            className={`speech-bubble ${BUBBLE_SLOT[p.key]}`}
-            data-bubble={p.key}
-          >
-            {personaBubbleText({
-              persona: p.key,
-              hasUploads,
-              loadingRound,
-              round1,
-              round2,
-              streamPreview: streamPreview?.[p.key],
-            })}
+        {showTableWaitingPrompt({
+          hasUploads,
+          loadingRound,
+          round1,
+          round2,
+        }) ? (
+          <div className="table-waiting" data-table-prompt="true">
+            {WAITING_BUBBLE}
           </div>
-        ))}
+        ) : null}
+        {PERSONAS.map((p) => {
+          const opts = {
+            persona: p.key,
+            hasUploads,
+            loadingRound,
+            round1,
+            round2,
+            streamPreview: streamPreview?.[p.key],
+          };
+          if (!shouldShowPersonaBubble(opts)) return null;
+          return (
+            <div
+              key={`bubble-${p.key}`}
+              className={`speech-bubble ${BUBBLE_SLOT[p.key]}`}
+              data-bubble={p.key}
+            >
+              {personaBubbleText(opts)}
+            </div>
+          );
+        })}
         <div className="paper-pile-anchor">
           <PaperStack fileCount={fileCount} burstId={burstId} />
         </div>

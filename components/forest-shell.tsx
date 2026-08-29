@@ -33,15 +33,10 @@ const NAV: {
   { id: "home", label: "홈", href: "/", Icon: Home },
   { id: "debate", label: "토론 결과", href: "/debate", Icon: MessagesSquare },
   { id: "dashboard", label: "대시보드", href: "/dashboard", Icon: LayoutDashboard },
-  { id: "files", label: "파일 관리", href: "/#upload", Icon: FolderOpen },
+  { id: "files", label: "파일 관리", href: "/files", Icon: FolderOpen },
   { id: "decision", label: "의사결정", href: "/decision", Icon: Scale },
   { id: "settings", label: "설정", href: "/settings", Icon: Settings },
 ];
-
-const DUMMY_FILES = [
-  "/dummy/patient-and-cashflow.csv",
-  "/dummy/patient-and-cashflow.xlsx",
-] as const;
 
 const STEPS: {
   id: TimelineStepId;
@@ -209,8 +204,6 @@ export function ForestShell({
   disclaimer,
   sidebarLead,
   sidebarExtra,
-  dropzone,
-  files,
   footer,
   children,
 }: {
@@ -218,8 +211,6 @@ export function ForestShell({
   disclaimer: ReactNode;
   sidebarLead: ReactNode;
   sidebarExtra: ReactNode;
-  dropzone: ReactNode;
-  files: UploadedMetricsFile[];
   footer: ReactNode;
   children: ReactNode;
 }) {
@@ -233,27 +224,8 @@ export function ForestShell({
       sidebar={null}
     >
       <div className="forest-home-split">
-        <section className="forest-upload-column" aria-label="파일 업로드">
+        <section className="forest-upload-column" aria-label="안건">
           {sidebarLead}
-          <p className="upload-panel-title" id="upload">
-            파일 업로드
-          </p>
-          {dropzone}
-          <ForestFileList files={files} />
-          <button
-            type="button"
-            className="download-all-btn"
-            onClick={() => {
-              for (const href of DUMMY_FILES) {
-                const a = document.createElement("a");
-                a.href = href;
-                a.download = href.split("/").pop() ?? "metrics";
-                a.click();
-              }
-            }}
-          >
-            모든 파일 다운로드
-          </button>
           {sidebarExtra}
         </section>
         <div className="forest-scene-column">{children}</div>
