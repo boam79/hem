@@ -11,3 +11,7 @@
 
 - 단위 `pnpm test` 87.
 - HTTPS E2E `pnpm test:e2e` **27 passed** (프로덕션 `https://boardroom-six-delta.vercel.app`). 유효 안건으로 토론 시작은 누르지 않음.
+
+## 위치 (2026-08-29 저녁)
+
+여우 쪽(테이블 뒤)에 떠 있던 더미를 초록·주황·파랑 바인더 사이 정중앙으로 내렸다. `.paper-pile-anchor`는 `top: 72%; left: 50%; transform: translate(-50%, -100%)` — 박스 바닥이 테이블에 앉는다. 사용자 하드 리프레시 후 확인 대기.
