@@ -183,7 +183,7 @@ test("dashboard decision and settings menus open real pages", async ({
   const menu = page.getByRole("navigation", { name: "주요 메뉴" });
   await menu.getByRole("link", { name: "대시보드" }).click();
   await expect(page).toHaveURL(/\/dashboard/);
-  await expect(page.getByRole("heading", { name: "대시보드" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "대시보드", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "연결 상태" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "비용 대시보드" })).toBeVisible();
   await expect(page.getByText("남은 예산").first()).toBeVisible();
