@@ -666,19 +666,19 @@ body {
 }
 
 .name-cfo {
-  top: 53%;
-  left: 26.5%;
+  top: 49%;
+  left: 27%;
 }
 
 .name-mkt {
-  top: 45%;
+  top: 41.5%;
   left: 50%;
   transform: translateX(-50%);
 }
 
 .name-md {
-  top: 51%;
-  left: 73.5%;
+  top: 47%;
+  left: 71.5%;
   right: auto;
 }
 
