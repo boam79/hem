@@ -21,7 +21,6 @@ const NAME_SLOT: Record<PersonaKey, string> = {
 };
 
 export function MeetingScene({
-  compact = false,
   fileCount,
   burstId,
   hasUploads,
@@ -32,7 +31,6 @@ export function MeetingScene({
   streamPreview,
   onLeave,
 }: {
-  compact?: boolean;
   fileCount: number;
   burstId: number;
   hasUploads: boolean;
@@ -44,7 +42,7 @@ export function MeetingScene({
   onLeave: () => void;
 }) {
   return (
-    <div className={compact ? "forest-scene-frame is-compact" : "forest-scene-frame"}>
+    <div className="forest-scene-frame">
       <div className="forest-scene">
         <Image
           src="/forest-room.png"
@@ -64,6 +62,7 @@ export function MeetingScene({
           <div
             key={`bubble-${p.key}`}
             className={`speech-bubble ${BUBBLE_SLOT[p.key]}`}
+            data-bubble={p.key}
           >
             {personaBubbleText({
               persona: p.key,

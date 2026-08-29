@@ -23,5 +23,6 @@
 | [progress/2026-08-29-forest-ui-02.md](progress/2026-08-29-forest-ui-02.md) | 홈을 02 포레스트 병원 회의실 UI로 (종이더미·스파클) |
 | [progress/2026-08-29-nav-glance.md](progress/2026-08-29-nav-glance.md) | 메뉴 3페이지·안건 위 배치·토론 한눈 압축 |
 | [progress/2026-08-29-usage-persona-stream.md](progress/2026-08-29-usage-persona-stream.md) | 설정 사용량·페르소나 편집·비용 대시보드·토큰 스트리밍 |
+| [progress/2026-08-29-debate-bubbles.md](progress/2026-08-29-debate-bubbles.md) | 홈 말풍선 + 토론 결과 메뉴 `/debate` |
 
 루트 `PRD.md`는 여기로 가는 포인터다.

@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from "react";
 import { CloudUpload } from "lucide-react";
-import { DebateGlance } from "@/components/debate-glance";
 import { Disclaimer } from "@/components/disclaimer";
 import {
   ForestDropzone,
@@ -54,7 +53,6 @@ export default function Home() {
   const [loadingRound, setLoadingRound] = useState<0 | 1 | 2>(0);
   const [round1Ms, setRound1Ms] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [resultsOpen, setResultsOpen] = useState(true);
   const [streamPreview, setStreamPreview] = useState<
     Partial<Record<PersonaKey, string>>
   >({});
@@ -68,8 +66,6 @@ export default function Home() {
   const hasUploads = uploads.length > 0;
   const roundNumber: 1 | 2 =
     round2.length > 0 || loadingRound === 2 ? 2 : 1;
-  const showResults =
-    loadingRound !== 0 || round1.length > 0 || Boolean(sessionId);
 
   useEffect(() => {
     void fetch("/api/personas")
@@ -131,7 +127,6 @@ export default function Home() {
     setRound1([]);
     setRound2([]);
     setRound1Ms(null);
-    setResultsOpen(true);
     setStreamPreview({});
     setLoadingRound(1);
     try {
@@ -336,6 +331,16 @@ export default function Home() {
           {error ? (
             <p className="text-destructive mt-2 text-xs">{error}</p>
           ) : null}
+          {sessionId && round1.length > 0 ? (
+            <p className="forest-field-hint mt-2">
+              {round1Ms !== null
+                ? `라운드 1 ${round1Ms}ms · `
+                : null}
+              <a className="forest-dummy-link" href={`/debate?id=${sessionId}`}>
+                토론 결과 보기
+              </a>
+            </p>
+          ) : null}
         </section>
       }
       footer={
@@ -349,61 +354,7 @@ export default function Home() {
         />
       }
     >
-      {showResults ? (
-        <section className="forest-results">
-          <button
-            type="button"
-            className="forest-results-toggle"
-            aria-expanded={resultsOpen}
-            onClick={() => setResultsOpen((open) => !open)}
-          >
-            <span>토론 결과</span>
-            <span className="forest-results-chevron" data-open={resultsOpen}>
-              ▾
-            </span>
-          </button>
-          {resultsOpen ? (
-            <div className="forest-results-body">
-              {round1Ms !== null ? (
-                <p className="text-muted-foreground mb-2 text-xs">
-                  라운드 1 {round1Ms}ms
-                  {round1Ms > 30_000 ? " · 30초 초과" : " · 30초 이내"}
-                </p>
-              ) : null}
-              <DebateGlance
-                round1={round1}
-                round2={round2}
-                loadingRound={loadingRound}
-              />
-              <p className="forest-results-links">
-                {sessionId ? (
-                  <>
-                    전체 그리드:{" "}
-                    <a className="forest-dummy-link" href={`/s/${sessionId}`}>
-                      /s/{sessionId}
-                    </a>
-                    {loadingRound === 0 ? (
-                      <>
-                        {" · "}
-                        <a
-                          className="forest-dummy-link"
-                          href={`/decision?id=${sessionId}`}
-                        >
-                          사회자 메모 작성
-                        </a>
-                      </>
-                    ) : null}
-                  </>
-                ) : (
-                  "발언이 끝나면 공유 링크가 생깁니다."
-                )}
-              </p>
-            </div>
-          ) : null}
-        </section>
-      ) : null}
       <MeetingScene
-        compact={showResults}
         fileCount={uploads.length}
         burstId={sparkleBurst}
         hasUploads={hasUploads}

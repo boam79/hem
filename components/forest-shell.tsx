@@ -10,6 +10,7 @@ import {
   FolderOpen,
   Home,
   LayoutDashboard,
+  MessagesSquare,
   Scale,
   Settings,
 } from "lucide-react";
@@ -30,6 +31,7 @@ const NAV: {
   Icon: typeof Home;
 }[] = [
   { id: "home", label: "홈", href: "/", Icon: Home },
+  { id: "debate", label: "토론 결과", href: "/debate", Icon: MessagesSquare },
   { id: "dashboard", label: "대시보드", href: "/dashboard", Icon: LayoutDashboard },
   { id: "files", label: "파일 관리", href: "/#upload", Icon: FolderOpen },
   { id: "decision", label: "의사결정", href: "/decision", Icon: Scale },
@@ -173,7 +175,7 @@ export function ForestFrame({
   subtitle: string;
   roundNumber?: 1 | 2;
   disclaimer?: ReactNode;
-  sidebar: ReactNode;
+  sidebar?: ReactNode;
   footer?: ReactNode;
   children: ReactNode;
 }) {
@@ -228,8 +230,10 @@ export function ForestShell({
       roundNumber={roundNumber}
       disclaimer={disclaimer}
       footer={footer}
-      sidebar={
-        <>
+      sidebar={null}
+    >
+      <div className="forest-home-split">
+        <section className="forest-upload-column" aria-label="파일 업로드">
           {sidebarLead}
           <p className="upload-panel-title" id="upload">
             파일 업로드
@@ -251,10 +255,9 @@ export function ForestShell({
             모든 파일 다운로드
           </button>
           {sidebarExtra}
-        </>
-      }
-    >
-      {children}
+        </section>
+        <div className="forest-scene-column">{children}</div>
+      </div>
     </ForestFrame>
   );
 }

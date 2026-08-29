@@ -176,6 +176,47 @@ test("agenda and category sit above the file upload panel", async ({
   expect(category!.y).toBeLessThan(file!.y);
 });
 
+test("home keeps the meeting room and speech bubbles, not result cards", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect(page.locator("[data-bubble=cfo]")).toBeVisible();
+  await expect(page.locator("[data-bubble=mkt]")).toBeVisible();
+  await expect(page.locator("[data-bubble=md]")).toBeVisible();
+  await expect(page.getByText("자료를 올려 주세요.")).toHaveCount(3);
+  await expect(page.getByRole("button", { name: "토론 결과" })).toHaveCount(0);
+  await expect(page.locator("[data-glance=true]")).toHaveCount(0);
+});
+
+test("upload panel sits left of the meeting room", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/");
+  const upload = await page.locator("#upload").boundingBox();
+  const scene = await page.locator(".forest-scene").boundingBox();
+  expect(upload).toBeTruthy();
+  expect(scene).toBeTruthy();
+  expect(upload!.x).toBeLessThan(scene!.x);
+});
+
+test("debate results live on a separate menu", async ({ page }) => {
+  await page.goto("/");
+  const menu = page.getByRole("navigation", { name: "주요 메뉴" });
+  await menu.getByRole("link", { name: "토론 결과" }).click();
+  await expect(page).toHaveURL(/\/debate/);
+  await expect(page.getByRole("heading", { name: "토론 결과" })).toBeVisible();
+  await page.goto("/debate?id=w4demo");
+  await expect(page.locator("[data-glance=true]")).toBeVisible();
+  await expect(page.getByText("R1").first()).toBeVisible();
+  await expect(page.getByText("R2").first()).toBeVisible();
+  await expect(
+    page.getByText("보류. 검색광고 30% 증액의 회수기간이 12개월 안에 닫히지 않습니다."),
+  ).toBeVisible();
+  await page.goto("/debate?id=uE7m2G");
+  await expect(page.locator("[data-glance=true]")).toBeVisible();
+  await expect(page.getByText("R1").first()).toBeVisible();
+  await expect(page.getByText("R2").first()).toBeVisible();
+});
+
 test("dashboard decision and settings menus open real pages", async ({
   page,
 }) => {

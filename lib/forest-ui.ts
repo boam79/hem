@@ -49,6 +49,7 @@ export function glanceNote(text: string | undefined): string | null {
 
 export type ForestNavId =
   | "home"
+  | "debate"
   | "dashboard"
   | "files"
   | "decision"
@@ -61,6 +62,8 @@ export function forestNavActive(
   switch (id) {
     case "home":
       return pathname === "/";
+    case "debate":
+      return pathname === "/debate";
     case "files":
       return false;
     case "dashboard":
@@ -102,6 +105,15 @@ export function latestPosition(
   return from(round2) || from(round1) || undefined;
 }
 
+export function spokenFromStream(streamPreview?: string): string | undefined {
+  const raw = streamPreview?.trim();
+  if (!raw) return undefined;
+  if (!raw.startsWith("{")) return raw;
+  const match = raw.match(/"position"\s*:\s*"((?:\\.|[^"\\])*)/);
+  if (!match?.[1]) return undefined;
+  return match[1].replace(/\\n/g, " ").replace(/\\"/g, '"').trim() || undefined;
+}
+
 export function personaBubbleText(opts: {
   persona: PersonaKey;
   hasUploads: boolean;
@@ -112,8 +124,9 @@ export function personaBubbleText(opts: {
 }): string {
   const { persona, hasUploads, loadingRound, round1, round2, streamPreview } =
     opts;
-  if (loadingRound !== 0 && streamPreview?.trim()) {
-    return truncateBubble(streamPreview);
+  const spoken = spokenFromStream(streamPreview);
+  if (loadingRound !== 0 && spoken) {
+    return truncateBubble(spoken);
   }
   if (loadingRound === 1) return LOADING_BUBBLE;
   const position = latestPosition(persona, round1, round2);

@@ -538,6 +538,38 @@ body {
   padding: 0 1.2rem 0.75rem;
 }
 
+.forest-home-split {
+  display: grid;
+  grid-template-columns: minmax(240px, 18.75rem) minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: stretch;
+  flex: 1;
+  min-height: 0;
+}
+
+.forest-upload-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  min-width: 0;
+  overflow: auto;
+  border: 1px solid #e5eee9;
+  border-radius: 16px;
+  background: #fff;
+  padding: 0.95rem 0.9rem 1.05rem;
+  box-shadow: 0 10px 28px rgb(28 64 48 / 0.06);
+}
+
+.forest-scene-column {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+}
+
+.forest-scene-column .forest-scene-frame {
+  width: 100%;
+}
+
 .forest-scene-frame {
   display: flex;
   justify-content: center;
@@ -562,11 +594,11 @@ body {
 .speech-bubble {
   position: absolute;
   z-index: 6;
-  max-width: 13.5rem;
+  max-width: 16rem;
   border-radius: 16px;
   background: #fff;
-  padding: 0.55rem 0.8rem;
-  font-size: 0.72rem;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.78rem;
   font-weight: 650;
   line-height: 1.45;
   color: #24332c;
@@ -585,29 +617,34 @@ body {
 .bubble-cfo {
   top: 14%;
   left: 7%;
+  background: #fff7ea;
 }
 
 .bubble-cfo::after {
   bottom: -0.28rem;
   left: 1.6rem;
+  background: #fff7ea;
 }
 
 .bubble-mkt {
   top: 5.5%;
   left: 50%;
   transform: translateX(-50%);
+  background: #e9f8f0;
 }
 
 .bubble-mkt::after {
   bottom: -0.28rem;
   left: 50%;
   margin-left: -0.35rem;
+  background: #e9f8f0;
 }
 
 .bubble-md {
   top: 13%;
   right: 6%;
   left: auto;
+  background: #fff;
 }
 
 .bubble-md::after {
@@ -869,16 +906,6 @@ body {
 
 .forest-results-chevron[data-open="false"] {
   transform: rotate(-90deg);
-}
-
-.forest-scene-frame.is-compact .forest-scene {
-  height: 15.5rem;
-  max-height: 15.5rem;
-  aspect-ratio: auto;
-}
-
-.forest-scene-frame.is-compact .speech-bubble {
-  display: none;
 }
 
 .forest-results-body {
@@ -1344,6 +1371,10 @@ body {
 
   .forest-scene {
     width: 100%;
+  }
+
+  .forest-home-split {
+    grid-template-columns: 1fr;
   }
 
   .speech-bubble {

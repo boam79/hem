@@ -12,6 +12,7 @@ import {
   LOADING_BUBBLE,
   personaBubbleText,
   sheetCountFromUploads,
+  spokenFromStream,
   timelineStates,
   truncateBubble,
   UPLOAD_BUBBLES,
@@ -91,6 +92,29 @@ describe("personaBubbleText", () => {
     ).toBe("보류. 회수기간을 먼저");
   });
 
+  it("does not put raw JSON into the bubble", () => {
+    expect(
+      personaBubbleText({
+        persona: "cfo",
+        hasUploads: true,
+        loadingRound: 1,
+        round1: [],
+        round2: [],
+        streamPreview: '{"evidence":["x"],"position":"보류. 현금흐름을 먼저 본다"',
+      }),
+    ).toBe("보류. 현금흐름을 먼저 본다");
+    expect(
+      personaBubbleText({
+        persona: "cfo",
+        hasUploads: true,
+        loadingRound: 1,
+        round1: [],
+        round2: [],
+        streamPreview: '{"evidence":["x"]',
+      }),
+    ).toBe(LOADING_BUBBLE);
+  });
+
   it("shows loading during round 1", () => {
     expect(
       personaBubbleText({
@@ -126,6 +150,27 @@ describe("personaBubbleText", () => {
     expect(text.endsWith("…")).toBe(true);
     expect(text.length).toBe(BUBBLE_MAX + 1);
     expect(truncateBubble(long).length).toBe(BUBBLE_MAX + 1);
+  });
+});
+
+describe("spokenFromStream", () => {
+  it("returns plain Korean as-is", () => {
+    expect(spokenFromStream("보류. 현금흐름을 먼저 본다")).toBe(
+      "보류. 현금흐름을 먼저 본다",
+    );
+  });
+
+  it("pulls position out of a partial JSON stream", () => {
+    expect(
+      spokenFromStream(
+        '{"evidence":["x"],"position":"보류. 현금흐름을 먼저 본다"',
+      ),
+    ).toBe("보류. 현금흐름을 먼저 본다");
+  });
+
+  it("returns nothing until a JSON position appears", () => {
+    expect(spokenFromStream("{")).toBeUndefined();
+    expect(spokenFromStream('{"evidence":[')).toBeUndefined();
   });
 });
 
@@ -210,6 +255,8 @@ describe("forestNavActive", () => {
   it("highlights one workspace item per path", () => {
     expect(forestNavActive("/", "home")).toBe(true);
     expect(forestNavActive("/", "files")).toBe(false);
+    expect(forestNavActive("/", "debate")).toBe(false);
+    expect(forestNavActive("/debate", "debate")).toBe(true);
     expect(forestNavActive("/", "dashboard")).toBe(false);
     expect(forestNavActive("/dashboard", "dashboard")).toBe(true);
     expect(forestNavActive("/decision", "decision")).toBe(true);
