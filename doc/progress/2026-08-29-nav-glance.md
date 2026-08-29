@@ -23,3 +23,4 @@
 - 단위: `glanceLine`·`glanceNote`·`forestNavActive`·`parseRecentSessions`·`cellsForRound`
 - E2E: 안건/유형 y < 업로드, 메뉴 클릭, `/decision?id=uE7m2G` 압축 뷰. 유효 안건으로 토론 시작은 누르지 않음
 - 배포 HTTPS만. localhost 대체 없음
+- 2026-08-29 프로덕션 `https://boardroom-six-delta.vercel.app` — `pnpm test` 66, `pnpm test:e2e` **18 passed**

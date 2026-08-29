@@ -45,7 +45,7 @@ Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
 - [x] keepalive 주 2회 — 스케줄 `0 3 * * 1,4`. HTTPS POST 12:12:22Z, Vercel Cron 12:16:07Z. GH Actions 시크릿은 사용자 몫.
 - [x] 제한 429 HTTPS — 세션 POST만, 라운드 없음. `rate_limited` 429 (이번 턴 재확인).
 - [x] 홈 UI를 `doc/design/02.png`와 같게 (민트 셸 + 회의실 + 업로드 종이더미·스파클). HTTPS E2E 15. 배포 https://boardroom-six-delta.vercel.app
-- [ ] 안건·유형을 파일 업로드 위로. 토론 R1·R2 한눈 압축. 대시보드·의사결정·설정 실페이지. HTTPS E2E 후 완료
+- [x] 안건·유형을 파일 업로드 위로. 토론 R1·R2 한눈 압축. 대시보드·의사결정·설정 실페이지. HTTPS E2E 18. 배포 https://boardroom-six-delta.vercel.app
 
 ## Executor's Feedback or Assistance Requests
 
@@ -59,7 +59,7 @@ Haiku R2 재시도 수정 후(`ba66843`): `cA_9I2` `4e4XEM` `NQSmdi` — 세 세
 
 2026-08-29 Forest UI: `app/page.tsx`가 `ForestShell` + `MeetingScene` + `PaperStack`을 연결. 기존 POST `/api/metrics/parse` · `/api/session` · `/api/round` 유지. E2E 셀렉터(`#agenda`, `#metrics-file`, `토론 시작`, 디스클레이머, CSV/엑셀 더미 링크, 안건 10–200자) 로컬에서 확인. 커밋·푸시·배포는 하지 않음. HTTPS 스모크는 배포 후.
 
-2026-08-29 메뉴·한눈: `/dashboard` health+최근세션, `/decision` 메모, `/settings` 읽기전용 페르소나. 홈 토론은 `DebateGlance`. 공유 `/s/[id]`는 기존 그리드. 실토론 버튼은 E2E에서 누르지 않음.
+2026-08-29 메뉴·한눈: `/dashboard` health+최근세션, `/decision` 메모, `/settings` 읽기전용 페르소나. 홈 토론은 `DebateGlance`. 공유 `/s/[id]`는 기존 그리드. 실토론 버튼은 E2E에서 누르지 않음. HTTPS E2E 18.
 
 ## Lessons
 
