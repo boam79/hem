@@ -52,6 +52,7 @@ export default function Home() {
     Partial<Record<PersonaKey, string>>
   >({});
   const runId = useRef(0);
+  const prevFileCount = useRef(0);
   const clientAgendaError = agendaError(agenda);
   const agendaOk = isAgendaValid(agenda);
   const hasUploads = fileCount > 0;
@@ -78,11 +79,16 @@ export default function Home() {
         setMetrics(null);
         setMetricsLabel(null);
         setFileCount(0);
+        prevFileCount.current = 0;
         return;
       }
       setMetrics(stored.metrics);
       setMetricsLabel(stored.label);
       setFileCount(stored.files.length);
+      if (stored.files.length > prevFileCount.current) {
+        setSparkleBurst((n) => n + 1);
+      }
+      prevFileCount.current = stored.files.length;
     }
     hydrate();
     window.addEventListener("storage", hydrate);
@@ -101,6 +107,7 @@ export default function Home() {
     setRound2([]);
     setRound1Ms(null);
     setStreamPreview({});
+    setSparkleBurst((n) => n + 1);
     setLoadingRound(1);
     try {
       const s = await fetch("/api/session", {

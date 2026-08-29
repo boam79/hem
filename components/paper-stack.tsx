@@ -2,7 +2,7 @@
 
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { sheetCountFromUploads } from "@/lib/forest-ui";
+import { sheetCountFromActivity } from "@/lib/forest-ui";
 
 function Sparkle({ className }: { className: string }) {
   return <span className={`sparkle ${className}`} />;
@@ -25,49 +25,56 @@ function SpreadsheetGlyph() {
 export function PaperStack({
   fileCount,
   burstId,
+  waiting,
 }: {
   fileCount: number;
   burstId: number;
+  waiting: boolean;
 }) {
-  const sheets = sheetCountFromUploads(fileCount);
-  if (sheets <= 0) return null;
-  const scale = Math.min(1.12, 0.82 + fileCount * 0.1);
+  const stacked = !waiting;
+  const sheets = sheetCountFromActivity(fileCount, stacked);
+  const scale = stacked
+    ? Math.min(1.12, 0.82 + Math.max(fileCount, 1) * 0.1)
+    : 0.92;
 
   return (
     <div
-      className="paper-pile-wrap"
+      className={waiting ? "paper-pile-wrap is-waiting" : "paper-pile-wrap"}
+      data-stack={waiting ? "waiting" : "stacked"}
       data-sheet-count={sheets}
       data-files={fileCount}
       aria-hidden
     >
       <div className="paper-pile-glow" />
-      <div className="iso-drop-sheets">
-        {Array.from({ length: sheets }, (_, i) => (
+      {stacked ? (
+        <div className="iso-drop-sheets">
+          {Array.from({ length: sheets }, (_, i) => (
+            <div
+              key={`${burstId}-iso-${i}`}
+              className="iso-sheet"
+              style={
+                {
+                  "--i": String(i),
+                  animationDelay: `${i * 110}ms`,
+                } as CSSProperties
+              }
+            />
+          ))}
           <div
-            key={`${burstId}-iso-${i}`}
-            className="iso-sheet"
+            className="iso-sheet iso-sheet-top"
             style={
               {
-                "--i": String(i),
-                animationDelay: `${i * 68}ms`,
+                "--i": String(sheets),
+                animationDelay: `${sheets * 110}ms`,
               } as CSSProperties
             }
-          />
-        ))}
-        <div
-          className="iso-sheet iso-sheet-top"
-          style={
-            {
-              "--i": String(sheets),
-              animationDelay: `${sheets * 68}ms`,
-            } as CSSProperties
-          }
-        >
-          <SpreadsheetGlyph />
+          >
+            <SpreadsheetGlyph />
+          </div>
         </div>
-      </div>
+      ) : null}
       <div
-        key={burstId}
+        key={waiting ? "idle" : burstId}
         className="clay-stack"
         style={{ "--stack-scale": String(scale) } as CSSProperties}
       >
@@ -80,18 +87,22 @@ export function PaperStack({
           unoptimized
         />
       </div>
-      <Sparkle className="sparkle-1" />
-      <Sparkle className="sparkle-2" />
-      <Sparkle className="sparkle-3" />
-      <Sparkle className="sparkle-4" />
-      <span key={`burst-${burstId}`} className="sparkle-burst-group">
-        <Sparkle className="sparkle-burst sparkle-b1" />
-        <Sparkle className="sparkle-burst sparkle-b2" />
-        <Sparkle className="sparkle-burst sparkle-b3" />
-        <Sparkle className="sparkle-burst sparkle-b4" />
-        <Sparkle className="sparkle-burst sparkle-b5" />
-        <Sparkle className="sparkle-burst sparkle-b6" />
-      </span>
+      {stacked ? (
+        <>
+          <Sparkle className="sparkle-1" />
+          <Sparkle className="sparkle-2" />
+          <Sparkle className="sparkle-3" />
+          <Sparkle className="sparkle-4" />
+          <span key={`burst-${burstId}`} className="sparkle-burst-group">
+            <Sparkle className="sparkle-burst sparkle-b1" />
+            <Sparkle className="sparkle-burst sparkle-b2" />
+            <Sparkle className="sparkle-burst sparkle-b3" />
+            <Sparkle className="sparkle-burst sparkle-b4" />
+            <Sparkle className="sparkle-burst sparkle-b5" />
+            <Sparkle className="sparkle-burst sparkle-b6" />
+          </span>
+        </>
+      ) : null}
     </div>
   );
 }

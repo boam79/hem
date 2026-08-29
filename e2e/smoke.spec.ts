@@ -192,6 +192,7 @@ test("home keeps the meeting room without waiting speech bubbles", async ({
   await expect(page.locator("[data-bubble=cfo]")).toHaveCount(0);
   await expect(page.locator("[data-bubble=mkt]")).toHaveCount(0);
   await expect(page.locator("[data-bubble=md]")).toHaveCount(0);
+  await expect(page.locator("[data-stack=waiting]")).toBeVisible();
   await expect(page.locator("[data-table-prompt=true]")).toBeVisible();
   await expect(page.getByText("자료를 올려 주세요.")).toHaveCount(1);
   await expect(page.getByRole("button", { name: "토론 결과" })).toHaveCount(0);
@@ -215,6 +216,18 @@ test("file management is a dedicated menu", async ({ page }) => {
   await expect(page).toHaveURL(/\/files/);
   await expect(page.getByRole("heading", { name: "파일 관리" })).toBeVisible();
   await expect(page.locator("#metrics-file")).toBeVisible();
+});
+
+test("uploading a dummy csv stacks papers on home", async ({ page }) => {
+  await page.goto("/files");
+  await page
+    .locator("#metrics-file")
+    .setInputFiles("public/dummy/patient-and-cashflow.csv");
+  await expect(page.getByText("업로드안과(가상)")).toBeVisible();
+  await page.getByRole("link", { name: "홈에서 토론 시작" }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.locator("[data-stack=stacked]")).toBeVisible();
+  await expect(page.locator("[data-table-prompt=true]")).toHaveCount(0);
 });
 
 test("debate results live on a separate menu", async ({ page }) => {

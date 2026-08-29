@@ -7,6 +7,7 @@ import { PaperStack } from "@/components/paper-stack";
 import { PERSONAS } from "@/config/personas";
 import type { DebateCell } from "@/lib/debate";
 import {
+  paperStackMode,
   personaBubbleText,
   shouldShowPersonaBubble,
   showTableWaitingPrompt,
@@ -94,16 +95,6 @@ export function MeetingScene({
             {names?.[p.key] ?? p.name}
           </div>
         ))}
-        {showTableWaitingPrompt({
-          hasUploads,
-          loadingRound,
-          round1,
-          round2,
-        }) ? (
-          <ClayBubble className="table-waiting" data-table-prompt="true">
-            {WAITING_BUBBLE}
-          </ClayBubble>
-        ) : null}
         {PERSONAS.map((p) => {
           const opts = {
             persona: p.key,
@@ -125,7 +116,27 @@ export function MeetingScene({
           );
         })}
         <div className="paper-pile-anchor">
-          <PaperStack fileCount={fileCount} burstId={burstId} />
+          <PaperStack
+            fileCount={fileCount}
+            burstId={burstId}
+            waiting={
+              paperStackMode({
+                fileCount,
+                loadingRound,
+                round1Count: round1.length,
+              }) === "waiting"
+            }
+          />
+          {showTableWaitingPrompt({
+            hasUploads,
+            loadingRound,
+            round1,
+            round2,
+          }) ? (
+            <p className="table-waiting-label" data-table-prompt="true">
+              {WAITING_BUBBLE}
+            </p>
+          ) : null}
         </div>
         <button type="button" className="leave-meeting-btn" onClick={onLeave}>
           <LogOut className="size-3.5" strokeWidth={2.4} />

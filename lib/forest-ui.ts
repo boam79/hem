@@ -26,6 +26,25 @@ export function sheetCountFromUploads(fileCount: number): number {
   return Math.min(PAPER_STACK_CAP, 4 + fileCount * 2);
 }
 
+export function paperStackMode(opts: {
+  fileCount: number;
+  loadingRound: 0 | 1 | 2;
+  round1Count: number;
+}): "waiting" | "stacked" {
+  if (opts.fileCount > 0 || opts.loadingRound !== 0 || opts.round1Count > 0) {
+    return "stacked";
+  }
+  return "waiting";
+}
+
+export function sheetCountFromActivity(
+  fileCount: number,
+  stacked: boolean,
+): number {
+  if (fileCount > 0) return sheetCountFromUploads(fileCount);
+  return stacked ? sheetCountFromUploads(1) : 0;
+}
+
 export function truncateBubble(text: string, max = BUBBLE_MAX): string {
   const trimmed = text.trim();
   if (trimmed.length <= max) return trimmed;

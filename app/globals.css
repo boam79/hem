@@ -674,11 +674,20 @@ body {
   right: auto;
 }
 
-.table-waiting {
-  top: 53%;
+.table-waiting-label {
+  position: absolute;
+  bottom: 6%;
   left: 50%;
-  width: 12.6rem;
-  transform: translate(-50%, -42%);
+  z-index: 6;
+  margin: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 0.82rem;
+  font-weight: 750;
+  color: #24332c;
+  text-shadow:
+    0 1px 0 rgb(255 255 255 / 0.9),
+    0 6px 16px rgb(20 40 30 / 0.22);
 }
 
 .leave-meeting-btn {
@@ -701,13 +710,13 @@ body {
 
 .paper-pile-anchor {
   position: absolute;
-  top: 47%;
+  top: 49%;
   left: 50%;
   z-index: 4;
   width: 12.5rem;
   height: 15.2rem;
   pointer-events: none;
-  transform: translate(-50%, -8%);
+  transform: translate(-50%, -6%);
 }
 
 .paper-pile-wrap {
@@ -795,6 +804,18 @@ body {
   object-fit: contain;
   object-position: bottom center;
   animation: clay-rise 0.7s cubic-bezier(0.22, 1.28, 0.36, 1) 0.28s both;
+}
+
+.paper-pile-wrap.is-waiting .paper-pile-glow {
+  opacity: 0.5;
+}
+
+.paper-pile-wrap.is-waiting .clay-stack {
+  filter: drop-shadow(0 10px 16px rgb(40 30 10 / 0.18));
+}
+
+.paper-pile-wrap.is-waiting .clay-stack-art {
+  animation: clay-idle-pulse 1.8s ease-in-out infinite;
 }
 
 .sparkle {
@@ -1315,6 +1336,18 @@ body {
   }
 }
 
+@keyframes clay-idle-pulse {
+  0%,
+  100% {
+    opacity: 0.28;
+    transform: translate(-50%, 0) scale(1);
+  }
+  50% {
+    opacity: 0.72;
+    transform: translate(-50%, -4px) scale(1.04);
+  }
+}
+
 @keyframes pile-glow {
   0%,
   100% {
@@ -1404,5 +1437,9 @@ body {
   .clay-stack-art {
     opacity: 1;
     transform: translate(-50%, 0);
+  }
+
+  .paper-pile-wrap.is-waiting .clay-stack-art {
+    opacity: 0.45;
   }
 }

@@ -11,6 +11,8 @@ import {
   formatBytes,
   LOADING_BUBBLE,
   personaBubbleText,
+  paperStackMode,
+  sheetCountFromActivity,
   sheetCountFromUploads,
   shouldShowPersonaBubble,
   showTableWaitingPrompt,
@@ -33,6 +35,28 @@ describe("sheetCountFromUploads", () => {
     expect(sheetCountFromUploads(3)).toBe(10);
     expect(sheetCountFromUploads(4)).toBe(12);
     expect(sheetCountFromUploads(20)).toBe(12);
+  });
+});
+
+describe("paperStackMode", () => {
+  it("waits until a file or a debate starts", () => {
+    expect(
+      paperStackMode({ fileCount: 0, loadingRound: 0, round1Count: 0 }),
+    ).toBe("waiting");
+    expect(
+      paperStackMode({ fileCount: 1, loadingRound: 0, round1Count: 0 }),
+    ).toBe("stacked");
+    expect(
+      paperStackMode({ fileCount: 0, loadingRound: 1, round1Count: 0 }),
+    ).toBe("stacked");
+  });
+});
+
+describe("sheetCountFromActivity", () => {
+  it("uses a starter pile when debate starts without a file", () => {
+    expect(sheetCountFromActivity(0, false)).toBe(0);
+    expect(sheetCountFromActivity(0, true)).toBe(6);
+    expect(sheetCountFromActivity(2, true)).toBe(8);
   });
 });
 
