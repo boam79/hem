@@ -1,9 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import type { CSSProperties } from "react";
 import {
+  clayRevealRem,
   sheetCountFromActivity,
-  sheetOpacity,
   stackMotion,
   stackUpDurationMs,
 } from "@/lib/forest-ui";
@@ -24,6 +25,7 @@ export function PaperStack({
   const stacked = !waiting;
   const sheets = sheetCountFromActivity(fileCount, stacked);
   const motion = stackMotion(waiting);
+  const revealRem = clayRevealRem(sheets, waiting);
 
   return (
     <div
@@ -36,24 +38,20 @@ export function PaperStack({
       style={
         {
           "--stack-ms": `${stackUpDurationMs(sheets)}ms`,
+          "--reveal-h": `${revealRem}rem`,
         } as CSSProperties
       }
     >
       <div className="paper-pile-glow" />
-      <div className={waiting ? "iso-drop-sheets is-idle" : "iso-drop-sheets"}>
-        {Array.from({ length: sheets }, (_, i) => (
-          <div
-            key={waiting ? "idle-sheet" : `${burstId}-iso-${i}`}
-            className={i === 0 ? "iso-sheet is-base" : "iso-sheet"}
-            style={
-              {
-                "--i": String(i),
-                "--sheet-opacity": String(sheetOpacity(i, sheets, waiting)),
-                animationDelay: waiting || i === 0 ? "0ms" : `${i * 110}ms`,
-              } as CSSProperties
-            }
-          />
-        ))}
+      <div className="clay-reveal">
+        <Image
+          src="/clay-paper-stack.png"
+          alt=""
+          width={587}
+          height={849}
+          className="clay-stack-art"
+          unoptimized
+        />
       </div>
       {stacked ? (
         <span key={`burst-${burstId}`} className="sparkle-burst-group">

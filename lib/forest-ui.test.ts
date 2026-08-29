@@ -17,6 +17,9 @@ import {
   sheetOpacity,
   stackMotion,
   stackUpDurationMs,
+  clayRevealRem,
+  CLAY_IDLE_REM,
+  CLAY_MAX_REM,
   shouldShowPersonaBubble,
   showTableWaitingPrompt,
   spokenFromStream,
@@ -69,6 +72,14 @@ describe("sheetOpacity", () => {
     expect(sheetOpacity(0, 6, false)).toBe(1);
     expect(sheetOpacity(1, 6, false)).toBeCloseTo(0.856);
     expect(sheetOpacity(5, 6, false)).toBeCloseTo(1);
+  });
+});
+
+describe("clayRevealRem", () => {
+  it("keeps one clay plate idle and grows the pile up to a cap", () => {
+    expect(clayRevealRem(1, true)).toBe(CLAY_IDLE_REM);
+    expect(clayRevealRem(6, false)).toBeCloseTo(4.7);
+    expect(clayRevealRem(20, false)).toBe(CLAY_MAX_REM);
   });
 });
 
