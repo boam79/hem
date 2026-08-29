@@ -67,7 +67,7 @@ describe("sheetOpacity", () => {
   it("keeps the first sheet solid and densifies sheets stacked on top", () => {
     expect(sheetOpacity(0, 1, true)).toBe(1);
     expect(sheetOpacity(0, 6, false)).toBe(1);
-    expect(sheetOpacity(1, 6, false)).toBeCloseTo(0.696);
+    expect(sheetOpacity(1, 6, false)).toBeCloseTo(0.856);
     expect(sheetOpacity(5, 6, false)).toBeCloseTo(1);
   });
 });

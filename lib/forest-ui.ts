@@ -52,7 +52,7 @@ export function sheetOpacity(
   waiting: boolean,
 ): number {
   if (waiting || total <= 1 || index === 0) return 1;
-  return 0.62 + (index / (total - 1)) * 0.38;
+  return 0.82 + (index / (total - 1)) * 0.18;
 }
 
 export function stackMotion(waiting: boolean): "pulse" | "stack-up" {

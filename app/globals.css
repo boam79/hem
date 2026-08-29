@@ -644,7 +644,8 @@ body {
   width: 100%;
   height: 100%;
   overflow: visible;
-  perspective: 520px;
+  perspective: 640px;
+  transform-style: preserve-3d;
 }
 
 .paper-pile-glow {
@@ -668,11 +669,11 @@ body {
 .iso-drop-sheets {
   position: absolute;
   left: 50%;
-  bottom: 0.2rem;
+  bottom: 0.15rem;
   z-index: 2;
-  width: 4.5rem;
-  height: 4.5rem;
-  transform: translateX(-50%) rotateX(58deg) rotateZ(-16deg);
+  width: 3.6rem;
+  height: 3.6rem;
+  transform: translateX(-50%) rotateX(62deg) rotateZ(-20deg);
   transform-style: preserve-3d;
 }
 
@@ -685,24 +686,25 @@ body {
   bottom: 0;
   left: 50%;
   z-index: calc(var(--i) + 1);
-  width: 3.5rem;
-  height: 3.7rem;
-  border-radius: 0.45rem;
-  background: linear-gradient(180deg, #fffaf2 0%, #f0ddc2 100%);
+  width: 3.15rem;
+  height: 3.15rem;
+  border-radius: 0.48rem;
+  background: linear-gradient(180deg, #fffaf2 0%, #ead6b8 100%);
   box-shadow:
     inset 0 1px 0 #fff,
-    0 2px 0 #c4ae8c,
-    0 6px 10px rgb(40 28 10 / 0.28);
+    0 0 0 1px rgb(180 150 110 / 0.28),
+    0 2px 0 #c4ae8c;
   opacity: var(--sheet-opacity, 1);
-  transform: translate(-50%, calc(var(--i) * -12px));
-  animation: iso-drop 0.5s cubic-bezier(0.22, 1.28, 0.36, 1) both;
+  transform: translate3d(-50%, 0, calc(var(--i) * 8px));
+  transform-style: preserve-3d;
+  animation: iso-drop 0.48s cubic-bezier(0.22, 1.28, 0.36, 1) both;
 }
 
 .iso-sheet.is-base,
 .iso-drop-sheets.is-idle .iso-sheet {
   animation: none;
   opacity: 1;
-  transform: translate(-50%, 0);
+  transform: translate3d(-50%, 0, 0);
 }
 
 .clay-stack {
@@ -1227,15 +1229,15 @@ body {
 @keyframes iso-drop {
   0% {
     opacity: 0;
-    transform: translate(-50%, calc(var(--i) * -12px - 42px)) scale(1.08);
+    transform: translate3d(-50%, 0, calc(var(--i) * 8px + 40px)) scale(1.06);
   }
-  70% {
+  72% {
     opacity: var(--sheet-opacity, 1);
-    transform: translate(-50%, calc(var(--i) * -12px + 2px)) scale(1);
+    transform: translate3d(-50%, 0, calc(var(--i) * 8px + 2px)) scale(1);
   }
   100% {
     opacity: var(--sheet-opacity, 1);
-    transform: translate(-50%, calc(var(--i) * -12px)) scale(1);
+    transform: translate3d(-50%, 0, calc(var(--i) * 8px));
   }
 }
 
