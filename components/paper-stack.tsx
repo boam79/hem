@@ -24,9 +24,7 @@ export function PaperStack({
   const stacked = !waiting;
   const sheets = sheetCountFromActivity(fileCount, stacked);
   const motion = stackMotion(waiting);
-  const scale = stacked
-    ? Math.min(1.08, 0.9 + Math.max(fileCount, 1) * 0.08)
-    : 0.78;
+  const scale = stacked ? 0.94 : 0.9;
 
   return (
     <div
@@ -74,20 +72,11 @@ export function PaperStack({
         />
       </div>
       {stacked ? (
-        <>
-          <Sparkle className="sparkle-1" />
-          <Sparkle className="sparkle-2" />
-          <Sparkle className="sparkle-3" />
-          <Sparkle className="sparkle-4" />
-          <span key={`burst-${burstId}`} className="sparkle-burst-group">
-            <Sparkle className="sparkle-burst sparkle-b1" />
-            <Sparkle className="sparkle-burst sparkle-b2" />
-            <Sparkle className="sparkle-burst sparkle-b3" />
-            <Sparkle className="sparkle-burst sparkle-b4" />
-            <Sparkle className="sparkle-burst sparkle-b5" />
-            <Sparkle className="sparkle-burst sparkle-b6" />
-          </span>
-        </>
+        <span key={`burst-${burstId}`} className="sparkle-burst-group">
+          <Sparkle className="sparkle-burst sparkle-b1" />
+          <Sparkle className="sparkle-burst sparkle-b2" />
+          <Sparkle className="sparkle-burst sparkle-b3" />
+        </span>
       ) : null}
     </div>
   );
