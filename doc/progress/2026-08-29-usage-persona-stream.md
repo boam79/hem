@@ -17,6 +17,7 @@
 
 ## 검증
 
-- 단위: `pnpm test`
+- 단위: `pnpm test` 77
 - 빌드: `pnpm build`
-- HTTPS E2E: 설정 필드·남은 예산, 대시보드 비용, GET usage/personas, PUT 후 복구, stream 409. **유효 안건으로 토론 시작은 누르지 않음.**
+- HTTPS E2E **21 passed** (https://boardroom-six-delta.vercel.app). 설정 필드·남은 예산, 대시보드 비용, GET usage/personas, PUT 후 복구, stream 409. **유효 안건으로 토론 시작은 누르지 않음.**
+- 브라우저: 설정에서 사용량·남은 예산·페르소나 저장/기본값 복구, 대시보드 비용 패널 확인.
