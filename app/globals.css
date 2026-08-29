@@ -633,8 +633,8 @@ body {
   top: 61.5%;
   left: 50%;
   z-index: 4;
-  width: 6.2rem;
-  height: 4.5rem;
+  width: 5.8rem;
+  height: 6.6rem;
   pointer-events: none;
   transform: translate(-50%, -100%);
 }
@@ -698,7 +698,7 @@ body {
   left: 0;
   z-index: 3;
   height: 100%;
-  overflow: hidden;
+  overflow: visible;
   transform-origin: center bottom;
   transform: scale(var(--stack-scale, 1));
   filter: drop-shadow(5px 8px 6px rgb(46 28 10 / 0.4));
@@ -706,13 +706,15 @@ body {
 
 .clay-stack-art {
   position: absolute;
-  bottom: -8%;
+  bottom: 0;
   left: 50%;
   display: block;
-  width: 128%;
-  height: 235%;
+  width: auto;
+  height: 100%;
+  max-width: 100%;
   object-fit: contain;
   object-position: bottom center;
+  transform: translate(-50%, 0);
   filter: sepia(1) saturate(0.62) brightness(0.8) contrast(0.9);
 }
 
@@ -1244,16 +1246,13 @@ body {
 
 @keyframes clay-stack-up {
   0% {
-    clip-path: inset(72% 18% 0 16%);
     opacity: 0.4;
     transform: translate(-50%, 10px) scale(0.86);
   }
   40% {
-    clip-path: inset(38% 10% 0 10%);
     opacity: 0.85;
   }
   100% {
-    clip-path: inset(0 0 0 0);
     opacity: 1;
     transform: translate(-50%, 0) scale(1);
   }
