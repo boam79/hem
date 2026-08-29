@@ -20,5 +20,6 @@
 | [progress/2026-08-28-ac-audit.md](progress/2026-08-28-ac-audit.md) | PRD F1–F6·W1–W4 감사표와 5안건 1회 실측 |
 | [progress/2026-08-28-w3-close.md](progress/2026-08-28-w3-close.md) | W3 keepalive·eval **50/50** HTTPS |
 | [progress/2026-08-29-metrics-upload.md](progress/2026-08-29-metrics-upload.md) | 엑셀·CSV 지표 업로드와 더미 재무·환자통계 |
+| [progress/2026-08-29-forest-ui-02.md](progress/2026-08-29-forest-ui-02.md) | 홈을 02 포레스트 병원 회의실 UI로 (종이더미·스파클) |
 
 루트 `PRD.md`는 여기로 가는 포인터다.

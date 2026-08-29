@@ -1,0 +1,154 @@
+import { describe, expect, it } from "vitest";
+import type { DebateCell } from "@/lib/debate";
+import {
+  BUBBLE_MAX,
+  fileKind,
+  formatBytes,
+  LOADING_BUBBLE,
+  personaBubbleText,
+  sheetCountFromUploads,
+  timelineStates,
+  truncateBubble,
+  UPLOAD_BUBBLES,
+  WAITING_BUBBLE,
+} from "@/lib/forest-ui";
+
+describe("sheetCountFromUploads", () => {
+  it("is empty until a file lands", () => {
+    expect(sheetCountFromUploads(0)).toBe(0);
+    expect(sheetCountFromUploads(-1)).toBe(0);
+  });
+
+  it("grows with each file and caps at 12", () => {
+    expect(sheetCountFromUploads(1)).toBe(6);
+    expect(sheetCountFromUploads(2)).toBe(8);
+    expect(sheetCountFromUploads(3)).toBe(10);
+    expect(sheetCountFromUploads(4)).toBe(12);
+    expect(sheetCountFromUploads(20)).toBe(12);
+  });
+});
+
+describe("personaBubbleText", () => {
+  const empty: DebateCell[] = [];
+
+  it("asks for files before upload", () => {
+    expect(
+      personaBubbleText({
+        persona: "cfo",
+        hasUploads: false,
+        loadingRound: 0,
+        round1: empty,
+        round2: empty,
+      }),
+    ).toBe(WAITING_BUBBLE);
+  });
+
+  it("uses the upload lines after a successful parse", () => {
+    expect(
+      personaBubbleText({
+        persona: "cfo",
+        hasUploads: true,
+        loadingRound: 0,
+        round1: empty,
+        round2: empty,
+      }),
+    ).toBe(UPLOAD_BUBBLES.cfo);
+    expect(
+      personaBubbleText({
+        persona: "mkt",
+        hasUploads: true,
+        loadingRound: 0,
+        round1: empty,
+        round2: empty,
+      }),
+    ).toBe(UPLOAD_BUBBLES.mkt);
+    expect(
+      personaBubbleText({
+        persona: "md",
+        hasUploads: true,
+        loadingRound: 0,
+        round1: empty,
+        round2: empty,
+      }),
+    ).toBe(UPLOAD_BUBBLES.md);
+  });
+
+  it("shows loading during round 1", () => {
+    expect(
+      personaBubbleText({
+        persona: "md",
+        hasUploads: true,
+        loadingRound: 1,
+        round1: empty,
+        round2: empty,
+      }),
+    ).toBe(LOADING_BUBBLE);
+  });
+
+  it("truncates debate positions to 80 characters", () => {
+    const long = "가".repeat(90);
+    const cell: DebateCell = {
+      persona: "cfo",
+      provider: "anthropic",
+      status: "ok",
+      payload: {
+        position: long,
+        evidence: ["x"],
+        risks: [],
+        needs_data: [],
+      },
+    };
+    const text = personaBubbleText({
+      persona: "cfo",
+      hasUploads: true,
+      loadingRound: 0,
+      round1: [cell],
+      round2: empty,
+    });
+    expect(text.endsWith("…")).toBe(true);
+    expect(text.length).toBe(BUBBLE_MAX + 1);
+    expect(truncateBubble(long).length).toBe(BUBBLE_MAX + 1);
+  });
+});
+
+describe("timelineStates", () => {
+  it("checks upload after files, review while round 1, result after session", () => {
+    expect(
+      timelineStates({
+        hasUploads: true,
+        loadingRound: 1,
+        round1Count: 0,
+        round2Count: 0,
+        sessionId: "abc",
+      }).upload,
+    ).toBe("done");
+    expect(
+      timelineStates({
+        hasUploads: true,
+        loadingRound: 0,
+        round1Count: 0,
+        round2Count: 0,
+        sessionId: null,
+      }).review,
+    ).toBe("active");
+    expect(
+      timelineStates({
+        hasUploads: true,
+        loadingRound: 0,
+        round1Count: 3,
+        round2Count: 3,
+        sessionId: "abc",
+      }).result,
+    ).toBe("done");
+  });
+});
+
+describe("file helpers", () => {
+  it("classifies csv vs xlsx and formats sizes", () => {
+    expect(fileKind("a.CSV")).toBe("csv");
+    expect(fileKind("b.xlsx")).toBe("xlsx");
+    expect(formatBytes(800)).toBe("800B");
+    expect(formatBytes(2048)).toBe("2.0KB");
+    expect(formatBytes(12_288)).toBe("12KB");
+  });
+});

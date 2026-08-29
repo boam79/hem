@@ -157,6 +157,9 @@ test("home has csv/xlsx upload and dummy links", async ({ page }) => {
   await expect(
     page.getByRole("link", { name: "엑셀" }),
   ).toHaveAttribute("href", "/dummy/patient-and-cashflow.xlsx");
+  await expect(page.getByText("포레스트 병원").first()).toBeVisible();
+  await expect(page.getByRole("button", { name: "파일 선택" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "회의 나가기" })).toBeVisible();
 });
 
 test("metrics parse accepts dummy csv with cashflow and patient stats", async ({
