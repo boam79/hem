@@ -26,7 +26,7 @@ R2 실측: `doc/progress/2026-08-28-round2-json.md`
 AC 감사: `doc/progress/2026-08-28-ac-audit.md`
 Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
 현재(Executor): 엑셀·CSV 지표 업로드 완료. 더미 HTTPS 세션 `dohUks` R1·R2 ok=3.
-2026-08-29 홈 02 UI: `doc/progress/2026-08-29-forest-ui-02.md`. 글자 메뉴 사이드바, 여우 회의실, 흰 종이산+스파클. 단위 61 · build 통과. HTTPS E2E는 배포 후.
+2026-08-29 홈 02 UI: `doc/progress/2026-08-29-forest-ui-02.md`. HTTPS E2E 15. 배포 https://boardroom-six-delta.vercel.app
 
 ## Project Status Board
 
@@ -44,7 +44,7 @@ Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
 - [x] 엑셀·CSV 지표 업로드 — 더미 재무흐름·환자통계. HTTPS `dohUks` R1·R2 ok=3
 - [x] keepalive 주 2회 — 스케줄 `0 3 * * 1,4`. HTTPS POST 12:12:22Z, Vercel Cron 12:16:07Z. GH Actions 시크릿은 사용자 몫.
 - [x] 제한 429 HTTPS — 세션 POST만, 라운드 없음. `rate_limited` 429 (이번 턴 재확인).
-- [ ] 홈 UI를 `doc/design/02.png`와 같게 (민트 셸 + 회의실 + 업로드 종이더미·스파클). 로컬에서 업로드·말풍선·더미·스파클 확인. 완료 체크는 사용자 확인 + HTTPS E2E.
+- [x] 홈 UI를 `doc/design/02.png`와 같게 (민트 셸 + 회의실 + 업로드 종이더미·스파클). HTTPS E2E 15. 배포 https://boardroom-six-delta.vercel.app
 
 ## Executor's Feedback or Assistance Requests
 
