@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type ChangeEvent, type DragEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from "react";
 import { CloudUpload } from "lucide-react";
 import { DebateGlance } from "@/components/debate-glance";
 import { Disclaimer } from "@/components/disclaimer";
@@ -30,7 +30,8 @@ import {
   type UploadedMetricsFile,
 } from "@/lib/forest-ui";
 import { rememberSession } from "@/lib/recent-sessions";
-import type { Category } from "@/lib/schema";
+import { readRoundTurns } from "@/lib/round-client";
+import type { Category, PersonaKey } from "@/lib/schema";
 
 const CATEGORIES: { value: Category; label: string }[] = [
   { value: "investment", label: "투자" },
@@ -54,6 +55,12 @@ export default function Home() {
   const [round1Ms, setRound1Ms] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [resultsOpen, setResultsOpen] = useState(true);
+  const [streamPreview, setStreamPreview] = useState<
+    Partial<Record<PersonaKey, string>>
+  >({});
+  const [personaNames, setPersonaNames] = useState<
+    Partial<Record<PersonaKey, string>>
+  >({});
   const runId = useRef(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const clientAgendaError = agendaError(agenda);
@@ -63,6 +70,19 @@ export default function Home() {
     round2.length > 0 || loadingRound === 2 ? 2 : 1;
   const showResults =
     loadingRound !== 0 || round1.length > 0 || Boolean(sessionId);
+
+  useEffect(() => {
+    void fetch("/api/personas")
+      .then((res) => res.json())
+      .then((json: { personas?: { key: PersonaKey; name: string }[] }) => {
+        const map: Partial<Record<PersonaKey, string>> = {};
+        for (const persona of json.personas ?? []) {
+          map[persona.key] = persona.name;
+        }
+        setPersonaNames(map);
+      })
+      .catch(() => undefined);
+  }, []);
 
   async function parseMetricsFile(file: File) {
     setError(null);
@@ -112,6 +132,7 @@ export default function Home() {
     setRound2([]);
     setRound1Ms(null);
     setResultsOpen(true);
+    setStreamPreview({});
     setLoadingRound(1);
     try {
       const s = await fetch("/api/session", {
@@ -131,37 +152,47 @@ export default function Home() {
       setSessionId(sj.id);
       rememberSession(sj.id, agenda.trim());
       const r1Started = performance.now();
-      const r1 = await fetch("/api/round", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId: sj.id, round: 1 }),
-      });
+      const r1Turns = await readRoundTurns(
+        sj.id,
+        1,
+        (persona, text) => {
+          if (runId.current !== my) return;
+          setStreamPreview((prev) => ({
+            ...prev,
+            [persona]: `${prev[persona as PersonaKey] ?? ""}${text}`,
+          }));
+        },
+        () => runId.current === my,
+      );
       const r1Ms = Math.round(performance.now() - r1Started);
       if (runId.current !== my) return;
       setRound1Ms(r1Ms);
-      const r1j = await r1.json();
-      if (!r1.ok) throw new Error(apiErrorMessage(r1j));
-      setRound1(r1j.turns);
+      setRound1(r1Turns);
+      setStreamPreview({});
       setLoadingRound(2);
-      const r2 = await fetch("/api/round", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId: sj.id, round: 2 }),
-      });
-      const r2j = await r2.json();
+      const r2Turns = await readRoundTurns(
+        sj.id,
+        2,
+        (persona, text) => {
+          if (runId.current !== my) return;
+          setStreamPreview((prev) => ({
+            ...prev,
+            [persona]: `${prev[persona as PersonaKey] ?? ""}${text}`,
+          }));
+        },
+        () => runId.current === my,
+      );
       if (runId.current !== my) return;
-      if (r2.status === 422) {
-        setError(apiErrorMessage(r2j));
-        setRound2([]);
-        return;
-      }
-      if (!r2.ok) throw new Error(apiErrorMessage(r2j));
-      setRound2(r2j.turns);
+      setRound2(r2Turns);
     } catch (e) {
       if (runId.current !== my) return;
+      if (e instanceof Error && e.message === "aborted") return;
       setError(e instanceof Error ? e.message : "실패");
     } finally {
-      if (runId.current === my) setLoadingRound(0);
+      if (runId.current === my) {
+        setStreamPreview({});
+        setLoadingRound(0);
+      }
     }
   }
 
@@ -172,6 +203,7 @@ export default function Home() {
     setRound2([]);
     setRound1Ms(null);
     setLoadingRound(0);
+    setStreamPreview({});
     setMetrics(null);
     setMetricsLabel(null);
     setUploads([]);
@@ -378,6 +410,8 @@ export default function Home() {
         loadingRound={loadingRound}
         round1={round1}
         round2={round2}
+        names={personaNames}
+        streamPreview={streamPreview}
         onLeave={leaveMeeting}
       />
     </ForestShell>

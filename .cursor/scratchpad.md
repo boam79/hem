@@ -8,7 +8,7 @@
 진행 문서: `doc/`
 PRD AC 감사: `doc/progress/2026-08-28-prd-final-audit.md`
 
-2026-08-29: 대시보드·의사결정·설정에 실제 기능을 넣고, 안건·유형을 업로드 위로, 토론 R1·R2를 한눈에 보이게 한다. 완료는 Planner가 표시한다.
+2026-08-29: 설정에서 API 사용량·남은 예산, 페르소나 편집, 비용 대시보드, 홈 토큰 스트리밍을 넣는다. 완료는 Planner가 표시한다.
 
 ## Key Challenges and Analysis
 
@@ -45,7 +45,7 @@ Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
 - [x] keepalive 주 2회 — 스케줄 `0 3 * * 1,4`. HTTPS POST 12:12:22Z, Vercel Cron 12:16:07Z. GH Actions 시크릿은 사용자 몫.
 - [x] 제한 429 HTTPS — 세션 POST만, 라운드 없음. `rate_limited` 429 (이번 턴 재확인).
 - [x] 홈 UI를 `doc/design/02.png`와 같게 (민트 셸 + 회의실 + 업로드 종이더미·스파클). HTTPS E2E 15. 배포 https://boardroom-six-delta.vercel.app
-- [x] 안건·유형을 파일 업로드 위로. 토론 R1·R2 한눈 압축. 대시보드·의사결정·설정 실페이지. HTTPS E2E 18. 배포 https://boardroom-six-delta.vercel.app
+- [ ] 설정 사용량·잔여, 페르소나 편집, 비용 대시보드, 홈 토큰 스트리밍. HTTPS E2E·배포 검증 전.
 
 ## Executor's Feedback or Assistance Requests
 
@@ -60,6 +60,8 @@ Haiku R2 재시도 수정 후(`ba66843`): `cA_9I2` `4e4XEM` `NQSmdi` — 세 세
 2026-08-29 Forest UI: `app/page.tsx`가 `ForestShell` + `MeetingScene` + `PaperStack`을 연결. 기존 POST `/api/metrics/parse` · `/api/session` · `/api/round` 유지. E2E 셀렉터(`#agenda`, `#metrics-file`, `토론 시작`, 디스클레이머, CSV/엑셀 더미 링크, 안건 10–200자) 로컬에서 확인. 커밋·푸시·배포는 하지 않음. HTTPS 스모크는 배포 후.
 
 2026-08-29 메뉴·한눈: `/dashboard` health+최근세션, `/decision` 메모, `/settings` 읽기전용 페르소나. 홈 토론은 `DebateGlance`. 공유 `/s/[id]`는 기존 그리드. 실토론 버튼은 E2E에서 누르지 않음. HTTPS E2E 18.
+
+2026-08-29 사용량·페르소나·스트리밍: `/api/usage` 월 집계+예산 잔여, `persona_overrides`로 이름·역할·습관·temperature 편집(프로바이더 고정), 홈은 `/api/round/stream` SSE. 계정 잔액 API는 키만으로 불가 → 콘솔 링크. 실토론 버튼은 E2E에서 누르지 않음. 배포·HTTPS E2E는 이어서.
 
 ## Lessons
 

@@ -78,6 +78,19 @@ describe("personaBubbleText", () => {
     ).toBe(UPLOAD_BUBBLES.md);
   });
 
+  it("shows streamed tokens while a round is running", () => {
+    expect(
+      personaBubbleText({
+        persona: "cfo",
+        hasUploads: true,
+        loadingRound: 1,
+        round1: [],
+        round2: [],
+        streamPreview: "보류. 회수기간을 먼저",
+      }),
+    ).toBe("보류. 회수기간을 먼저");
+  });
+
   it("shows loading during round 1", () => {
     expect(
       personaBubbleText({

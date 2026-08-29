@@ -108,8 +108,13 @@ export function personaBubbleText(opts: {
   loadingRound: 0 | 1 | 2;
   round1: DebateCell[];
   round2: DebateCell[];
+  streamPreview?: string;
 }): string {
-  const { persona, hasUploads, loadingRound, round1, round2 } = opts;
+  const { persona, hasUploads, loadingRound, round1, round2, streamPreview } =
+    opts;
+  if (loadingRound !== 0 && streamPreview?.trim()) {
+    return truncateBubble(streamPreview);
+  }
   if (loadingRound === 1) return LOADING_BUBBLE;
   const position = latestPosition(persona, round1, round2);
   if (position) return truncateBubble(position);

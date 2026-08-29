@@ -28,6 +28,8 @@ export function MeetingScene({
   loadingRound,
   round1,
   round2,
+  names,
+  streamPreview,
   onLeave,
 }: {
   compact?: boolean;
@@ -37,6 +39,8 @@ export function MeetingScene({
   loadingRound: 0 | 1 | 2;
   round1: DebateCell[];
   round2: DebateCell[];
+  names?: Partial<Record<PersonaKey, string>>;
+  streamPreview?: Partial<Record<PersonaKey, string>>;
   onLeave: () => void;
 }) {
   return (
@@ -53,7 +57,7 @@ export function MeetingScene({
         />
         {PERSONAS.map((p) => (
           <div key={`name-${p.key}`} className={`char-name ${NAME_SLOT[p.key]}`}>
-            {p.name}
+            {names?.[p.key] ?? p.name}
           </div>
         ))}
         {PERSONAS.map((p) => (
@@ -67,6 +71,7 @@ export function MeetingScene({
               loadingRound,
               round1,
               round2,
+              streamPreview: streamPreview?.[p.key],
             })}
           </div>
         ))}

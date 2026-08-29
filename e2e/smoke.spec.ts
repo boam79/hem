@@ -185,6 +185,8 @@ test("dashboard decision and settings menus open real pages", async ({
   await expect(page).toHaveURL(/\/dashboard/);
   await expect(page.getByRole("heading", { name: "대시보드" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "연결 상태" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "비용 대시보드" })).toBeVisible();
+  await expect(page.getByText("남은 예산").first()).toBeVisible();
   await expect(page.getByText("Anthropic (재무이사)")).toBeVisible();
   await expect(page.getByText("연결됨").first()).toBeVisible();
 
@@ -196,10 +198,16 @@ test("dashboard decision and settings menus open real pages", async ({
   await menu.getByRole("link", { name: "설정" }).click();
   await expect(page).toHaveURL(/\/settings/);
   await expect(page.getByRole("heading", { name: "설정" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "재무이사" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "페르소나 편집" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "비용 대시보드" })).toBeVisible();
+  await expect(page.getByText("남은 예산").first()).toBeVisible();
+  await expect(page.locator("#persona-name-cfo")).toBeVisible();
+  await expect(page.locator("#persona-role-cfo")).toBeVisible();
+  await expect(page.locator("#monthly-budget")).toBeVisible();
+  await expect(page.getByRole("link", { name: "콘솔" }).first()).toBeVisible();
   await expect(
     page.getByText("페르소나 편집 UI는 MVP 범위 밖입니다"),
-  ).toBeVisible();
+  ).toHaveCount(0);
 });
 
 test("decision page shows a compact two-round glance for a saved session", async ({
@@ -248,4 +256,80 @@ test("keepalive without secret is 401", async ({ request }) => {
   expect(post.status()).toBe(401);
   const get = await request.get("/api/keepalive");
   expect(get.status()).toBe(401);
+});
+
+test("usage API reports monthly spend and remaining budget", async ({
+  request,
+}) => {
+  const res = await request.get("/api/usage");
+  expect(res.ok()).toBeTruthy();
+  const body = await res.json();
+  expect(typeof body.month).toBe("string");
+  expect(typeof body.budgetUsd).toBe("number");
+  expect(typeof body.spentUsd).toBe("number");
+  expect(typeof body.remainingUsd).toBe("number");
+  expect(body.byPersona).toHaveLength(3);
+  const same = await request.patch("/api/usage", {
+    data: { monthlyBudgetUsd: body.budgetUsd },
+  });
+  expect(same.ok()).toBeTruthy();
+});
+
+test("personas API round-trips an edit then restores", async ({ request }) => {
+  const get = await request.get("/api/personas");
+  expect(get.ok()).toBeTruthy();
+  const original = await get.json();
+  expect(original.personas).toHaveLength(3);
+  const snapshot = original.personas.map(
+    (p: {
+      key: string;
+      name: string;
+      role: string;
+      habits: string;
+      temperature: number;
+      provider: string;
+    }) => ({
+      key: p.key,
+      name: p.name,
+      role: p.role,
+      habits: p.habits,
+      temperature: p.temperature,
+    }),
+  );
+  expect(new Set(original.personas.map((p: { provider: string }) => p.provider)).size).toBe(
+    3,
+  );
+  const edited = snapshot.map(
+    (p: { key: string; name: string; role: string; habits: string; temperature: number }) =>
+      p.key === "cfo" ? { ...p, name: "테스트재무" } : p,
+  );
+  try {
+    const put = await request.put("/api/personas", {
+      data: { personas: edited },
+    });
+    expect(put.ok()).toBeTruthy();
+    const after = await (await request.get("/api/personas")).json();
+    expect(after.personas.find((p: { key: string }) => p.key === "cfo").name).toBe(
+      "테스트재무",
+    );
+    expect(
+      after.personas.find((p: { key: string }) => p.key === "cfo").provider,
+    ).toBe("anthropic");
+  } finally {
+    const restore = await request.put("/api/personas", {
+      data: { personas: snapshot },
+    });
+    expect(restore.ok()).toBeTruthy();
+  }
+});
+
+test("round stream on a finished session is an SSE error, not a new LLM call", async ({
+  request,
+}) => {
+  const res = await request.post("/api/round/stream", {
+    data: { sessionId: "uE7m2G", round: 1 },
+  });
+  expect(res.headers()["content-type"] ?? "").toContain("text/event-stream");
+  const text = await res.text();
+  expect(text).toContain("round_already_run");
 });

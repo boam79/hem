@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ForestFrame, ForestPageNote } from "@/components/forest-shell";
+import { CostPanel } from "@/components/cost-panel";
 import { DEMO_SHARE_ID } from "@/lib/debate";
 import { readRecentSessions, type RecentSession } from "@/lib/recent-sessions";
 
@@ -39,11 +40,11 @@ export default function DashboardPage() {
   return (
     <ForestFrame
       title="대시보드"
-      subtitle="연결 상태와 이 브라우저에서 연 최근 회의를 봅니다."
+      subtitle="연결 상태, 이번 달 비용, 이 브라우저에서 연 최근 회의를 봅니다."
       sidebar={
         <ForestPageNote>
-          비용 대시보드와 로그인 통계는 MVP에 없습니다. 여기서는 키 연결
-          여부와 최근 세션만 확인합니다.
+          이번 달 Boardroom 호출의 추정 비용과 남은 예산을 봅니다. 계정
+          잔액은 각 사 콘솔, 예산 변경은 설정입니다.
         </ForestPageNote>
       }
     >
@@ -64,6 +65,7 @@ export default function DashboardPage() {
           ))}
         </ul>
       </section>
+      <CostPanel />
       <section className="forest-panel">
         <h2 className="forest-panel-title">최근 회의</h2>
         {recent.length === 0 ? (

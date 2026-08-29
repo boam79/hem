@@ -1,4 +1,4 @@
-import { generateText, Output } from "ai";
+import { generateText, streamText, Output } from "ai";
 import { anthropic } from "@ai-sdk/anthropic";
 import { openai } from "@ai-sdk/openai";
 import { google } from "@ai-sdk/google";
@@ -48,6 +48,8 @@ type OnceOk = {
   usage: { input: number; output: number };
 };
 
+export type PersonaDeltaHandler = (delta: string) => void;
+
 function usageOf(usage: { inputTokens?: number; outputTokens?: number } | undefined) {
   return {
     input: usage?.inputTokens ?? 0,
@@ -62,6 +64,7 @@ async function once(
   temperature: number,
   round: 1 | 2,
   abortMs: number,
+  onDelta?: PersonaDeltaHandler,
 ): Promise<OnceOk> {
   const t0 = Date.now();
   const options = callOptions(p, temperature);
@@ -70,15 +73,54 @@ async function once(
     round === 2
       ? `${system}\n${round2SystemHint(p.provider)}\n${jsonOnlySuffix(2)}`
       : system;
+  const common = {
+    model: modelFor(p),
+    system: firstSystem,
+    prompt: user,
+    maxOutputTokens: MAX_OUTPUT_TOKENS,
+    ...options,
+  };
   try {
+    if (onDelta) {
+      const result = streamText({
+        ...common,
+        output: Output.object({ schema: llmSchema, name: "turn" }),
+        abortSignal: AbortSignal.timeout(structuredAbortMs(abortMs)),
+      });
+      let text = "";
+      for await (const delta of result.textStream) {
+        text += delta;
+        onDelta(delta);
+      }
+      try {
+        const output = await result.output;
+        const usage = await result.usage;
+        return {
+          output: parseTurnPayload(output, round),
+          latencyMs: Date.now() - t0,
+          usage: usageOf(usage),
+        };
+      } catch (err) {
+        if (text.includes("{")) {
+          let usage;
+          try {
+            usage = usageOf(await result.usage);
+          } catch {
+            usage = usageOf(undefined);
+          }
+          return {
+            output: parseTurnPayload(extractJsonObject(text), round),
+            latencyMs: Date.now() - t0,
+            usage,
+          };
+        }
+        throw err;
+      }
+    }
     const { output, usage } = await generateText({
-      model: modelFor(p),
-      system: firstSystem,
-      prompt: user,
+      ...common,
       output: Output.object({ schema: llmSchema, name: "turn" }),
-      maxOutputTokens: MAX_OUTPUT_TOKENS,
       abortSignal: AbortSignal.timeout(structuredAbortMs(abortMs)),
-      ...options,
     });
     return {
       output: parseTurnPayload(output, round),
@@ -128,10 +170,19 @@ export async function callPersona(
   system: string,
   user: string,
   round: 1 | 2,
+  onDelta?: PersonaDeltaHandler,
 ): Promise<PersonaCallResult> {
   const budgetStart = Date.now();
   try {
-    const first = await once(p, system, user, p.temperature, round, PERSONA_ABORT_MS);
+    const first = await once(
+      p,
+      system,
+      user,
+      p.temperature,
+      round,
+      PERSONA_ABORT_MS,
+      onDelta,
+    );
     return {
       status: "ok",
       payload: first.output,

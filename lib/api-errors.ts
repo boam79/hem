@@ -12,6 +12,8 @@ const MESSAGES: Record<string, string> = {
   round1_insufficient:
     "라운드 1 성공 셀이 2개 미만이라 라운드 2를 건너뜁니다.",
   not_found: "세션을 찾을 수 없습니다.",
+  round_failed: "라운드를 실행하지 못했습니다.",
+  providers_must_differ: "세 페르소나의 프로바이더는 서로 달라야 합니다.",
 };
 
 export function apiErrorMessage(
