@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import Image from "next/image";
 import { LogOut } from "lucide-react";
 import { PaperStack } from "@/components/paper-stack";
@@ -24,6 +25,36 @@ const NAME_SLOT: Record<PersonaKey, string> = {
   mkt: "name-mkt",
   md: "name-md",
 };
+
+function ClayBubble({
+  className,
+  children,
+  "data-bubble": dataBubble,
+  "data-table-prompt": dataTablePrompt,
+}: {
+  className: string;
+  children: ReactNode;
+  "data-bubble"?: PersonaKey;
+  "data-table-prompt"?: "true";
+}) {
+  return (
+    <div
+      className={`clay-bubble ${className}`}
+      data-bubble={dataBubble}
+      data-table-prompt={dataTablePrompt}
+    >
+      <Image
+        src="/clay-speech-bubble.png"
+        alt=""
+        fill
+        sizes="280px"
+        className="clay-bubble-art"
+        unoptimized
+      />
+      <span className="clay-bubble-text">{children}</span>
+    </div>
+  );
+}
 
 export function MeetingScene({
   fileCount,
@@ -69,9 +100,9 @@ export function MeetingScene({
           round1,
           round2,
         }) ? (
-          <div className="table-waiting" data-table-prompt="true">
+          <ClayBubble className="table-waiting" data-table-prompt="true">
             {WAITING_BUBBLE}
-          </div>
+          </ClayBubble>
         ) : null}
         {PERSONAS.map((p) => {
           const opts = {
@@ -84,13 +115,13 @@ export function MeetingScene({
           };
           if (!shouldShowPersonaBubble(opts)) return null;
           return (
-            <div
+            <ClayBubble
               key={`bubble-${p.key}`}
               className={`speech-bubble ${BUBBLE_SLOT[p.key]}`}
               data-bubble={p.key}
             >
               {personaBubbleText(opts)}
-            </div>
+            </ClayBubble>
           );
         })}
         <div className="paper-pile-anchor">

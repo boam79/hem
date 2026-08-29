@@ -591,65 +591,57 @@ body {
   object-position: center center;
 }
 
-.speech-bubble {
+.clay-bubble {
   position: absolute;
   z-index: 6;
-  max-width: 16rem;
-  border-radius: 16px;
-  background: #fff;
-  padding: 0.6rem 0.9rem;
-  font-size: 0.78rem;
-  font-weight: 650;
-  line-height: 1.45;
-  color: #24332c;
-  box-shadow: 0 8px 22px rgb(20 40 30 / 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 13.8rem;
+  aspect-ratio: 1266 / 911;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  pointer-events: none;
 }
 
-.speech-bubble::after {
-  content: "";
-  position: absolute;
-  width: 0.7rem;
-  height: 0.7rem;
-  background: #fff;
-  transform: rotate(45deg);
+.clay-bubble-art {
+  z-index: 0;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.clay-bubble-text {
+  position: relative;
+  z-index: 1;
+  max-width: 72%;
+  padding: 0 0.15rem 0.85rem;
+  text-align: center;
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #3b3428;
+}
+
+.speech-bubble {
+  width: 15.4rem;
 }
 
 .bubble-cfo {
-  top: 24%;
-  left: 11%;
-  background: #fff7ea;
-}
-
-.bubble-cfo::after {
-  bottom: -0.28rem;
-  left: 1.6rem;
-  background: #fff7ea;
+  top: 16%;
+  left: 7%;
 }
 
 .bubble-mkt {
-  top: 8%;
+  top: 3.5%;
   left: 50%;
   transform: translateX(-50%);
-  background: #e9f8f0;
-}
-
-.bubble-mkt::after {
-  bottom: -0.28rem;
-  left: 50%;
-  margin-left: -0.35rem;
-  background: #e9f8f0;
 }
 
 .bubble-md {
-  top: 22%;
-  right: 9%;
+  top: 14.5%;
+  right: 5%;
   left: auto;
-  background: #fff;
-}
-
-.bubble-md::after {
-  right: 1.8rem;
-  bottom: -0.28rem;
 }
 
 .char-name {
@@ -683,21 +675,10 @@ body {
 }
 
 .table-waiting {
-  position: absolute;
-  top: 56%;
+  top: 53%;
   left: 50%;
-  z-index: 6;
-  max-width: 11.5rem;
-  transform: translate(-50%, -50%);
-  border-radius: 16px;
-  background: rgb(255 255 255 / 0.96);
-  padding: 0.7rem 1rem;
-  text-align: center;
-  font-size: 0.82rem;
-  font-weight: 700;
-  line-height: 1.4;
-  color: #24332c;
-  box-shadow: 0 10px 24px rgb(20 40 30 / 0.16);
+  width: 12.6rem;
+  transform: translate(-50%, -42%);
 }
 
 .leave-meeting-btn {
@@ -1397,9 +1378,12 @@ body {
     grid-template-columns: 1fr;
   }
 
-  .speech-bubble {
-    max-width: 42%;
-    font-size: 0.64rem;
+  .clay-bubble {
+    width: 38%;
+  }
+
+  .clay-bubble-text {
+    font-size: 0.62rem;
   }
 
   .debate-glance,
