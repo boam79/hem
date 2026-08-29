@@ -193,6 +193,7 @@ test("home keeps the meeting room without waiting speech bubbles", async ({
   await expect(page.locator("[data-bubble=mkt]")).toHaveCount(0);
   await expect(page.locator("[data-bubble=md]")).toHaveCount(0);
   await expect(page.locator("[data-stack=waiting]")).toBeVisible();
+  await expect(page.locator("[data-motion=pulse]")).toBeVisible();
   await expect(page.locator("[data-table-prompt=true]")).toBeVisible();
   await expect(page.getByText("자료를 올려 주세요.")).toHaveCount(1);
   await expect(page.getByRole("button", { name: "토론 결과" })).toHaveCount(0);
@@ -227,6 +228,7 @@ test("uploading a dummy csv stacks papers on home", async ({ page }) => {
   await page.getByRole("link", { name: "홈에서 토론 시작" }).click();
   await expect(page).toHaveURL(/\/$/);
   await expect(page.locator("[data-stack=stacked]")).toBeVisible();
+  await expect(page.locator("[data-motion=stack-up]")).toBeVisible();
   await expect(page.locator("[data-table-prompt=true]")).toHaveCount(0);
 });
 

@@ -2,24 +2,14 @@
 
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { sheetCountFromActivity } from "@/lib/forest-ui";
+import {
+  sheetCountFromActivity,
+  stackMotion,
+  stackUpDurationMs,
+} from "@/lib/forest-ui";
 
 function Sparkle({ className }: { className: string }) {
   return <span className={`sparkle ${className}`} />;
-}
-
-function SpreadsheetGlyph() {
-  return (
-    <svg viewBox="0 0 32 32" className="iso-top-icon" aria-hidden>
-      <rect width="32" height="32" rx="8" fill="#3DCC8A" />
-      <path
-        d="M9 11h14M9 16h14M9 21h14M14 9v14"
-        stroke="#fff"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
 }
 
 export function PaperStack({
@@ -33,17 +23,25 @@ export function PaperStack({
 }) {
   const stacked = !waiting;
   const sheets = sheetCountFromActivity(fileCount, stacked);
+  const motion = stackMotion(waiting);
   const scale = stacked
-    ? Math.min(1.12, 0.82 + Math.max(fileCount, 1) * 0.1)
-    : 0.92;
+    ? Math.min(1.08, 0.9 + Math.max(fileCount, 1) * 0.08)
+    : 0.78;
 
   return (
     <div
       className={waiting ? "paper-pile-wrap is-waiting" : "paper-pile-wrap"}
       data-stack={waiting ? "waiting" : "stacked"}
+      data-motion={motion}
       data-sheet-count={sheets}
       data-files={fileCount}
       aria-hidden
+      style={
+        {
+          "--stack-scale": String(scale),
+          "--stack-ms": `${stackUpDurationMs(sheets)}ms`,
+        } as CSSProperties
+      }
     >
       <div className="paper-pile-glow" />
       {stacked ? (
@@ -55,28 +53,16 @@ export function PaperStack({
               style={
                 {
                   "--i": String(i),
-                  animationDelay: `${i * 110}ms`,
+                  animationDelay: `${i * 90}ms`,
                 } as CSSProperties
               }
             />
           ))}
-          <div
-            className="iso-sheet iso-sheet-top"
-            style={
-              {
-                "--i": String(sheets),
-                animationDelay: `${sheets * 110}ms`,
-              } as CSSProperties
-            }
-          >
-            <SpreadsheetGlyph />
-          </div>
         </div>
       ) : null}
       <div
-        key={waiting ? "idle" : burstId}
+        key={waiting ? "idle" : `stack-${burstId}`}
         className="clay-stack"
-        style={{ "--stack-scale": String(scale) } as CSSProperties}
       >
         <Image
           src="/clay-paper-stack.png"

@@ -45,6 +45,14 @@ export function sheetCountFromActivity(
   return stacked ? sheetCountFromUploads(1) : 0;
 }
 
+export function stackMotion(waiting: boolean): "pulse" | "stack-up" {
+  return waiting ? "pulse" : "stack-up";
+}
+
+export function stackUpDurationMs(sheetCount: number): number {
+  return 280 + Math.max(sheetCount, 1) * 90;
+}
+
 export function truncateBubble(text: string, max = BUBBLE_MAX): string {
   const trimmed = text.trim();
   if (trimmed.length <= max) return trimmed;

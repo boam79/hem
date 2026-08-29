@@ -14,6 +14,8 @@ import {
   paperStackMode,
   sheetCountFromActivity,
   sheetCountFromUploads,
+  stackMotion,
+  stackUpDurationMs,
   shouldShowPersonaBubble,
   showTableWaitingPrompt,
   spokenFromStream,
@@ -57,6 +59,15 @@ describe("sheetCountFromActivity", () => {
     expect(sheetCountFromActivity(0, false)).toBe(0);
     expect(sheetCountFromActivity(0, true)).toBe(6);
     expect(sheetCountFromActivity(2, true)).toBe(8);
+  });
+});
+
+describe("stackMotion", () => {
+  it("pulses while waiting and stacks up after upload or debate", () => {
+    expect(stackMotion(true)).toBe("pulse");
+    expect(stackMotion(false)).toBe("stack-up");
+    expect(stackUpDurationMs(6)).toBe(820);
+    expect(stackUpDurationMs(1)).toBe(370);
   });
 });
 
