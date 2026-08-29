@@ -44,12 +44,12 @@ export function PaperStack({
         {Array.from({ length: sheets }, (_, i) => (
           <div
             key={waiting ? "idle-sheet" : `${burstId}-iso-${i}`}
-            className="iso-sheet"
+            className={i === 0 ? "iso-sheet is-base" : "iso-sheet"}
             style={
               {
                 "--i": String(i),
                 "--sheet-opacity": String(sheetOpacity(i, sheets, waiting)),
-                animationDelay: waiting ? "0ms" : `${i * 110}ms`,
+                animationDelay: waiting || i === 0 ? "0ms" : `${i * 110}ms`,
               } as CSSProperties
             }
           />

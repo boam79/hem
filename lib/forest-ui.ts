@@ -51,8 +51,8 @@ export function sheetOpacity(
   total: number,
   waiting: boolean,
 ): number {
-  if (waiting || total <= 1) return 1;
-  return 0.58 + (index / (total - 1)) * 0.42;
+  if (waiting || total <= 1 || index === 0) return 1;
+  return 0.62 + (index / (total - 1)) * 0.38;
 }
 
 export function stackMotion(waiting: boolean): "pulse" | "stack-up" {
