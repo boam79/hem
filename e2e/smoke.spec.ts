@@ -184,7 +184,7 @@ test("dashboard decision and settings menus open real pages", async ({
   await menu.getByRole("link", { name: "대시보드" }).click();
   await expect(page).toHaveURL(/\/dashboard/);
   await expect(page.getByRole("heading", { name: "대시보드" })).toBeVisible();
-  await expect(page.getByText("연결 상태")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "연결 상태" })).toBeVisible();
   await expect(page.getByText("Anthropic (재무이사)")).toBeVisible();
   await expect(page.getByText("연결됨").first()).toBeVisible();
 
