@@ -196,7 +196,7 @@ test("dashboard decision and settings menus open real pages", async ({
   await menu.getByRole("link", { name: "설정" }).click();
   await expect(page).toHaveURL(/\/settings/);
   await expect(page.getByRole("heading", { name: "설정" })).toBeVisible();
-  await expect(page.getByText("재무이사")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "재무이사" })).toBeVisible();
   await expect(
     page.getByText("페르소나 편집 UI는 MVP 범위 밖입니다"),
   ).toBeVisible();
