@@ -59,17 +59,7 @@ export function stackMotion(waiting: boolean): "pulse" | "stack-up" {
   return waiting ? "pulse" : "stack-up";
 }
 
-export const CLAY_IDLE_REM = 2.45;
-export const CLAY_STEP_REM = 0.45;
-export const CLAY_MAX_REM = 5.6;
-
-export function clayRevealRem(sheetCount: number, waiting: boolean): number {
-  if (waiting) return CLAY_IDLE_REM;
-  return Math.min(
-    CLAY_MAX_REM,
-    CLAY_IDLE_REM + Math.max(sheetCount - 1, 0) * CLAY_STEP_REM,
-  );
-}
+export const CLAY_TILE_LIFT_PX = 11;
 
 export function stackUpDurationMs(sheetCount: number): number {
   return 280 + Math.max(sheetCount, 1) * 90;
