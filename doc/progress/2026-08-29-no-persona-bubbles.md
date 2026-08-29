@@ -9,4 +9,4 @@
 ## 검증
 
 - 단위 `pnpm test` 87.
-- HTTPS E2E는 배포 후. 실토론 버튼은 누르지 않음.
+- HTTPS E2E `pnpm test:e2e` **27 passed**. 실토론 버튼은 누르지 않음.

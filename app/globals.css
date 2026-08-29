@@ -629,13 +629,13 @@ body {
 
 .paper-pile-anchor {
   position: absolute;
-  top: 52.5%;
-  left: 50.2%;
+  top: 55%;
+  left: 50%;
   z-index: 4;
-  width: 7.4rem;
-  height: 9.6rem;
+  width: 8rem;
+  height: 10.4rem;
   pointer-events: none;
-  transform: translate(-50%, -86%);
+  transform: translate(-50%, -76%);
 }
 
 .paper-pile-wrap {
