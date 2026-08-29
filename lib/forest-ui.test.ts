@@ -14,6 +14,7 @@ import {
   paperStackMode,
   sheetCountFromActivity,
   sheetCountFromUploads,
+  sheetOpacity,
   stackMotion,
   stackUpDurationMs,
   shouldShowPersonaBubble,
@@ -55,10 +56,18 @@ describe("paperStackMode", () => {
 });
 
 describe("sheetCountFromActivity", () => {
-  it("uses a starter pile when debate starts without a file", () => {
-    expect(sheetCountFromActivity(0, false)).toBe(0);
+  it("shows one idle sheet until a file or a debate starts", () => {
+    expect(sheetCountFromActivity(0, false)).toBe(1);
     expect(sheetCountFromActivity(0, true)).toBe(6);
     expect(sheetCountFromActivity(2, true)).toBe(8);
+  });
+});
+
+describe("sheetOpacity", () => {
+  it("keeps the idle sheet solid and densifies as sheets stack", () => {
+    expect(sheetOpacity(0, 1, true)).toBe(1);
+    expect(sheetOpacity(0, 6, false)).toBeCloseTo(0.58);
+    expect(sheetOpacity(5, 6, false)).toBeCloseTo(1);
   });
 });
 

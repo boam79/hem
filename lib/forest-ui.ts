@@ -41,8 +41,18 @@ export function sheetCountFromActivity(
   fileCount: number,
   stacked: boolean,
 ): number {
+  if (!stacked) return 1;
   if (fileCount > 0) return sheetCountFromUploads(fileCount);
-  return stacked ? sheetCountFromUploads(1) : 0;
+  return sheetCountFromUploads(1);
+}
+
+export function sheetOpacity(
+  index: number,
+  total: number,
+  waiting: boolean,
+): number {
+  if (waiting || total <= 1) return 1;
+  return 0.58 + (index / (total - 1)) * 0.42;
 }
 
 export function stackMotion(waiting: boolean): "pulse" | "stack-up" {

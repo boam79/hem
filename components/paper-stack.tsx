@@ -1,9 +1,9 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import Image from "next/image";
 import {
   sheetCountFromActivity,
+  sheetOpacity,
   stackMotion,
   stackUpDurationMs,
 } from "@/lib/forest-ui";
@@ -24,7 +24,6 @@ export function PaperStack({
   const stacked = !waiting;
   const sheets = sheetCountFromActivity(fileCount, stacked);
   const motion = stackMotion(waiting);
-  const scale = stacked ? 0.94 : 0.9;
 
   return (
     <div
@@ -36,40 +35,25 @@ export function PaperStack({
       aria-hidden
       style={
         {
-          "--stack-scale": String(scale),
           "--stack-ms": `${stackUpDurationMs(sheets)}ms`,
         } as CSSProperties
       }
     >
       <div className="paper-pile-glow" />
-      {stacked ? (
-        <div className="iso-drop-sheets">
-          {Array.from({ length: sheets }, (_, i) => (
-            <div
-              key={`${burstId}-iso-${i}`}
-              className="iso-sheet"
-              style={
-                {
-                  "--i": String(i),
-                  animationDelay: `${i * 90}ms`,
-                } as CSSProperties
-              }
-            />
-          ))}
-        </div>
-      ) : null}
-      <div
-        key={waiting ? "idle" : `stack-${burstId}`}
-        className="clay-stack"
-      >
-        <Image
-          src="/clay-paper-stack.png"
-          alt=""
-          width={587}
-          height={849}
-          className="clay-stack-art"
-          unoptimized
-        />
+      <div className={waiting ? "iso-drop-sheets is-idle" : "iso-drop-sheets"}>
+        {Array.from({ length: sheets }, (_, i) => (
+          <div
+            key={waiting ? "idle-sheet" : `${burstId}-iso-${i}`}
+            className="iso-sheet"
+            style={
+              {
+                "--i": String(i),
+                "--sheet-opacity": String(sheetOpacity(i, sheets, waiting)),
+                animationDelay: waiting ? "0ms" : `${i * 110}ms`,
+              } as CSSProperties
+            }
+          />
+        ))}
       </div>
       {stacked ? (
         <span key={`burst-${burstId}`} className="sparkle-burst-group">
