@@ -1359,11 +1359,11 @@ body {
 @keyframes clay-idle-pulse {
   0%,
   100% {
-    opacity: 0.16;
+    opacity: 0.36;
     transform: translate(-50%, 0) scale(1);
   }
   50% {
-    opacity: 0.46;
+    opacity: 0.72;
     transform: translate(-50%, -7px) scale(1.06);
   }
 }
@@ -1466,6 +1466,6 @@ body {
   }
 
   .paper-pile-wrap.is-waiting .clay-stack-art {
-    opacity: 0.32;
+    opacity: 0.5;
   }
 }

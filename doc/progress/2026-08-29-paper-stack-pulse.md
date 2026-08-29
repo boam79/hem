@@ -10,4 +10,4 @@
 ## 검증
 
 - 단위 `pnpm test` 87.
-- HTTPS E2E는 배포 후. 배포 https://boardroom-six-delta.vercel.app
+- HTTPS E2E `pnpm test:e2e` **27 passed** (프로덕션 `https://boardroom-six-delta.vercel.app`). 유효 안건으로 토론 시작은 누르지 않음.
