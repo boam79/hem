@@ -611,12 +611,12 @@ body {
 
 .paper-pile-anchor {
   position: absolute;
-  /* Sit on the empty wood between the three characters — not the front binders. */
+  /* Empty wood between the three characters — 02.png table center. */
   top: 61.5%;
   left: 50%;
   z-index: 4;
-  width: 8.2rem;
-  height: 6.6rem;
+  width: 11.5rem;
+  height: 14rem;
   pointer-events: none;
   transform: translate(-50%, -100%);
 }
@@ -630,28 +630,29 @@ body {
 
 .paper-pile-glow {
   position: absolute;
-  bottom: 0.05rem;
+  bottom: 0.2rem;
   left: 50%;
   z-index: 0;
-  width: 5.6rem;
-  height: 1.7rem;
+  width: 7.2rem;
+  height: 4.2rem;
   border-radius: 50%;
   background: radial-gradient(
     ellipse,
-    rgb(210 200 70 / 0.48) 0%,
-    rgb(150 210 90 / 0.2) 42%,
+    rgb(255 230 80 / 0.55) 0%,
+    rgb(90 220 110 / 0.38) 38%,
     transparent 74%
   );
   transform: translateX(-50%);
-  filter: blur(6px);
+  filter: blur(7px);
+  animation: pile-glow 1.7s ease-in-out infinite;
 }
 
 .clay-idle-tile {
   position: absolute;
   left: 50%;
-  bottom: 0.06rem;
+  bottom: 0.08rem;
   z-index: 2;
-  width: var(--tile-w, 7.26rem);
+  width: 6.6rem;
   height: auto;
   max-width: none;
   transform: translateX(-50%);
@@ -659,36 +660,40 @@ body {
   animation: idle-clay-breathe 2.4s ease-in-out infinite;
 }
 
-.clay-pile {
+.clay-stack {
   position: absolute;
-  left: 50%;
+  right: 0;
   bottom: 0;
-  z-index: 2;
-  width: 8.2rem;
-  height: var(--reveal-h);
-  overflow: hidden;
-  transform: translateX(-50%);
-  animation: clay-pile-stack var(--stack-ms, 820ms) cubic-bezier(0.22, 1.12, 0.36, 1)
-    both;
+  left: 0;
+  z-index: 3;
+  height: 100%;
+  transform-origin: center bottom;
+  filter: drop-shadow(0 12px 18px rgb(40 30 10 / 0.3));
 }
 
-.clay-pile-img {
+.clay-stack-art {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: auto;
+  bottom: 0;
+  left: 50%;
+  display: block;
+  width: 92%;
+  height: 100%;
   max-width: none;
+  object-fit: contain;
+  object-position: bottom center;
+  transform: translateX(-50%);
+  animation: clay-rise 0.7s cubic-bezier(0.22, 1.28, 0.36, 1) both;
 }
 
 .paper-pile-wrap.is-waiting .paper-pile-glow {
   opacity: 0.4;
+  animation: none;
 }
 
 .table-waiting-label {
   position: absolute;
   top: auto;
-  bottom: 2.7rem;
+  bottom: 2.85rem;
   left: 50%;
   z-index: 8;
   margin: 0;
@@ -1207,6 +1212,21 @@ body {
   }
 }
 
+@keyframes clay-rise {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 40px) scale(0.68);
+  }
+  68% {
+    opacity: 1;
+    transform: translate(-50%, -5px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
 @keyframes clay-pile-stack {
   0% {
     height: var(--from-h);
@@ -1342,7 +1362,7 @@ body {
   .iso-drop-sheets,
   .paper-pile-glow,
   .clay-idle-tile,
-  .clay-pile {
+  .clay-stack-art {
     animation: none;
   }
 }

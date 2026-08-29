@@ -69,7 +69,7 @@ Haiku R2 재시도 수정 후(`ba66843`): `cA_9I2` `4e4XEM` `NQSmdi` — 세 세
 
 2026-08-29 말풍선 스타일: 납작한 CSS 박스를 점토 말풍선 PNG로 바꿈. 대기 문구·토론 말풍선 같은 에셋.
 
-2026-08-29 종이더미: 대기=`clay-paper-tile.png` 1장. 쌓임=`clay-paper-stack.png`를 홈에서 키움(민트 면 반복 금지). 위치 61.5%. 단위 89. HTTPS 확인 전.
+2026-08-29 종이더미: 02 시안대로 업로드 후 `clay-paper-stack.png` 통째로. 대기만 타일 1장. 위치 61.5%.
 
 ## Lessons
 
@@ -89,4 +89,4 @@ IP 시간당 10은 50회 eval을 시각마다 10건+대기로 만든다. 프로�
 heading `대시보드`는 `비용 대시보드`와도 매칭된다. Playwright는 `exact: true`가 필요하다.
 홈에서 토론이 시작되면 결과 카드 때문에 회의실을 compact로 접고 `.speech-bubble { display: none }`을 켜면 02 시안의 말풍선이 사라진다. 카드는 `/debate`로 빼고 회의실은 접지 않는다.
 아이소메트릭 테이블에서 CSS `top`을 키우면 화면 아래 = 테이블 앞. 종이더미는 `translate(-50%, -100%)`로 박스 바닥을 테이블에 붙인다. 여우 앞(`top` 54%)은 뒤쪽, 바인더 삼각형(72%)은 앞쪽. 세 캐릭터 사이 빈 나무면은 바닥 약 61.5%. `.paper-pile-wrap { overflow: hidden }`는 그림자를 네모로 잘라 이질적으로 보인다. 크롭은 `.clay-stack`에만 둔다. PNG 네온 초록은 약한 sepia로 민트회색이 되므로 `sepia(1)`로 나무색에 붙인다.
-짧은 더미를 만들려 `height: 235%` + `overflow: hidden`으로 PNG 아래만 확대하면 윗장이 가로로 잘린다. 타워 PNG 창을 대기에 쓰면 아이소메트릭 윗면이 여러 장처럼 보인다. 같은 타일 PNG를 올려 쌓으면 민트 그리드가 층마다 반복된다. 대기는 `clay-paper-tile.png` 1장, 쌓임은 `clay-paper-stack.png`를 홈에서 키운다.
+짧은 더미를 만들려 `height: 235%` + `overflow: hidden`으로 PNG 아래만 확대하면 윗장이 가로로 잘린다. 타워 PNG 창을 대기에 쓰면 아이소메트릭 윗면이 여러 장처럼 보인다. 같은 타일 PNG를 올려 쌓으면 민트 그리드가 층마다 반복된다. 02 시안(`doc/design/02.png`, `doc/progress/2026-08-29-forest-ui-02.md`)은 업로드 후 `clay-paper-stack.png`를 통째로 테이블 중앙에 두고 스파클을 켠다. 대기는 타일 1장.

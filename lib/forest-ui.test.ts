@@ -17,12 +17,6 @@ import {
   sheetOpacity,
   stackMotion,
   stackUpDurationMs,
-  clayStackClipPx,
-  clayStackHeightRem,
-  clayStackFromHeightRem,
-  clayIdleTileWidthRem,
-  CLAY_STACK_WIDTH_REM,
-  CLAY_STACK_SRC_W,
   shouldShowPersonaBubble,
   showTableWaitingPrompt,
   spokenFromStream,
@@ -84,22 +78,6 @@ describe("stackMotion", () => {
     expect(stackMotion(false)).toBe("stack-up");
     expect(stackUpDurationMs(6)).toBe(820);
     expect(stackUpDurationMs(1)).toBe(370);
-  });
-});
-
-describe("clay stack clip", () => {
-  it("snaps stacked height to whole layers of the tower PNG", () => {
-    expect(clayStackClipPx(1)).toBe(175);
-    expect(clayStackClipPx(6)).toBe(335);
-    expect(clayStackClipPx(8)).toBe(376);
-    expect(clayStackClipPx(12)).toBe(462);
-    expect(clayStackHeightRem(6)).toBeCloseTo(
-      (CLAY_STACK_WIDTH_REM * 335) / CLAY_STACK_SRC_W,
-    );
-    expect(clayStackFromHeightRem()).toBeLessThan(clayStackHeightRem(6));
-    expect(clayIdleTileWidthRem()).toBeCloseTo(
-      (CLAY_STACK_WIDTH_REM * 520) / CLAY_STACK_SRC_W,
-    );
   });
 });
 

@@ -59,40 +59,6 @@ export function stackMotion(waiting: boolean): "pulse" | "stack-up" {
   return waiting ? "pulse" : "stack-up";
 }
 
-/** Native width of `clay-paper-stack.png`. */
-export const CLAY_STACK_SRC_W = 587;
-/** Display width of the stack PNG (includes transparent isometric padding). */
-export const CLAY_STACK_WIDTH_REM = 8.2;
-/** Tight idle plate crop (`clay-paper-tile.png`). */
-export const CLAY_TILE_SRC = { w: 520, h: 175 } as const;
-
-/**
- * Source pixel height of the stack PNG, snapped to layer grooves.
- * Index = sheet count. Idle (1) is unused in the UI — that state uses the tile asset.
- * Repeating the mint-top tile makes every layer look like a spreadsheet face.
- */
-const CLAY_CLIP_BY_SHEETS = [
-  0, 175, 252, 294, 335, 335, 335, 376, 376, 419, 419, 462, 462,
-] as const;
-
-export function clayStackClipPx(sheetCount: number): number {
-  const n = Math.min(PAPER_STACK_CAP, Math.max(1, Math.round(sheetCount)));
-  return CLAY_CLIP_BY_SHEETS[n];
-}
-
-export function clayStackHeightRem(sheetCount: number): number {
-  return (CLAY_STACK_WIDTH_REM * clayStackClipPx(sheetCount)) / CLAY_STACK_SRC_W;
-}
-
-/** First groove that still reads as a short clay pile, not a sliced tile. */
-export function clayStackFromHeightRem(): number {
-  return (CLAY_STACK_WIDTH_REM * 252) / CLAY_STACK_SRC_W;
-}
-
-export function clayIdleTileWidthRem(): number {
-  return (CLAY_STACK_WIDTH_REM * CLAY_TILE_SRC.w) / CLAY_STACK_SRC_W;
-}
-
 export function stackUpDurationMs(sheetCount: number): number {
   return 280 + Math.max(sheetCount, 1) * 90;
 }
