@@ -629,8 +629,8 @@ body {
 
 .paper-pile-anchor {
   position: absolute;
-  /* Bottom-center sits on the table, in the green/orange/blue binder triangle. */
-  top: 72%;
+  /* Sit on the empty wood between the three characters — not the front binders. */
+  top: 61.5%;
   left: 50%;
   z-index: 4;
   width: 6.2rem;
@@ -643,26 +643,25 @@ body {
   position: relative;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .paper-pile-glow {
   position: absolute;
-  bottom: 0.05rem;
+  bottom: 0.15rem;
   left: 50%;
   z-index: 0;
-  width: 4.4rem;
-  height: 2.2rem;
+  width: 3.5rem;
+  height: 1.35rem;
   border-radius: 50%;
   background: radial-gradient(
-    circle,
-    rgb(255 214 140 / 0.42) 0%,
-    rgb(210 170 90 / 0.16) 48%,
-    transparent 74%
+    ellipse,
+    rgb(52 32 12 / 0.4) 0%,
+    rgb(52 32 12 / 0.14) 44%,
+    transparent 72%
   );
   transform: translateX(-50%);
-  filter: blur(6px);
-  animation: pile-glow 2.2s ease-in-out infinite;
+  filter: blur(5px);
 }
 
 .iso-drop-sheets {
@@ -699,9 +698,10 @@ body {
   left: 0;
   z-index: 3;
   height: 100%;
+  overflow: hidden;
   transform-origin: center bottom;
   transform: scale(var(--stack-scale, 1));
-  filter: drop-shadow(0 6px 10px rgb(40 30 10 / 0.18));
+  filter: drop-shadow(5px 8px 6px rgb(46 28 10 / 0.4));
 }
 
 .clay-stack-art {
@@ -713,15 +713,15 @@ body {
   height: 235%;
   object-fit: contain;
   object-position: bottom center;
-  filter: sepia(0.22) saturate(0.68) brightness(0.97) contrast(0.94);
+  filter: sepia(1) saturate(0.62) brightness(0.8) contrast(0.9);
 }
 
 .paper-pile-wrap.is-waiting .paper-pile-glow {
-  opacity: 0.55;
+  opacity: 0.7;
 }
 
 .paper-pile-wrap.is-waiting .clay-stack {
-  filter: drop-shadow(0 10px 16px rgb(40 30 10 / 0.12));
+  filter: drop-shadow(4px 7px 6px rgb(46 28 10 / 0.32));
 }
 
 .paper-pile-wrap.is-waiting .clay-stack-art {
@@ -1262,12 +1262,12 @@ body {
 @keyframes clay-idle-pulse {
   0%,
   100% {
-    opacity: 0.36;
+    opacity: 0.42;
     transform: translate(-50%, 0) scale(1);
   }
   50% {
-    opacity: 0.72;
-    transform: translate(-50%, -7px) scale(1.06);
+    opacity: 0.7;
+    transform: translate(-50%, -3px) scale(1.02);
   }
 }
 
