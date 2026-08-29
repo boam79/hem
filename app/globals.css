@@ -591,89 +591,6 @@ body {
   object-position: center center;
 }
 
-.clay-bubble {
-  position: absolute;
-  z-index: 6;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 13.8rem;
-  aspect-ratio: 1266 / 911;
-  padding: 0;
-  background: none;
-  box-shadow: none;
-  pointer-events: none;
-}
-
-.clay-bubble-art {
-  z-index: 0;
-  object-fit: contain;
-  pointer-events: none;
-}
-
-.clay-bubble-text {
-  position: relative;
-  z-index: 1;
-  max-width: 72%;
-  padding: 0 0.15rem 0.85rem;
-  text-align: center;
-  font-size: 0.74rem;
-  font-weight: 700;
-  line-height: 1.35;
-  color: #3b3428;
-}
-
-.speech-bubble {
-  width: 15.4rem;
-}
-
-.bubble-cfo {
-  top: 16%;
-  left: 7%;
-}
-
-.bubble-mkt {
-  top: 3.5%;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.bubble-md {
-  top: 14.5%;
-  right: 5%;
-  left: auto;
-}
-
-.char-name {
-  position: absolute;
-  z-index: 5;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 0.95);
-  padding: 0.2rem 0.62rem;
-  font-size: 0.68rem;
-  font-weight: 750;
-  color: #245c40;
-  box-shadow: 0 2px 8px rgb(20 40 30 / 0.12);
-  white-space: nowrap;
-}
-
-.name-cfo {
-  top: 49%;
-  left: 27%;
-}
-
-.name-mkt {
-  top: 41.5%;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.name-md {
-  top: 47%;
-  left: 71.5%;
-  right: auto;
-}
-
 .table-waiting-label {
   position: absolute;
   top: 44%;
@@ -712,13 +629,13 @@ body {
 
 .paper-pile-anchor {
   position: absolute;
-  top: 52%;
-  left: 50%;
+  top: 52.5%;
+  left: 50.2%;
   z-index: 4;
-  width: 11.2rem;
-  height: 13.6rem;
+  width: 7.4rem;
+  height: 9.6rem;
   pointer-events: none;
-  transform: translate(-50%, -10%);
+  transform: translate(-50%, -86%);
 }
 
 .paper-pile-wrap {
@@ -1429,14 +1346,6 @@ body {
 
   .forest-home-split {
     grid-template-columns: 1fr;
-  }
-
-  .clay-bubble {
-    width: 38%;
-  }
-
-  .clay-bubble-text {
-    font-size: 0.62rem;
   }
 
   .debate-glance,

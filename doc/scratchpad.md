@@ -45,7 +45,7 @@ Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
 - [x] keepalive 주 2회 — 스케줄 `0 3 * * 1,4`. HTTPS POST 12:12:22Z, Vercel Cron 12:16:07Z. GH Actions 시크릿은 사용자 몫.
 - [x] 제한 429 HTTPS — 세션 POST만, 라운드 없음. `rate_limited` 429 (이번 턴 재확인).
 - [x] 홈 UI를 `doc/design/02.png`와 같게 (민트 셸 + 회의실 + 업로드 종이더미·스파클). HTTPS E2E 15. 배포 https://boardroom-six-delta.vercel.app
-- [ ] 테이블 중앙 종이더미 깜박임·쌓임. 대기 반투명 펄스 + PNG 스택업. HTTPS 사용자 확인 대기.
+- [ ] 테이블 중앙 종이더미 위치 + 페르소나 말풍선/이름표 제거. HTTPS 사용자 확인 대기.
 
 ## Executor's Feedback or Assistance Requests
 
@@ -69,7 +69,7 @@ Haiku R2 재시도 수정 후(`ba66843`): `cA_9I2` `4e4XEM` `NQSmdi` — 세 세
 
 2026-08-29 말풍선 스타일: 납작한 CSS 박스를 점토 말풍선 PNG로 바꿈. 대기 문구·토론 말풍선 같은 에셋.
 
-2026-08-29 테이블 중앙: 점토 종이더미를 더 투명하게 깜박이고, 업로드·토론 시작 때 PNG가 아래에서 쌓인다. 사용자 확인 대기.
+2026-08-29 테이블 중앙: 종이더미를 테이블 면 위로. 이름표·페르소나 말풍선 제거. 대기 문구만.
 
 ## Lessons
 

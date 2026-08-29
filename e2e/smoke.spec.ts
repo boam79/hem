@@ -192,6 +192,7 @@ test("home keeps the meeting room without waiting speech bubbles", async ({
   await expect(page.locator("[data-bubble=cfo]")).toHaveCount(0);
   await expect(page.locator("[data-bubble=mkt]")).toHaveCount(0);
   await expect(page.locator("[data-bubble=md]")).toHaveCount(0);
+  await expect(page.locator(".char-name")).toHaveCount(0);
   await expect(page.locator("[data-stack=waiting]")).toBeVisible();
   await expect(page.locator("[data-motion=pulse]")).toBeVisible();
   await expect(page.locator("[data-table-prompt=true]")).toBeVisible();
@@ -230,6 +231,10 @@ test("uploading a dummy csv stacks papers on home", async ({ page }) => {
   await expect(page.locator("[data-stack=stacked]")).toBeVisible();
   await expect(page.locator("[data-motion=stack-up]")).toBeVisible();
   await expect(page.locator("[data-table-prompt=true]")).toHaveCount(0);
+  await expect(page.locator("[data-bubble=cfo]")).toHaveCount(0);
+  await expect(page.locator("[data-bubble=mkt]")).toHaveCount(0);
+  await expect(page.locator("[data-bubble=md]")).toHaveCount(0);
+  await expect(page.locator(".char-name")).toHaveCount(0);
 });
 
 test("debate results live on a separate menu", async ({ page }) => {
