@@ -43,7 +43,7 @@ export function PaperStack({
       ) : (
         <div key={`pile-${burstId}`} className="clay-stack">
           <Image
-            src="/clay-paper-stack.png"
+            src="/clay-paper-stack.png?v=wood2"
             alt=""
             width={587}
             height={849}
