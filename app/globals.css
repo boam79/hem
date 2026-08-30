@@ -615,8 +615,8 @@ body {
   top: 61.5%;
   left: 50%;
   z-index: 4;
-  width: 11.5rem;
-  height: 14rem;
+  width: 9.2rem;
+  height: 11.2rem;
   pointer-events: none;
   transform: translate(-50%, -100%);
 }
@@ -630,21 +630,20 @@ body {
 
 .paper-pile-glow {
   position: absolute;
-  bottom: 0.2rem;
+  bottom: 0.12rem;
   left: 50%;
   z-index: 0;
-  width: 7.2rem;
-  height: 4.2rem;
+  width: 4.8rem;
+  height: 1.45rem;
   border-radius: 50%;
   background: radial-gradient(
     ellipse,
-    rgb(255 230 80 / 0.55) 0%,
-    rgb(90 220 110 / 0.38) 38%,
+    rgb(48 28 10 / 0.38) 0%,
+    rgb(48 28 10 / 0.12) 48%,
     transparent 74%
   );
   transform: translateX(-50%);
-  filter: blur(7px);
-  animation: pile-glow 1.7s ease-in-out infinite;
+  filter: blur(6px);
 }
 
 .clay-idle-tile {
@@ -652,11 +651,12 @@ body {
   left: 50%;
   bottom: 0.08rem;
   z-index: 2;
-  width: 6.6rem;
+  width: 5.4rem;
   height: auto;
   max-width: none;
   transform: translateX(-50%);
-  filter: drop-shadow(3px 6px 7px rgb(40 28 10 / 0.32));
+  filter: saturate(0.86) sepia(0.14) hue-rotate(-10deg)
+    drop-shadow(3px 6px 7px rgb(40 24 8 / 0.28));
   animation: idle-clay-breathe 2.4s ease-in-out infinite;
 }
 
@@ -668,7 +668,9 @@ body {
   z-index: 3;
   height: 100%;
   transform-origin: center bottom;
-  filter: drop-shadow(0 12px 18px rgb(40 30 10 / 0.3));
+  filter: drop-shadow(4px 10px 12px rgb(40 24 8 / 0.28));
+  -webkit-mask-image: linear-gradient(to top, transparent 0%, #000 11%);
+  mask-image: linear-gradient(to top, transparent 0%, #000 11%);
 }
 
 .clay-stack-art {
@@ -682,18 +684,19 @@ body {
   object-fit: contain;
   object-position: bottom center;
   transform: translateX(-50%);
+  filter: saturate(0.8) sepia(0.16) hue-rotate(-12deg) brightness(0.95)
+    contrast(0.94);
   animation: clay-rise 0.7s cubic-bezier(0.22, 1.28, 0.36, 1) both;
 }
 
 .paper-pile-wrap.is-waiting .paper-pile-glow {
-  opacity: 0.4;
-  animation: none;
+  opacity: 0.45;
 }
 
 .table-waiting-label {
   position: absolute;
   top: auto;
-  bottom: 2.85rem;
+  bottom: 2.45rem;
   left: 50%;
   z-index: 8;
   margin: 0;
@@ -712,9 +715,9 @@ body {
 .sparkle {
   position: absolute;
   z-index: 5;
-  width: 1.05rem;
-  height: 1.05rem;
-  background: #ffe566;
+  width: 0.72rem;
+  height: 0.72rem;
+  background: #e4c56a;
   clip-path: polygon(
     50% 0%,
     61% 38%,
@@ -725,8 +728,8 @@ body {
     0% 50%,
     39% 38%
   );
-  filter: drop-shadow(0 0 5px #ffd54a);
-  animation: sparkle-glint 1.7s ease-in-out infinite;
+  filter: drop-shadow(0 0 3px rgb(210 170 70 / 0.4));
+  animation: sparkle-glint 2.2s ease-in-out infinite;
 }
 
 .sparkle-1 {

@@ -56,12 +56,9 @@ export function PaperStack({
         <>
           <Sparkle className="sparkle-1" />
           <Sparkle className="sparkle-2" />
-          <Sparkle className="sparkle-3" />
-          <Sparkle className="sparkle-4" />
           <span key={`burst-${burstId}`} className="sparkle-burst-group">
             <Sparkle className="sparkle-burst sparkle-b1" />
             <Sparkle className="sparkle-burst sparkle-b2" />
-            <Sparkle className="sparkle-burst sparkle-b3" />
           </span>
         </>
       ) : null}
