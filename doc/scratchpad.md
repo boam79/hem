@@ -10,9 +10,11 @@ PRD AC 감사: `doc/progress/2026-08-28-prd-final-audit.md`
 
 2026-08-29: 파일 관리 `/files` 전용. 대시보드에서 비용 패널 제거. 대기 말풍선은 테이블 중앙 1개. 완료는 Planner가 표시한다.
 
+2026-08-30 Planner: 안건 없이 업로드 데이터로 통계 + 데이터 검토 회의. **메뉴는 늘리지 않음.** 통계는 `/files`, 회의는 홈 보조 버튼. 계획 `doc/progress/2026-08-30-data-review-stats-plan.md`. 구현은 Executor 지정 후.
+
 ## Key Challenges and Analysis
 
-`qr-asset-manager` pause 후 `boardroom` DB 생성됨. 실토론은 service role + 3사 키.
+사이드바 6칸을 더 늘리면 02 셸이 답답해진다. 통계는 올린 직후 `/files`에 표를 붙이고, 안건 없는 회의는 홈 「데이터 검토」만 추가한다. 인사이트용 4번째 LLM은 두지 않는다. 「토론 시작」의 안건 10자 규칙은 유지한다. 데이터 검토는 고정 안건을 POST에만 넣는다. E2E는 그 버튼을 누르지 않는다.
 경량 모델 유지: haiku / gpt-5.4-nano / flash-lite. nano는 reasoning 모델이라 temperature 미지원. reasoningEffort는 `none`만 허용.
 Gemini 크레딧 결제 후 md 셀은 프로덕션에서 성공. Haiku·nano JSON 복구 커밋 `32168f5` 후 세션 `4fyIcc` R1 okCount=3. 사용자 수동 확인 대기(지우지 않음). R2 수정 커밋 `7eda3e3` 후 세션 `uE7m2G` R1 ok=3, R2 ok=3.
 2026-08-28 AC 감사: F1–F6·W1–W4 코드+테스트+HTTPS. **W3 5×10은 `/goal` 재개 후 50/50** (objection 50/50, 셀 실패 0). keepalive Vercel Cron 성공. GH Actions 시크릿은 사용자 몫.
@@ -25,7 +27,11 @@ JSON 실측: `doc/progress/2026-08-28-haiku-nano-json.md`
 R2 실측: `doc/progress/2026-08-28-round2-json.md`
 AC 감사: `doc/progress/2026-08-28-ac-audit.md`
 Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
-현재(Executor): 엑셀·CSV 지표 업로드 완료. 더미 HTTPS 세션 `dohUks` R1·R2 ok=3.
+2026-08-30 Planner: 데이터 검토 회의 + 업로드 통계. 메뉴 추가 없음. `doc/progress/2026-08-30-data-review-stats-plan.md`.
+1. 고정 안건 상수 + 통계 요약 함수 + 단위 테스트. 성공: 안건 10~200자, 더미 지표에서 12행·합계.
+2. `/files`에 업로드 통계 표. 성공: 더미 CSV 후 병원명·월 열. LLM 없음.
+3. 홈 「데이터 검토」. 업로드 없으면 disabled. 누르면 고정 안건으로 기존 세션·라운드. 성공: 단위 + E2E는 노출/disabled만. 클릭 금지.
+4. HTTPS E2E 배포 후. 성공: 파일 관리 표, 홈 버튼. 「데이터 검토」「토론 시작」 실클릭 없음.
 2026-08-29 홈 02 UI: `doc/progress/2026-08-29-forest-ui-02.md`. HTTPS E2E 15. 배포 https://boardroom-six-delta.vercel.app
 
 ## Project Status Board
@@ -47,6 +53,8 @@ Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
 - [x] 홈 UI를 `doc/design/02.png`와 같게 (민트 셸 + 회의실 + 업로드 종이더미·스파클). HTTPS E2E 15. 배포 https://boardroom-six-delta.vercel.app
 - [ ] 테이블 중앙 종이더미 위치 + 페르소나 말풍선/이름표 제거. HTTPS 사용자 확인 대기.
 - [ ] 바인더·타임라인 2026 + 토론 중 점토 말풍선 3개. HTTPS 사용자 확인 대기.
+- [ ] 400KB 이내 전 진료과·성별·나이대·지역 환자 더미 업로드. 파서가 환자행을 월별 지표로 합침. HTTPS 사용자 확인 대기.
+- [ ] 업로드 통계·데이터 검토. 1/4 상수·요약 함수 단위 103. 화면은 다음 칸. 사용자 확인 대기.
 
 ## Executor's Feedback or Assistance Requests
 
@@ -84,6 +92,10 @@ Haiku R2 재시도 수정 후(`ba66843`): `cA_9I2` `4e4XEM` `NQSmdi` — 세 세
 
 2026-08-30 진료 말풍선 꼬리(Executor): 파란 말풍선 꼬리가 왼쪽(여우)을 가리킴. 이미지를 좌우 반전해 꼬리를 오른쪽 아래(고양이 진료원장)로.
 
+2026-08-30 환자더미 업로드 오류(Executor): 프로덕션은 `month` 헤더만 받음. 방문행 CSV를 올리면 `month 헤더 행이 없습니다`. `hospital-patients-full.csv`를 월별 집계로 바꿈. 엑셀은 `monthly`+`patients`. 방문행은 `hospital-patients-visits.csv`. 단위 99. 사용자는 Finder에서 월별 CSV/엑셀을 다시 올리면 됨.
+
+2026-08-30 데이터검토 1/4(Executor): `DATA_REVIEW_AGENDA` 10~200자, `canStartDataReview(업로드여부)`, `summarizeMetrics` 12행·수술합·순현금. 단위 103. 화면(파일 관리 표·홈 버튼)은 다음 칸. 사용자 확인 후 2번으로.
+
 ## Lessons
 
 Supabase MCP는 service role 키를 반환하지 않는다. URL만 자동화 가능.
@@ -105,3 +117,4 @@ heading `대시보드`는 `비용 대시보드`와도 매칭된다. Playwright�
 
 02 시안과 서류를 맞추려면 회의실과 다른 PNG를 올리면 안 된다. 바인더처럼 `forest-room-idle.png` / `forest-room-stacked.png`에 구워 넣는다. 아이소메트릭 서류 PNG를 나무 위에 합성하면 구워도 후광이 남는다. 원본 회의실에 서류를 인페인트해야 조명·원근이 같다.
 `shouldShowPersonaBubble`이 `return false`면 토론이 시작돼도 홈 말풍선이 없다. 말풍선은 머리 위 점토 PNG(페르소나 색·꼬리 방향)이고, 이름표 칩은 다시 올리지 않는다.
+월별 지표 CSV에 없는 열을 넣으면 예전 파서는 `알 수 없는 열`로 거절했다. 환자행(진료과·성별·나이대·지역)은 별도 헤더로 읽고 12개월로 합친다. `consult_to_surgery_rate`는 스키마가 0.55~0.70이라 집계 후 클램프한다.

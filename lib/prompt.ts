@@ -4,6 +4,7 @@ import { MetricsSchema } from "@/lib/schema";
 import { estimateTokens } from "@/lib/tokens";
 import { BASE_RULES, ROUND2_RULES, type Persona } from "@/config/personas";
 import rawMetrics from "@/data/metrics.json";
+import { demographicsLine } from "@/lib/patient-visits";
 
 export function loadMetrics(): Metrics {
   return MetricsSchema.parse(rawMetrics);
@@ -24,13 +25,18 @@ export function metricsToMarkdownTable(metrics: Metrics): string {
     return `| ${m.month} | ${m.surgeries.lasik} | ${m.surgeries.smile} | ${m.surgeries.icl} | ${m.surgeries.cataract} | ${m.per_doctor_surgeries} | ${m.revenue_mix.refractive} | ${m.revenue_mix.cataract} | ${m.inflow.search_ad} | ${m.inflow.social} | ${m.inflow.referral} | ${m.inflow.overseas_agency} | ${m.nationality_mix.domestic} | ${m.nationality_mix.china} | ${m.nationality_mix.japan} | ${m.consult_to_surgery_rate} | ${m.cashflow.in_man} | ${m.cashflow.out_man} | ${m.cashflow.net_man} |`;
   });
   const table = [header, sep, ...rows].join("\n");
-  const tokens = estimateTokens(table);
+  const demo = demographicsLine(metrics);
+  const withDemo = demo ? `${table}\n\n[인구통계]\n${demo}` : table;
+  const tokens = estimateTokens(withDemo);
   if (tokens > METRICS_TABLE_TOKEN_LIMIT) {
-    throw new Error(
-      `metrics table is ${tokens} tokens, limit ${METRICS_TABLE_TOKEN_LIMIT}`,
-    );
+    if (estimateTokens(table) > METRICS_TABLE_TOKEN_LIMIT) {
+      throw new Error(
+        `metrics table is ${tokens} tokens, limit ${METRICS_TABLE_TOKEN_LIMIT}`,
+      );
+    }
+    return table;
   }
-  return table;
+  return withDemo;
 }
 
 export function buildSystemPrompt(persona: Persona, metrics: Metrics): string {

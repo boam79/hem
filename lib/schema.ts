@@ -170,6 +170,31 @@ export const MonthlyMetricsSchema = z.object({
   }),
 });
 
+export const DemographicsSchema = z.object({
+  gender: z.object({
+    male: z.number(),
+    female: z.number(),
+  }),
+  age_bands: z.array(
+    z.object({
+      label: z.string(),
+      share: z.number(),
+    }),
+  ),
+  regions: z.array(
+    z.object({
+      label: z.string(),
+      share: z.number(),
+    }),
+  ),
+  departments: z.array(
+    z.object({
+      label: z.string(),
+      share: z.number(),
+    }),
+  ),
+});
+
 export const MetricsSchema = z.object({
   _note: z.string(),
   hospital: z.object({
@@ -182,5 +207,6 @@ export const MetricsSchema = z.object({
     to: z.string(),
   }),
   monthly: z.array(MonthlyMetricsSchema).length(12),
+  demographics: DemographicsSchema.optional(),
 });
 export type Metrics = z.infer<typeof MetricsSchema>;

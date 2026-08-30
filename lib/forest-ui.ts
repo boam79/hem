@@ -119,6 +119,9 @@ export function fileKind(name: string): "csv" | "xlsx" {
 export const DUMMY_METRICS_HREFS = [
   "/dummy/patient-and-cashflow.csv",
   "/dummy/patient-and-cashflow.xlsx",
+  "/dummy/hospital-patients-full.csv",
+  "/dummy/hospital-patients-full.xlsx",
+  "/dummy/hospital-patients-visits.csv",
 ] as const;
 
 export function downloadDummyMetricsFiles(): void {

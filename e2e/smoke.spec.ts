@@ -153,10 +153,10 @@ test("files page has csv/xlsx upload and dummy links", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "파일 관리" })).toBeVisible();
   await expect(page.locator("#metrics-file")).toBeVisible();
   await expect(
-    page.getByRole("link", { name: "CSV" }),
+    page.getByRole("link", { name: "CSV", exact: true }),
   ).toHaveAttribute("href", "/dummy/patient-and-cashflow.csv");
   await expect(
-    page.getByRole("link", { name: "엑셀" }),
+    page.getByRole("link", { name: "엑셀", exact: true }),
   ).toHaveAttribute("href", "/dummy/patient-and-cashflow.xlsx");
   await expect(page.getByRole("button", { name: "파일 선택" })).toBeVisible();
 });
@@ -169,6 +169,7 @@ test("home has agenda and the meeting room, not the file picker", async ({
   await expect(page.locator("#metrics-file")).toHaveCount(0);
   await expect(page.getByRole("button", { name: "회의 나가기" })).toBeVisible();
   await expect(page.getByText("포레스트 병원").first()).toBeVisible();
+  await expect(page.getByRole("button", { name: "데이터 검토" })).toBeDisabled();
 });
 
 test("agenda and category sit above the start button", async ({
@@ -230,8 +231,11 @@ test("uploading a dummy csv stacks papers on home", async ({ page }) => {
     .locator("#metrics-file")
     .setInputFiles("public/dummy/patient-and-cashflow.csv");
   await expect(page.getByText("업로드안과(가상)")).toBeVisible();
+  await expect(page.locator("#upload-stats")).toBeVisible();
+  await expect(page.locator("#upload-stats th", { hasText: "월" })).toBeVisible();
   await page.getByRole("link", { name: "홈에서 토론 시작" }).click();
   await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole("button", { name: "데이터 검토" })).toBeEnabled();
   await expect(page.locator("[data-stack=stacked]")).toBeVisible();
   await expect(page.locator("[data-stack=stacked]")).toHaveAttribute(
     "data-sheet-count",

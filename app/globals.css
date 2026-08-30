@@ -411,6 +411,20 @@ body {
   color: #fff !important;
 }
 
+.forest-review-btn {
+  height: 2.2rem;
+  margin-top: 0.45rem;
+  border-radius: 12px;
+  border: 1px solid var(--forest-mint-deep) !important;
+  background: #fff !important;
+  font-weight: 650;
+  color: var(--forest-mint-deep) !important;
+}
+
+.forest-review-btn:disabled {
+  opacity: 0.45;
+}
+
 .forest-main {
   display: flex;
   min-width: 0;
@@ -1015,6 +1029,35 @@ body {
   font-size: 0.82rem;
   line-height: 1.5;
   color: #3d4f47;
+}
+
+.metrics-stats-wrap {
+  overflow-x: auto;
+  margin-top: 0.4rem;
+}
+
+.metrics-stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+}
+
+.metrics-stats-table th,
+.metrics-stats-table td {
+  padding: 0.35rem 0.4rem;
+  text-align: right;
+  border-bottom: 1px solid #e4eee8;
+  white-space: nowrap;
+}
+
+.metrics-stats-table th:first-child,
+.metrics-stats-table td:first-child {
+  text-align: left;
+}
+
+.metrics-stats-table th {
+  color: var(--forest-muted);
+  font-weight: 650;
 }
 
 .health-rows {

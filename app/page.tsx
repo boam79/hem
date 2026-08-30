@@ -17,7 +17,13 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { AGENDA_MAX, AGENDA_MIN } from "@/config/limits";
-import { agendaError, agendaLength, isAgendaValid } from "@/lib/agenda";
+import {
+  DATA_REVIEW_AGENDA,
+  agendaError,
+  agendaLength,
+  canStartDataReview,
+  isAgendaValid,
+} from "@/lib/agenda";
 import { apiErrorMessage } from "@/lib/api-errors";
 import type { DebateCell } from "@/lib/debate";
 import { rememberSession } from "@/lib/recent-sessions";
@@ -56,6 +62,7 @@ export default function Home() {
   const clientAgendaError = agendaError(agenda);
   const agendaOk = isAgendaValid(agenda);
   const hasUploads = fileCount > 0;
+  const dataReviewOk = canStartDataReview(hasUploads);
   const roundNumber: 1 | 2 =
     round2.length > 0 || loadingRound === 2 ? 2 : 1;
 
@@ -95,10 +102,10 @@ export default function Home() {
     return () => window.removeEventListener("storage", hydrate);
   }, []);
 
-  async function start() {
+  async function start(agendaText: string) {
     setError(null);
-    if (!agendaOk) {
-      setError(clientAgendaError);
+    if (!isAgendaValid(agendaText)) {
+      setError(agendaError(agendaText));
       return;
     }
     const my = ++runId.current;
@@ -114,7 +121,7 @@ export default function Home() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          agenda: agenda.trim(),
+          agenda: agendaText.trim(),
           category,
           ...(metrics ? { metrics } : {}),
         }),
@@ -125,7 +132,7 @@ export default function Home() {
         throw new Error(apiErrorMessage(sj));
       }
       setSessionId(sj.id);
-      rememberSession(sj.id, agenda.trim());
+      rememberSession(sj.id, agendaText.trim());
       const r1Started = performance.now();
       const r1Turns = await readRoundTurns(
         sj.id,
@@ -240,10 +247,24 @@ export default function Home() {
             size="lg"
             className="forest-start-btn w-full"
             disabled={loadingRound !== 0 || !agendaOk}
-            onClick={start}
+            onClick={() => void start(agenda)}
           >
             {loadingRound === 0 ? "토론 시작" : "토론 중…"}
           </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="forest-review-btn w-full"
+            disabled={loadingRound !== 0 || !dataReviewOk}
+            onClick={() => void start(DATA_REVIEW_AGENDA)}
+          >
+            데이터 검토
+          </Button>
+          <p className="forest-field-hint mt-2">
+            {dataReviewOk
+              ? "안건 없이 올린 지표의 위험·가정·필요 데이터를 올립니다."
+              : "파일 관리에서 올리면 안건 없이 지표만 검토할 수 있습니다."}
+          </p>
           {error ? (
             <p className="text-destructive mt-2 text-xs">{error}</p>
           ) : null}

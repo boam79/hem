@@ -31,6 +31,8 @@
 | [progress/2026-08-30-clay-stack-blend.md](progress/2026-08-30-clay-stack-blend.md) | 종이산을 회의실 나무 톤에 맞춤 |
 | [progress/2026-08-30-inpaint-papers.md](progress/2026-08-30-inpaint-papers.md) | 원본 회의실에 점토 서류 인페인트 (스티커 PNG 폐기) |
 | [progress/2026-08-30-year-bubbles.md](progress/2026-08-30-year-bubbles.md) | 바인더 2026 · 토론 중 점토 말풍선 3개 |
+| [progress/2026-08-30-patient-dummy.md](progress/2026-08-30-patient-dummy.md) | 400KB 이하 전 진료과·성별·나이대·지역 환자 더미 |
+| [progress/2026-08-30-data-review-stats-plan.md](progress/2026-08-30-data-review-stats-plan.md) | Planner: 데이터 검토 회의 + 업로드 통계 (메뉴 추가 없음) |
 | [progress/2026-08-29-no-persona-bubbles.md](progress/2026-08-29-no-persona-bubbles.md) | 종이더미 위치 · 페르소나 말풍선·이름표 제거 |
 
 루트 `PRD.md`는 여기로 가는 포인터다.

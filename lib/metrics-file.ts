@@ -1,6 +1,15 @@
 import ExcelJS from "exceljs";
 import { MAX_METRICS_UPLOAD_BYTES } from "@/config/limits";
 import { MetricsSchema, type Metrics } from "@/lib/schema";
+import {
+  PatientParseError,
+  aggregatePatientVisits,
+  isPatientHeader,
+  mapPatientHeader,
+  parsePatientRow,
+  type PatientField,
+  type PatientVisit,
+} from "@/lib/patient-visits";
 
 const MONTH_HEADER = [
   "month",
@@ -137,7 +146,7 @@ function parseMetaKey(key: string): string {
 }
 
 function monthlyFromRow(
-  header: (typeof MONTH_HEADER)[number][],
+  header: Array<(typeof MONTH_HEADER)[number] | null>,
   values: string[],
 ): Metrics["monthly"][number] {
   const get = (name: (typeof MONTH_HEADER)[number]) => {
@@ -180,15 +189,47 @@ function monthlyFromRow(
   };
 }
 
-function mapHeader(cells: string[]): (typeof MONTH_HEADER)[number][] {
+function mapHeader(
+  cells: string[],
+): Array<(typeof MONTH_HEADER)[number] | null> {
   return cells.map((raw) => {
     const key = raw.trim().toLowerCase();
-    const mapped = HEADER_ALIASES[key];
-    if (!mapped) {
-      throw new MetricsParseError(`알 수 없는 열: ${raw}`);
-    }
-    return mapped;
+    return HEADER_ALIASES[key] ?? HEADER_ALIASES[raw.trim()] ?? null;
   });
+}
+
+function assertMonthlyHeader(
+  header: Array<(typeof MONTH_HEADER)[number] | null>,
+): void {
+  const present = new Set(
+    header.filter((h): h is (typeof MONTH_HEADER)[number] => h !== null),
+  );
+  for (const name of MONTH_HEADER) {
+    if (!present.has(name)) {
+      throw new MetricsParseError(`열 없음: ${name}`);
+    }
+  }
+}
+
+function finishPatientMetrics(
+  meta: Record<string, string>,
+  visits: PatientVisit[],
+): Metrics {
+  try {
+    const metrics = aggregatePatientVisits(meta, visits);
+    const parsed = MetricsSchema.safeParse(metrics);
+    if (!parsed.success) {
+      throw new MetricsParseError(
+        parsed.error.issues[0]?.message || "지표 스키마가 맞지 않습니다.",
+      );
+    }
+    return parsed.data;
+  } catch (e) {
+    if (e instanceof PatientParseError) {
+      throw new MetricsParseError(e.message);
+    }
+    throw e;
+  }
 }
 
 function finishMetrics(meta: Record<string, string>, monthly: Metrics["monthly"]): Metrics {
@@ -213,58 +254,85 @@ function finishMetrics(meta: Record<string, string>, monthly: Metrics["monthly"]
   return parsed.data;
 }
 
+function parseMetricRows(
+  rowList: string[][],
+  initialMeta: Record<string, string>,
+  readMetaFromRows: boolean,
+): Metrics {
+  const meta: Record<string, string> = { ...initialMeta };
+  let monthlyHeader: Array<(typeof MONTH_HEADER)[number] | null> | null = null;
+  let patientHeader: Array<PatientField | null> | null = null;
+  const monthly: Metrics["monthly"] = [];
+  const visits: PatientVisit[] = [];
+  for (const cols of rowList) {
+    const first = (cols[0] ?? "").trim().toLowerCase();
+    if (!monthlyHeader && !patientHeader) {
+      if (isPatientHeader(cols)) {
+        patientHeader = mapPatientHeader(cols);
+        continue;
+      }
+      if (first === "month" || first === "월") {
+        monthlyHeader = mapHeader(cols);
+        assertMonthlyHeader(monthlyHeader);
+        continue;
+      }
+      if (readMetaFromRows && cols.length >= 2) {
+        meta[parseMetaKey(cols[0])] = cols.slice(1).join(",").trim();
+      }
+      continue;
+    }
+    if (patientHeader) {
+      visits.push(parsePatientRow(patientHeader, cols));
+      continue;
+    }
+    if (monthlyHeader) {
+      monthly.push(monthlyFromRow(monthlyHeader, cols));
+    }
+  }
+  if (patientHeader) {
+    return finishPatientMetrics(meta, visits);
+  }
+  if (!monthlyHeader) {
+    throw new MetricsParseError("month 헤더 행이 없습니다.");
+  }
+  return finishMetrics(meta, monthly);
+}
+
 export function parseMetricsCsv(text: string): Metrics {
   const lines = text
     .replace(/^\uFEFF/, "")
     .split(/\r?\n/)
     .map((l) => l.trimEnd())
     .filter((l) => l.trim() && !l.trim().startsWith("#"));
-  const meta: Record<string, string> = {};
-  let header: (typeof MONTH_HEADER)[number][] | null = null;
-  const monthly: Metrics["monthly"] = [];
-  for (const line of lines) {
-    const cols = splitCsvLine(line);
-    const first = (cols[0] ?? "").trim().toLowerCase();
-    if (!header && (first === "month" || first === "월")) {
-      header = mapHeader(cols);
-      continue;
-    }
-    if (!header) {
-      if (cols.length >= 2) {
-        meta[parseMetaKey(cols[0])] = cols.slice(1).join(",").trim();
-      }
-      continue;
-    }
-    monthly.push(monthlyFromRow(header, cols));
-  }
-  if (!header) {
-    throw new MetricsParseError("month 헤더 행이 없습니다.");
-  }
-  return finishMetrics(meta, monthly);
+  const rowList = lines.map((line) => splitCsvLine(line));
+  return parseMetricRows(rowList, {}, true);
 }
 
-function monthlyFromKeyed(
-  row: Record<string, unknown>,
-): Metrics["monthly"][number] {
-  const get = (name: (typeof MONTH_HEADER)[number]) => row[name];
-  return monthlyFromRow(
-    [...MONTH_HEADER],
-    MONTH_HEADER.map((h) => String(get(h) ?? "")),
-  );
+function sheetToRows(sheet: ExcelJS.Worksheet): string[][] {
+  const rows: string[][] = [];
+  sheet.eachRow((row) => {
+    const vals: string[] = [];
+    row.eachCell({ includeEmpty: true }, (cell, col) => {
+      vals[col - 1] = String(cell.value ?? "").trim();
+    });
+    if (vals.some((v) => v)) rows.push(vals);
+  });
+  return rows;
 }
 
 export async function parseMetricsXlsx(buffer: Buffer): Promise<Metrics> {
   const wb = new ExcelJS.Workbook();
-  // exceljs typings accept Buffer via load
   await wb.xlsx.load(buffer as unknown as ArrayBuffer);
   const hospital = wb.getWorksheet("hospital") ?? wb.getWorksheet("병원");
-  const monthlySheet = wb.getWorksheet("monthly") ?? wb.getWorksheet("월별") ?? wb.worksheets[0];
-  if (!monthlySheet) {
+  const patientsSheet = wb.getWorksheet("patients") ?? wb.getWorksheet("환자");
+  const monthlySheet =
+    wb.getWorksheet("monthly") ?? wb.getWorksheet("월별") ?? wb.worksheets[0];
+  if (!patientsSheet && !monthlySheet) {
     throw new MetricsParseError("엑셀에 시트가 없습니다.");
   }
 
   const meta: Record<string, string> = {};
-  if (hospital && hospital !== monthlySheet) {
+  if (hospital) {
     hospital.eachRow((row) => {
       const key = String(row.getCell(1).value ?? "").trim();
       const value = String(row.getCell(2).value ?? "").trim();
@@ -272,39 +340,17 @@ export async function parseMetricsXlsx(buffer: Buffer): Promise<Metrics> {
     });
   }
 
-  const rows: string[][] = [];
-  monthlySheet.eachRow((row) => {
-    const vals: string[] = [];
-    row.eachCell({ includeEmpty: true }, (cell, col) => {
-      vals[col - 1] = String(cell.value ?? "").trim();
-    });
-    if (vals.some((v) => v)) rows.push(vals);
-  });
-
-  let header: (typeof MONTH_HEADER)[number][] | null = null;
-  const monthly: Metrics["monthly"] = [];
-  for (const cols of rows) {
-    const first = (cols[0] ?? "").trim().toLowerCase();
-    if (!header && (first === "month" || first === "월")) {
-      header = mapHeader(cols);
-      continue;
-    }
-    if (!header) {
-      if (!hospital && cols.length >= 2) {
-        meta[parseMetaKey(cols[0])] = cols.slice(1).join(",").trim();
-      }
-      continue;
-    }
-    const keyed: Record<string, string> = {};
-    header.forEach((h, i) => {
-      keyed[h] = cols[i] ?? "";
-    });
-    monthly.push(monthlyFromKeyed(keyed));
+  if (patientsSheet) {
+    return parseMetricRows(sheetToRows(patientsSheet), meta, !hospital);
   }
-  if (!header) {
-    throw new MetricsParseError("month 헤더 행이 없습니다.");
+  if (!monthlySheet) {
+    throw new MetricsParseError("엑셀에 시트가 없습니다.");
   }
-  return finishMetrics(meta, monthly);
+  return parseMetricRows(
+    sheetToRows(monthlySheet),
+    meta,
+    !hospital || hospital === monthlySheet,
+  );
 }
 
 export function serializeMetricsCsv(metrics: Metrics): string {

@@ -9,6 +9,7 @@ import {
   ForestFrame,
   ForestPageNote,
 } from "@/components/forest-shell";
+import { MetricsStatsPanel } from "@/components/metrics-stats-panel";
 import { apiErrorMessage } from "@/lib/api-errors";
 import {
   downloadDummyMetricsFiles,
@@ -21,10 +22,13 @@ import {
   readMetricsUploadStore,
   saveMetricsUploadStore,
 } from "@/lib/metrics-upload-store";
+import { parseUploadedMetrics } from "@/lib/metrics-stats";
+import type { Metrics } from "@/lib/schema";
 
 export default function FilesPage() {
   const [uploads, setUploads] = useState<UploadedMetricsFile[]>([]);
   const [metricsLabel, setMetricsLabel] = useState<string | null>(null);
+  const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -34,6 +38,7 @@ export default function FilesPage() {
     if (!stored) return;
     setUploads(stored.files);
     setMetricsLabel(stored.label);
+    setMetrics(parseUploadedMetrics(stored.metrics));
   }, []);
 
   async function parseMetricsFile(file: File) {
@@ -67,6 +72,7 @@ export default function FilesPage() {
       return files;
     });
     setMetricsLabel(label);
+    setMetrics(parseUploadedMetrics(json.metrics));
   }
 
   function onFileInputChange(e: ChangeEvent<HTMLInputElement>) {
@@ -134,7 +140,7 @@ export default function FilesPage() {
           >
             파일 선택
           </button>
-          <p className="dropzone-hint">CSV, XLSX 파일만 지원됩니다.</p>
+          <p className="dropzone-hint">CSV, XLSX · 400KB 이하. 환자통계 더미는 전 진료과·성별·나이대·지역입니다.</p>
         </ForestDropzone>
         {error ? (
           <p className="text-destructive mt-2 text-xs">{error}</p>
@@ -152,6 +158,27 @@ export default function FilesPage() {
           >
             엑셀
           </a>
+          {" · "}
+          <a
+            className="forest-dummy-link"
+            href="/dummy/hospital-patients-full.csv"
+          >
+            환자통계 CSV
+          </a>
+          {" · "}
+          <a
+            className="forest-dummy-link"
+            href="/dummy/hospital-patients-full.xlsx"
+          >
+            환자통계 엑셀
+          </a>
+          {" · "}
+          <a
+            className="forest-dummy-link"
+            href="/dummy/hospital-patients-visits.csv"
+          >
+            방문행 CSV
+          </a>
         </p>
         <ForestFileList files={uploads} />
         <button
@@ -167,6 +194,7 @@ export default function FilesPage() {
           </Link>
         </p>
       </section>
+      {metrics ? <MetricsStatsPanel metrics={metrics} /> : null}
     </ForestFrame>
   );
 }
