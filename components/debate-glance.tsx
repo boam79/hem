@@ -61,7 +61,7 @@ export function DebateGlance({
               )}
             </div>
             <details className="glance-details">
-              <summary>근거·리스크</summary>
+              <summary>근거·위험</summary>
               <div className="glance-full">
                 <p className="glance-full-label">라운드 1</p>
                 <TurnCell cell={r1} loading={r1Loading} />

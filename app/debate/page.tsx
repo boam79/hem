@@ -73,7 +73,7 @@ function DebateInner() {
       subtitle="회의실 말풍선은 한 줄 결론입니다. 라운드 전체와 근거는 여기에서 봅니다."
       sidebar={
         <ForestPageNote>
-          홈은 동물 캐릭터의 말풍선만 보여 줍니다. R1·R2 카드와 공유 링크는
+          홈은 동물 캐릭터의 말풍선만 보여 줍니다. 1·2라운드 카드와 공유 링크는
           이 메뉴입니다.
         </ForestPageNote>
       }
@@ -96,7 +96,7 @@ function DebateInner() {
         <section className="forest-panel">
           <h2 className="forest-panel-title">아직 결과가 없습니다</h2>
           <p className="forest-panel-copy">
-            홈에서 토론을 시작하면 세 페르소나의 R1·R2가 여기에 남습니다.
+            홈에서 토론을 시작하면 세 페르소나의 1·2라운드가 여기에 남습니다.
           </p>
           <p className="forest-panel-copy">
             <Link className="forest-dummy-link" href="/">
@@ -122,7 +122,7 @@ function DebateInner() {
           <h2 className="forest-panel-title">라운드 한눈에</h2>
           <DebateGlance round1={round1} round2={round2} />
           <p className="forest-results-links">
-            전체 그리드:{" "}
+            전체 보기:{" "}
             <Link className="forest-dummy-link" href={`/s/${sessionId}`}>
               /s/{sessionId}
             </Link>

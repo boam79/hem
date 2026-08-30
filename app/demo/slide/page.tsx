@@ -27,7 +27,7 @@ export default function SlidePage() {
       <pre className="bg-muted mt-8 overflow-x-auto rounded-lg p-4 text-xs">
 {`지표 + 안건
   → [앤트로픽 재무] [오픈AI 마케팅] [구글 진료]
-  → 비교 그리드
+  → 비교 표
   → 사람 사회자 메모 → /s/[id]`}
       </pre>
     </main>

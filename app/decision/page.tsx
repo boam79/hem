@@ -125,7 +125,7 @@ function DecisionInner() {
             round2={cellsForRound(turns, 2)}
           />
           <p className="forest-results-links">
-            전체 그리드:{" "}
+            전체 보기:{" "}
             <Link className="forest-dummy-link" href={`/s/${sessionId}`}>
               /s/{sessionId}
             </Link>
