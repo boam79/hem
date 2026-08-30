@@ -700,7 +700,7 @@ body {
 .table-waiting-label {
   position: absolute;
   top: auto;
-  bottom: 3.15rem;
+  bottom: 5.55rem;
   left: 50%;
   z-index: 8;
   margin: 0;
@@ -712,7 +712,7 @@ body {
   font-size: 0.74rem;
   font-weight: 750;
   color: #24332c;
-  box-shadow: 0 6px 16px rgb(20 40 30 / 0.14);
+  box-shadow: 0 3px 10px rgb(20 40 30 / 0.1);
   text-shadow: 0 1px 0 rgb(255 255 255 / 0.9);
 }
 
