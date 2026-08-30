@@ -3,9 +3,9 @@
 import Image from "next/image";
 import { sheetCountFromActivity, stackMotion } from "@/lib/forest-ui";
 
-const STACK_SRC = "/clay-paper-stack.png?v=02match";
-const STACK_W = 787;
-const STACK_H = 975;
+const STACK_SRC = "/clay-paper-stack.png?v=02match2";
+const STACK_W = 771;
+const STACK_H = 965;
 
 function Sparkle({ className }: { className: string }) {
   return <span className={`sparkle ${className}`} />;
