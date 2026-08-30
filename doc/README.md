@@ -29,6 +29,7 @@
 | [progress/2026-08-29-clay-pile-tower.md](progress/2026-08-29-clay-pile-tower.md) | 대기 1장 타일 · 쌓임은 점토 타워 PNG |
 | [progress/2026-08-30-clay-stack-02.md](progress/2026-08-30-clay-stack-02.md) | 02 시안대로 종이산 PNG 통째로 |
 | [progress/2026-08-30-clay-stack-blend.md](progress/2026-08-30-clay-stack-blend.md) | 종이산을 회의실 나무 톤에 맞춤 |
+| [progress/2026-08-30-inpaint-papers.md](progress/2026-08-30-inpaint-papers.md) | 원본 회의실에 점토 서류 인페인트 (스티커 PNG 폐기) |
 | [progress/2026-08-29-no-persona-bubbles.md](progress/2026-08-29-no-persona-bubbles.md) | 종이더미 위치 · 페르소나 말풍선·이름표 제거 |
 
 루트 `PRD.md`는 여기로 가는 포인터다.
