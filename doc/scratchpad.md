@@ -77,6 +77,8 @@ Haiku R2 재시도 수정 후(`ba66843`): `cA_9I2` `4e4XEM` `NQSmdi` — 세 세
 
 2026-08-30 서류 재수정(Executor): 오버레이 PNG는 바인더와 조명·원근이 안 맞음. 대기=`forest-room-idle.png`, 업로드·토론=`forest-room-stacked.png`에 바인더 크기로 구워 넣음. 스티커 오버레이 제거.
 
+2026-08-30 서류 재인페인트(Executor): bake1도 흰 아이소메트릭 PNG를 붙인 것이라 후광·스티커가 남음. 원본 `forest-room.png`에 점토 서류를 그려 넣음(캐릭터·바인더 유지). 대기=낮은 크림산, 업로드=높은 크림산+윗장만 민트 그리드. 흰 글로우 없음. HTTPS 사용자 확인 대기.
+
 ## Lessons
 
 Supabase MCP는 service role 키를 반환하지 않는다. URL만 자동화 가능.
@@ -96,4 +98,4 @@ heading `대시보드`는 `비용 대시보드`와도 매칭된다. Playwright�
 홈에서 토론이 시작되면 결과 카드 때문에 회의실을 compact로 접고 `.speech-bubble { display: none }`을 켜면 02 시안의 말풍선이 사라진다. 카드는 `/debate`로 빼고 회의실은 접지 않는다.
 아이소메트릭 테이블에서 CSS `top`을 키우면 화면 아래 = 테이블 앞. 종이더미는 `translate(-50%, -100%)`로 박스 바닥을 테이블에 붙인다. 여우 앞(`top` 54%)은 뒤쪽, 바인더 삼각형(72%)은 앞쪽. 세 캐릭터 사이 빈 나무면은 바닥 약 61.5%. `.paper-pile-wrap { overflow: hidden }`는 그림자를 네모로 잘라 이질적으로 보인다. 타워 PNG를 창으로 자르거나 같은 타일을 반복하면 02 시안의 종이산이 아니다. 업로드 후는 `clay-paper-stack.png`를 통째로 둔다. PNG 바닥 네온과 노란 CSS 글로우가 겹치면 스티커처럼 뜬다. `sepia(1)`은 민트를 죽인다. 발치 라임을 회색으로 바꾸면 나무 위에 회판이 생긴다. 라임은 지우고(투명), 아랫장은 크림으로, 접촉은 나무색 AO, `sepia(0.1)`만. 같은 PNG URL은 브라우저가 네온 버전을 붙잡으니 `?v=`로 캐시를 깬다.
 
-02 시안과 서류를 맞추려면 회의실과 다른 PNG를 올리면 안 된다. 바인더처럼 `forest-room-idle.png` / `forest-room-stacked.png`에 구워 넣는다.
+02 시안과 서류를 맞추려면 회의실과 다른 PNG를 올리면 안 된다. 바인더처럼 `forest-room-idle.png` / `forest-room-stacked.png`에 구워 넣는다. 아이소메트릭 서류 PNG를 나무 위에 합성하면 구워도 후광이 남는다. 원본 회의실에 서류를 인페인트해야 조명·원근이 같다.
