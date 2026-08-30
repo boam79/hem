@@ -30,11 +30,22 @@ export function MeetingScene({
   streamPreview?: Partial<Record<PersonaKey, string>>;
   onLeave: () => void;
 }) {
+  const waiting =
+    paperStackMode({
+      fileCount,
+      loadingRound,
+      round1Count: round1.length,
+    }) === "waiting";
+
   return (
     <div className="forest-scene-frame">
       <div className="forest-scene">
         <Image
-          src="/forest-room.png"
+          src={
+            waiting
+              ? "/forest-room-idle.png?v=bake1"
+              : "/forest-room-stacked.png?v=bake1"
+          }
           alt="포레스트 병원 회의실 — 너구리 재무이사, 여우 마케팅실장, 고양이 진료원장"
           fill
           sizes="(max-width: 960px) 100vw, min(1200px, calc(100vw - 300px))"
@@ -46,13 +57,7 @@ export function MeetingScene({
           <PaperStack
             fileCount={fileCount}
             burstId={burstId}
-            waiting={
-              paperStackMode({
-                fileCount,
-                loadingRound,
-                round1Count: round1.length,
-              }) === "waiting"
-            }
+            waiting={waiting}
           />
           {showTableWaitingPrompt({
             hasUploads,

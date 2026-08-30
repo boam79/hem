@@ -1,11 +1,6 @@
 "use client";
 
-import Image from "next/image";
 import { sheetCountFromActivity, stackMotion } from "@/lib/forest-ui";
-
-const STACK_SRC = "/clay-paper-stack.png?v=02match2";
-const STACK_W = 771;
-const STACK_H = 965;
 
 function Sparkle({ className }: { className: string }) {
   return <span className={`sparkle ${className}`} />;
@@ -33,29 +28,6 @@ export function PaperStack({
       data-files={fileCount}
       aria-hidden
     >
-      <div className="paper-pile-glow" />
-      {waiting ? (
-        <Image
-          key="idle-stack"
-          src={STACK_SRC}
-          alt=""
-          width={STACK_W}
-          height={STACK_H}
-          className="clay-idle-tile"
-          unoptimized
-        />
-      ) : (
-        <div key={`pile-${burstId}`} className="clay-stack">
-          <Image
-            src={STACK_SRC}
-            alt=""
-            width={STACK_W}
-            height={STACK_H}
-            className="clay-stack-art"
-            unoptimized
-          />
-        </div>
-      )}
       {stacked ? (
         <>
           <Sparkle className="sparkle-1" />
