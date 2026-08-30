@@ -46,6 +46,7 @@ Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
 - [x] 제한 429 HTTPS — 세션 POST만, 라운드 없음. `rate_limited` 429 (이번 턴 재확인).
 - [x] 홈 UI를 `doc/design/02.png`와 같게 (민트 셸 + 회의실 + 업로드 종이더미·스파클). HTTPS E2E 15. 배포 https://boardroom-six-delta.vercel.app
 - [ ] 테이블 중앙 종이더미 위치 + 페르소나 말풍선/이름표 제거. HTTPS 사용자 확인 대기.
+- [ ] 바인더·타임라인 2026 + 토론 중 점토 말풍선 3개. HTTPS 사용자 확인 대기.
 
 ## Executor's Feedback or Assistance Requests
 
@@ -79,6 +80,8 @@ Haiku R2 재시도 수정 후(`ba66843`): `cA_9I2` `4e4XEM` `NQSmdi` — 세 세
 
 2026-08-30 서류 재인페인트(Executor): bake1도 흰 아이소메트릭 PNG를 붙인 것이라 후광·스티커가 남음. 원본 `forest-room.png`에 점토 서류를 그려 넣음(캐릭터·바인더 유지). 대기=낮은 크림산, 업로드=높은 크림산+윗장만 민트 그리드. 흰 글로우 없음. HTTPS 사용자 확인 대기.
 
+2026-08-30 연도·말풍선(Executor): 바인더·타임라인 2024→2026. 말풍선은 `shouldShowPersonaBubble`이 항상 false라 토론 중에도 안 나옴. 토론 시작·발언이 있으면 02색 점토 말풍선 3개(민트/주황/파랑, 꼬리는 각 캐릭터). 이름표는 그대로 없음. HTTPS 사용자 확인 대기.
+
 
 
 
@@ -102,3 +105,4 @@ heading `대시보드`는 `비용 대시보드`와도 매칭된다. Playwright�
 아이소메트릭 테이블에서 CSS `top`을 키우면 화면 아래 = 테이블 앞. 종이더미는 `translate(-50%, -100%)`로 박스 바닥을 테이블에 붙인다. 여우 앞(`top` 54%)은 뒤쪽, 바인더 삼각형(72%)은 앞쪽. 세 캐릭터 사이 빈 나무면은 바닥 약 61.5%. `.paper-pile-wrap { overflow: hidden }`는 그림자를 네모로 잘라 이질적으로 보인다. 타워 PNG를 창으로 자르거나 같은 타일을 반복하면 02 시안의 종이산이 아니다. 업로드 후는 `clay-paper-stack.png`를 통째로 둔다. PNG 바닥 네온과 노란 CSS 글로우가 겹치면 스티커처럼 뜬다. `sepia(1)`은 민트를 죽인다. 발치 라임을 회색으로 바꾸면 나무 위에 회판이 생긴다. 라임은 지우고(투명), 아랫장은 크림으로, 접촉은 나무색 AO, `sepia(0.1)`만. 같은 PNG URL은 브라우저가 네온 버전을 붙잡으니 `?v=`로 캐시를 깬다.
 
 02 시안과 서류를 맞추려면 회의실과 다른 PNG를 올리면 안 된다. 바인더처럼 `forest-room-idle.png` / `forest-room-stacked.png`에 구워 넣는다. 아이소메트릭 서류 PNG를 나무 위에 합성하면 구워도 후광이 남는다. 원본 회의실에 서류를 인페인트해야 조명·원근이 같다.
+`shouldShowPersonaBubble`이 `return false`면 토론이 시작돼도 홈 말풍선이 없다. 말풍선은 머리 위 점토 PNG(페르소나 색·꼬리 방향)이고, 이름표 칩은 다시 올리지 않는다.

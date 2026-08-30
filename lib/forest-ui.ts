@@ -180,7 +180,7 @@ export function showTableWaitingPrompt(opts: {
   );
 }
 
-export function shouldShowPersonaBubble(_opts: {
+export function shouldShowPersonaBubble(opts: {
   persona: PersonaKey;
   hasUploads: boolean;
   loadingRound: 0 | 1 | 2;
@@ -188,7 +188,8 @@ export function shouldShowPersonaBubble(_opts: {
   round2: DebateCell[];
   streamPreview?: string;
 }): boolean {
-  return false;
+  if (opts.loadingRound !== 0) return true;
+  return opts.round1.length > 0 || opts.round2.length > 0;
 }
 
 export function personaBubbleText(opts: {

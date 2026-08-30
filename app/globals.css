@@ -591,6 +591,60 @@ body {
   object-position: center center;
 }
 
+.clay-bubble {
+  position: absolute;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 13.6rem;
+  aspect-ratio: 3 / 2;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  pointer-events: none;
+  filter: drop-shadow(2px 7px 8px rgb(40 24 8 / 0.22));
+}
+
+.clay-bubble-art {
+  z-index: 0;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.clay-bubble-text {
+  position: relative;
+  z-index: 1;
+  max-width: 68%;
+  padding: 0 0.2rem 0.95rem;
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #3b3428;
+}
+
+.speech-bubble {
+  width: 14.8rem;
+}
+
+.bubble-cfo {
+  top: 15%;
+  left: 5.5%;
+}
+
+.bubble-mkt {
+  top: 2.2%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.bubble-md {
+  top: 13.5%;
+  right: 4%;
+  left: auto;
+}
+
 .leave-meeting-btn {
   position: absolute;
   top: 0.85rem;
@@ -1359,6 +1413,15 @@ body {
   .debate-glance,
   .settings-persona-grid {
     grid-template-columns: 1fr;
+  }
+
+  .clay-bubble,
+  .speech-bubble {
+    width: 38%;
+  }
+
+  .clay-bubble-text {
+    font-size: 0.62rem;
   }
 }
 

@@ -1,15 +1,57 @@
 "use client";
 
+import type { ReactNode } from "react";
 import Image from "next/image";
 import { LogOut } from "lucide-react";
 import { PaperStack } from "@/components/paper-stack";
+import { PERSONAS } from "@/config/personas";
 import type { DebateCell } from "@/lib/debate";
 import {
+  personaBubbleText,
   paperStackMode,
+  shouldShowPersonaBubble,
   showTableWaitingPrompt,
   WAITING_BUBBLE,
 } from "@/lib/forest-ui";
 import type { PersonaKey } from "@/lib/schema";
+
+const BUBBLE_SLOT: Record<PersonaKey, string> = {
+  cfo: "bubble-cfo",
+  mkt: "bubble-mkt",
+  md: "bubble-md",
+};
+
+const BUBBLE_ART: Record<PersonaKey, string> = {
+  cfo: "/clay-bubble-cfo.png",
+  mkt: "/clay-bubble-mkt.png",
+  md: "/clay-bubble-md.png",
+};
+
+function ClayBubble({
+  className,
+  art,
+  children,
+  "data-bubble": dataBubble,
+}: {
+  className: string;
+  art: string;
+  children: ReactNode;
+  "data-bubble"?: PersonaKey;
+}) {
+  return (
+    <div className={`clay-bubble ${className}`} data-bubble={dataBubble}>
+      <Image
+        src={art}
+        alt=""
+        fill
+        sizes="280px"
+        className="clay-bubble-art"
+        unoptimized
+      />
+      <span className="clay-bubble-text">{children}</span>
+    </div>
+  );
+}
 
 export function MeetingScene({
   fileCount,
@@ -18,6 +60,7 @@ export function MeetingScene({
   loadingRound,
   round1,
   round2,
+  streamPreview,
   onLeave,
 }: {
   fileCount: number;
@@ -43,8 +86,8 @@ export function MeetingScene({
         <Image
           src={
             waiting
-              ? "/forest-room-idle.png?v=inpaint1"
-              : "/forest-room-stacked.png?v=inpaint1"
+              ? "/forest-room-idle.png?v=y2026"
+              : "/forest-room-stacked.png?v=y2026"
           }
           alt="포레스트 병원 회의실 — 너구리 재무이사, 여우 마케팅실장, 고양이 진료원장"
           fill
@@ -53,6 +96,27 @@ export function MeetingScene({
           priority
           unoptimized
         />
+        {PERSONAS.map((p) => {
+          const opts = {
+            persona: p.key,
+            hasUploads,
+            loadingRound,
+            round1,
+            round2,
+            streamPreview: streamPreview?.[p.key],
+          };
+          if (!shouldShowPersonaBubble(opts)) return null;
+          return (
+            <ClayBubble
+              key={`bubble-${p.key}`}
+              art={BUBBLE_ART[p.key]}
+              className={`speech-bubble ${BUBBLE_SLOT[p.key]}`}
+              data-bubble={p.key}
+            >
+              {personaBubbleText(opts)}
+            </ClayBubble>
+          );
+        })}
         <div className="paper-pile-anchor">
           <PaperStack
             fileCount={fileCount}

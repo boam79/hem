@@ -43,11 +43,11 @@ const STEPS: {
   label: string;
   date: string;
 }[] = [
-  { id: "upload", label: "데이터 업로드", date: "24.05.20" },
-  { id: "review", label: "데이터 검토", date: "24.05.21" },
-  { id: "insight", label: "인사이트 도출", date: "24.05.23" },
-  { id: "decision", label: "의사결정", date: "24.05.24" },
-  { id: "result", label: "결과 확인", date: "24.05.27" },
+  { id: "upload", label: "데이터 업로드", date: "26.05.20" },
+  { id: "review", label: "데이터 검토", date: "26.05.21" },
+  { id: "insight", label: "인사이트 도출", date: "26.05.23" },
+  { id: "decision", label: "의사결정", date: "26.05.24" },
+  { id: "result", label: "결과 확인", date: "26.05.27" },
 ];
 
 function MedicalCross() {
@@ -316,7 +316,7 @@ export function ForestTimeline({
     <footer className="forest-footer">
       <div className="forest-footer-meta">
         <p className="forest-footer-round">Round {roundNumber}</p>
-        <p className="forest-footer-dates">24.05.20 ~ 24.05.27</p>
+        <p className="forest-footer-dates">26.05.20 ~ 26.05.27</p>
         <span className="days-left-badge">7일 남음</span>
       </div>
       <ol className="forest-steps">

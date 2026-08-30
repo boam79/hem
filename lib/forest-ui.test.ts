@@ -97,7 +97,7 @@ describe("personaBubbleText", () => {
     expect(personaBubbleText(waiting)).toBe(WAITING_BUBBLE);
   });
 
-  it("keeps persona bubbles off the meeting table after upload or while a round runs", () => {
+  it("keeps persona bubbles off until a debate starts", () => {
     expect(
       shouldShowPersonaBubble({
         persona: "cfo",
@@ -115,6 +115,9 @@ describe("personaBubbleText", () => {
         round2: empty,
       }),
     ).toBe(false);
+  });
+
+  it("shows persona bubbles while a round runs and after cells land", () => {
     expect(
       shouldShowPersonaBubble({
         persona: "cfo",
@@ -123,7 +126,27 @@ describe("personaBubbleText", () => {
         round1: empty,
         round2: empty,
       }),
-    ).toBe(false);
+    ).toBe(true);
+    const cell: DebateCell = {
+      persona: "cfo",
+      provider: "anthropic",
+      status: "ok",
+      payload: {
+        position: "보류. 회수기간을 먼저 본다",
+        evidence: ["x"],
+        risks: [],
+        needs_data: [],
+      },
+    };
+    expect(
+      shouldShowPersonaBubble({
+        persona: "cfo",
+        hasUploads: true,
+        loadingRound: 0,
+        round1: [cell],
+        round2: empty,
+      }),
+    ).toBe(true);
   });
 
   it("uses the upload lines after a successful parse", () => {
