@@ -18,5 +18,5 @@
 
 ## 검증
 
-- 단위 `pnpm test`
-- HTTPS https://boardroom-six-delta.vercel.app
+- 단위 `pnpm test` 88.
+- HTTPS 대기·쌓임 E2E 2 passed. 배포 `0870f24` READY. 클로즈 캡처에서 라임 픽셀 0. 사용자 확인 대기.
