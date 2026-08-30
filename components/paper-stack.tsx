@@ -3,6 +3,10 @@
 import Image from "next/image";
 import { sheetCountFromActivity, stackMotion } from "@/lib/forest-ui";
 
+const STACK_SRC = "/clay-paper-stack.png?v=02match";
+const STACK_W = 787;
+const STACK_H = 975;
+
 function Sparkle({ className }: { className: string }) {
   return <span className={`sparkle ${className}`} />;
 }
@@ -32,21 +36,21 @@ export function PaperStack({
       <div className="paper-pile-glow" />
       {waiting ? (
         <Image
-          key="idle-tile"
-          src="/clay-paper-tile.png"
+          key="idle-stack"
+          src={STACK_SRC}
           alt=""
-          width={520}
-          height={175}
+          width={STACK_W}
+          height={STACK_H}
           className="clay-idle-tile"
           unoptimized
         />
       ) : (
         <div key={`pile-${burstId}`} className="clay-stack">
           <Image
-            src="/clay-paper-stack.png?v=wood2"
+            src={STACK_SRC}
             alt=""
-            width={587}
-            height={849}
+            width={STACK_W}
+            height={STACK_H}
             className="clay-stack-art"
             unoptimized
           />
@@ -56,6 +60,8 @@ export function PaperStack({
         <>
           <Sparkle className="sparkle-1" />
           <Sparkle className="sparkle-2" />
+          <Sparkle className="sparkle-3" />
+          <Sparkle className="sparkle-4" />
           <span key={`burst-${burstId}`} className="sparkle-burst-group">
             <Sparkle className="sparkle-burst sparkle-b1" />
             <Sparkle className="sparkle-burst sparkle-b2" />
