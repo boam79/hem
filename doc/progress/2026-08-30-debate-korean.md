@@ -15,6 +15,8 @@ CSV 업로드 헤더(영문 키)와 JSON 스키마 키는 그대로. 파일 형�
 
 - 단위 110
 - `pnpm build` 통과
-- HTTPS E2E는 배포 후. 「토론 시작」「데이터 검토」 실클릭 없음.
+- HTTPS E2E **27 passed** (`https://boardroom-six-delta.vercel.app`)
+- 브라우저: `/debate?id=w4demo` 근거에 `검색광고 유입 2026-07`, `채널별 유치비용`. 배지 앤트로픽·오픈AI.
 
-배포: https://boardroom-six-delta.vercel.app
+배포: https://boardroom-six-delta.vercel.app  
+커밋 `5c839d1` `2b2328f`. Planner 완료는 사용자 확인 후.
