@@ -24,7 +24,7 @@ const BUBBLE_SLOT: Record<PersonaKey, string> = {
 const BUBBLE_ART: Record<PersonaKey, string> = {
   cfo: "/clay-bubble-cfo.png",
   mkt: "/clay-bubble-mkt.png",
-  md: "/clay-bubble-md.png",
+  md: "/clay-bubble-md.png?v=tail-r",
 };
 
 function ClayBubble({
