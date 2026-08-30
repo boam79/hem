@@ -54,7 +54,7 @@ Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
 - [ ] 테이블 중앙 종이더미 위치 + 페르소나 말풍선/이름표 제거. HTTPS 사용자 확인 대기.
 - [ ] 바인더·타임라인 2026 + 토론 중 점토 말풍선 3개. HTTPS 사용자 확인 대기.
 - [ ] 400KB 이내 전 진료과·성별·나이대·지역 환자 더미 업로드. 파서가 환자행을 월별 지표로 합침. HTTPS 사용자 확인 대기.
-- [ ] 업로드 통계·데이터 검토. 1/4 상수·요약 함수 단위 103. 화면은 다음 칸. 사용자 확인 대기.
+- [ ] 업로드 통계·데이터 검토. 메뉴 추가 없음. 단위 104 · HTTPS E2E 27. 배포 https://boardroom-six-delta.vercel.app 사용자 확인 대기(데이터 검토 실클릭은 비용).
 
 ## Executor's Feedback or Assistance Requests
 
@@ -94,7 +94,7 @@ Haiku R2 재시도 수정 후(`ba66843`): `cA_9I2` `4e4XEM` `NQSmdi` — 세 세
 
 2026-08-30 환자더미 업로드 오류(Executor): 프로덕션은 `month` 헤더만 받음. 방문행 CSV를 올리면 `month 헤더 행이 없습니다`. `hospital-patients-full.csv`를 월별 집계로 바꿈. 엑셀은 `monthly`+`patients`. 방문행은 `hospital-patients-visits.csv`. 단위 99. 사용자는 Finder에서 월별 CSV/엑셀을 다시 올리면 됨.
 
-2026-08-30 데이터검토 1/4(Executor): `DATA_REVIEW_AGENDA` 10~200자, `canStartDataReview(업로드여부)`, `summarizeMetrics` 12행·수술합·순현금. 단위 103. 화면(파일 관리 표·홈 버튼)은 다음 칸. 사용자 확인 후 2번으로.
+2026-08-30 데이터검토 전칸(Executor): `/files` 업로드 통계 표, 홈 「데이터 검토」(업로드 없으면 disabled, 고정 안건). 메뉴 그대로. 단위 104 · HTTPS E2E 27. 커밋 `cbf0b12` `2956532`. 실토론 버튼은 E2E에서 누르지 않음.
 
 
 
