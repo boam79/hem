@@ -230,8 +230,8 @@ test("uploading a dummy csv stacks papers on home", async ({ page }) => {
   await page
     .locator("#metrics-file")
     .setInputFiles("public/dummy/patient-and-cashflow.csv");
-  await expect(page.getByText("업로드안과(가상)")).toBeVisible();
   await expect(page.locator("#upload-stats")).toBeVisible();
+  await expect(page.locator("#upload-stats")).toContainText("업로드안과(가상)");
   await expect(page.locator("#upload-stats th", { hasText: "월" })).toBeVisible();
   await page.getByRole("link", { name: "홈에서 토론 시작" }).click();
   await expect(page).toHaveURL(/\/$/);
