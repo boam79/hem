@@ -3,6 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { TurnCell } from "@/components/turn-cell";
 import { PERSONAS } from "@/config/personas";
 import type { DebateCell } from "@/lib/debate";
+import { ROUND1_LABEL, ROUND2_LABEL } from "@/lib/ko-display";
 import { glanceLine, glanceNote } from "@/lib/forest-ui";
 
 export function DebateGlance({
@@ -34,7 +35,7 @@ export function DebateGlance({
               <ProviderBadge provider={p.provider} />
             </header>
             <div className="glance-row">
-              <span className="glance-round-label">R1</span>
+              <span className="glance-round-label">{ROUND1_LABEL}</span>
               {r1Loading ? (
                 <GlanceSkeleton />
               ) : (
@@ -42,7 +43,7 @@ export function DebateGlance({
               )}
             </div>
             <div className="glance-row">
-              <span className="glance-round-label">R2</span>
+              <span className="glance-round-label">{ROUND2_LABEL}</span>
               {r2Loading ? (
                 <GlanceSkeleton />
               ) : (

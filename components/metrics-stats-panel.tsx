@@ -25,7 +25,7 @@ export function MetricsStatsPanel({ metrics }: { metrics: Metrics }) {
               <th>월</th>
               <th>라식</th>
               <th>스마일</th>
-              <th>ICL</th>
+              <th>안내렌즈</th>
               <th>백내장</th>
               <th>유입</th>
               <th>유출</th>

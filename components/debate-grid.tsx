@@ -8,6 +8,7 @@ import { ProviderBadge } from "@/components/provider-badge";
 import { TurnCell } from "@/components/turn-cell";
 import { PERSONAS } from "@/config/personas";
 import type { DebateCell } from "@/lib/debate";
+import { ROUND1_LABEL, ROUND2_LABEL } from "@/lib/ko-display";
 
 export function DebateGrid({
   round1,
@@ -23,7 +24,7 @@ export function DebateGrid({
   }
   return (
     <div className="mt-8 overflow-x-auto">
-      <div className="grid min-w-[48rem] grid-cols-[4.5rem_repeat(3,minmax(0,1fr))] gap-3">
+      <div className="grid min-w-[48rem] grid-cols-[5.5rem_repeat(3,minmax(0,1fr))] gap-3">
         <div />
         {PERSONAS.map((p) => (
           <Card key={p.key} size="sm">
@@ -36,7 +37,7 @@ export function DebateGrid({
           </Card>
         ))}
         <div className="text-muted-foreground flex items-start pt-3 text-sm font-medium">
-          R1
+          {ROUND1_LABEL}
         </div>
         {PERSONAS.map((p) => (
           <Card key={`r1-${p.key}`}>
@@ -49,7 +50,7 @@ export function DebateGrid({
           </Card>
         ))}
         <div className="text-muted-foreground flex items-start pt-3 text-sm font-medium">
-          R2
+          {ROUND2_LABEL}
         </div>
         {PERSONAS.map((p) => (
           <Card key={`r2-${p.key}`}>

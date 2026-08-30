@@ -6,15 +6,15 @@ const STYLES: Record<
   { label: string; className: string }
 > = {
   anthropic: {
-    label: "Anthropic",
+    label: "앤트로픽",
     className: "border-transparent bg-amber-100 text-amber-950",
   },
   openai: {
-    label: "OpenAI",
+    label: "오픈AI",
     className: "border-transparent bg-emerald-100 text-emerald-950",
   },
   google: {
-    label: "Google",
+    label: "구글",
     className: "border-transparent bg-sky-100 text-sky-950",
   },
 };

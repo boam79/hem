@@ -342,6 +342,22 @@ describe("glanceLine", () => {
     expect(line.length).toBe(GLANCE_POSITION_MAX + 1);
   });
 
+  it("shows Korean metric names in glance copy", () => {
+    expect(
+      glanceLine({
+        persona: "cfo",
+        provider: "anthropic",
+        status: "ok",
+        payload: {
+          position: "cash_net이 안정적입니다",
+          evidence: ["inflow_ad 2026-01"],
+          risks: [],
+          needs_data: [],
+        },
+      }),
+    ).toBe("순현금이 안정적입니다");
+  });
+
   it("clips round-2 notes and skips blanks", () => {
     expect(glanceNote("")).toBeNull();
     expect(glanceNote("   ")).toBeNull();

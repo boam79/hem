@@ -233,6 +233,8 @@ describe("json-only retry hint", () => {
     const r1 = jsonOnlySuffix(1);
     const r2 = jsonOnlySuffix(2);
     expect(r1).not.toMatch(/objection/);
+    expect(r1).toMatch(/검색광고 유입/);
+    expect(r1).not.toMatch(/inflow\.search_ad/);
     expect(r2).toMatch(/"objection":"[^"]+"/);
     expect(r2).toMatch(/"changed":"[^"]+"/);
     expect(r2).toMatch(/빈 문자열 금지|비우지 않습니다/);

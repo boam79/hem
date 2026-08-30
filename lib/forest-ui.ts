@@ -1,4 +1,5 @@
 import type { DebateCell } from "@/lib/debate";
+import { koreanizePublicText } from "@/lib/ko-display";
 import type { PersonaKey } from "@/lib/schema";
 
 export const PAPER_STACK_CAP = 12;
@@ -75,13 +76,16 @@ export const GLANCE_NOTE_MAX = 56;
 export function glanceLine(cell?: DebateCell): string {
   if (!cell) return "대기";
   if (cell.status !== "ok") return "발언 불가";
-  return truncateBubble(cell.payload?.position ?? "", GLANCE_POSITION_MAX);
+  return truncateBubble(
+    koreanizePublicText(cell.payload?.position ?? ""),
+    GLANCE_POSITION_MAX,
+  );
 }
 
 export function glanceNote(text: string | undefined): string | null {
   const trimmed = text?.trim();
   if (!trimmed) return null;
-  return truncateBubble(trimmed, GLANCE_NOTE_MAX);
+  return truncateBubble(koreanizePublicText(trimmed), GLANCE_NOTE_MAX);
 }
 
 export type ForestNavId =
@@ -157,16 +161,18 @@ export function latestPosition(
 ): string | undefined {
   const from = (cells: DebateCell[]) =>
     cells.find((cell) => cell.persona === persona)?.payload?.position?.trim();
-  return from(round2) || from(round1) || undefined;
+  const text = from(round2) || from(round1);
+  return text ? koreanizePublicText(text) : undefined;
 }
 
 export function spokenFromStream(streamPreview?: string): string | undefined {
   const raw = streamPreview?.trim();
   if (!raw) return undefined;
-  if (!raw.startsWith("{")) return raw;
+  if (!raw.startsWith("{")) return koreanizePublicText(raw);
   const match = raw.match(/"position"\s*:\s*"((?:\\.|[^"\\])*)/);
   if (!match?.[1]) return undefined;
-  return match[1].replace(/\\n/g, " ").replace(/\\"/g, '"').trim() || undefined;
+  const spoken = match[1].replace(/\\n/g, " ").replace(/\\"/g, '"').trim();
+  return spoken ? koreanizePublicText(spoken) : undefined;
 }
 
 export function showTableWaitingPrompt(opts: {

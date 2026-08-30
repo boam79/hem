@@ -5,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { koreanizePublicText } from "@/lib/ko-display";
 import type { Memo } from "@/lib/schema";
 
 const PERSONA_LABEL = {
@@ -26,7 +27,7 @@ export function MemoView({ memo }: { memo: Memo }) {
           ) : (
             <ul className="list-disc pl-5 text-sm">
               {memo.consensus.map((item) => (
-                <li key={item}>{item}</li>
+                <li key={item}>{koreanizePublicText(item)}</li>
               ))}
             </ul>
           )}
@@ -42,11 +43,11 @@ export function MemoView({ memo }: { memo: Memo }) {
           ) : (
             memo.open_issues.map((row) => (
               <div key={row.issue} className="text-sm">
-                <p className="font-medium">{row.issue}</p>
+                <p className="font-medium">{koreanizePublicText(row.issue)}</p>
                 <ul className="text-muted-foreground mt-1 list-disc pl-5">
-                  <li>재무: {row.positions.cfo}</li>
-                  <li>마케팅: {row.positions.mkt}</li>
-                  <li>진료: {row.positions.md}</li>
+                  <li>재무: {koreanizePublicText(row.positions.cfo)}</li>
+                  <li>마케팅: {koreanizePublicText(row.positions.mkt)}</li>
+                  <li>진료: {koreanizePublicText(row.positions.md)}</li>
                 </ul>
               </div>
             ))
@@ -63,7 +64,7 @@ export function MemoView({ memo }: { memo: Memo }) {
           ) : (
             <ul className="list-disc pl-5 text-sm">
               {memo.missing_data.map((item) => (
-                <li key={item}>{item}</li>
+                <li key={item}>{koreanizePublicText(item)}</li>
               ))}
             </ul>
           )}
@@ -79,7 +80,7 @@ export function MemoView({ memo }: { memo: Memo }) {
           ) : (
             memo.options.map((row) => (
               <div key={row.option} className="text-sm">
-                <p>{row.option}</p>
+                <p>{koreanizePublicText(row.option)}</p>
                 <div className="mt-1 flex flex-wrap gap-1">
                   {row.supported_by.map((key) => (
                     <Badge key={key} variant="secondary">

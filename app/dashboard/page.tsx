@@ -14,10 +14,10 @@ type Health = {
 };
 
 const CHECKS: { key: keyof Health; label: string }[] = [
-  { key: "anthropic", label: "Anthropic (재무이사)" },
-  { key: "openai", label: "OpenAI (마케팅실장)" },
-  { key: "google", label: "Google (진료원장)" },
-  { key: "supabase", label: "Supabase" },
+  { key: "anthropic", label: "재무이사 (앤트로픽)" },
+  { key: "openai", label: "마케팅실장 (오픈AI)" },
+  { key: "google", label: "진료원장 (구글)" },
+  { key: "supabase", label: "데이터베이스" },
 ];
 
 export default function DashboardPage() {

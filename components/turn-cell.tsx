@@ -1,3 +1,4 @@
+import { koreanizePayload } from "@/lib/ko-display";
 import { ProviderBadge } from "@/components/provider-badge";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -39,8 +40,8 @@ export function TurnCell({
       </div>
     );
   }
-  const p = cell.payload;
-  if (!p) return null;
+  if (!cell.payload) return null;
+  const p = koreanizePayload(cell.payload);
   return (
     <div className="space-y-2 text-sm">
       <ProviderBadge provider={cell.provider} />

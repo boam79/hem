@@ -33,9 +33,9 @@ test("precomputed share page is public and shows three provider badges", async (
   await page.goto("/s/w4demo");
   await expect(page.getByText("AI 토론 결과이며 결정은 사람이 합니다.")).toBeVisible();
   await expect(page.getByText("백내장 검색광고 예산 30% 증액")).toBeVisible();
-  await expect(page.getByText("Anthropic").first()).toBeVisible();
-  await expect(page.getByText("OpenAI").first()).toBeVisible();
-  await expect(page.getByText("Google").first()).toBeVisible();
+  await expect(page.getByText("앤트로픽").first()).toBeVisible();
+  await expect(page.getByText("오픈AI").first()).toBeVisible();
+  await expect(page.getByText("구글").first()).toBeVisible();
   await expect(page.getByText("합의점")).toBeVisible();
   await expect(page.getByText("반대:")).toHaveCount(3);
 });
@@ -52,9 +52,9 @@ test("saved live memo is public without login", async ({ page, request }) => {
   await expect(
     page.getByText("검색광고 증액은 회수 가정이 필요합니다"),
   ).toBeVisible();
-  await expect(page.getByText("Anthropic").first()).toBeVisible();
-  await expect(page.getByText("OpenAI").first()).toBeVisible();
-  await expect(page.getByText("Google").first()).toBeVisible();
+  await expect(page.getByText("앤트로픽").first()).toBeVisible();
+  await expect(page.getByText("오픈AI").first()).toBeVisible();
+  await expect(page.getByText("구글").first()).toBeVisible();
   const objections = await page.getByText("반대:").count();
   expect(objections).toBeGreaterThanOrEqual(3);
   await expect(page.locator("input[type=password]")).toHaveCount(0);
@@ -82,9 +82,9 @@ test("F4 evidence sessions have three non-empty R2 objections", async ({
   await page.goto("/s/cA_9I2");
   await expect(page.getByText("AI 토론 결과이며 결정은 사람이 합니다.")).toBeVisible();
   await expect(page.getByText("스마일 전용 레이저 리스 계약 12개월")).toBeVisible();
-  await expect(page.getByText("Anthropic").first()).toBeVisible();
-  await expect(page.getByText("OpenAI").first()).toBeVisible();
-  await expect(page.getByText("Google").first()).toBeVisible();
+  await expect(page.getByText("앤트로픽").first()).toBeVisible();
+  await expect(page.getByText("오픈AI").first()).toBeVisible();
+  await expect(page.getByText("구글").first()).toBeVisible();
   expect(await page.getByText("반대:").count()).toBeGreaterThanOrEqual(3);
   await expect(page.locator("input[type=password]")).toHaveCount(0);
 });
@@ -257,8 +257,8 @@ test("debate results live on a separate menu", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "토론 결과" })).toBeVisible();
   await page.goto("/debate?id=w4demo");
   await expect(page.locator("[data-glance=true]")).toBeVisible();
-  await expect(page.getByText("R1").first()).toBeVisible();
-  await expect(page.getByText("R2").first()).toBeVisible();
+  await expect(page.getByText("1라운드").first()).toBeVisible();
+  await expect(page.getByText("2라운드").first()).toBeVisible();
   await expect(
     page
       .getByText("보류. 검색광고 30% 증액의 회수기간이 12개월 안에 닫히지 않습니다.")
@@ -266,8 +266,8 @@ test("debate results live on a separate menu", async ({ page }) => {
   ).toBeVisible();
   await page.goto("/debate?id=uE7m2G");
   await expect(page.locator("[data-glance=true]")).toBeVisible();
-  await expect(page.getByText("R1").first()).toBeVisible();
-  await expect(page.getByText("R2").first()).toBeVisible();
+  await expect(page.getByText("1라운드").first()).toBeVisible();
+  await expect(page.getByText("2라운드").first()).toBeVisible();
 });
 
 test("dashboard decision and settings menus open real pages", async ({
@@ -280,7 +280,7 @@ test("dashboard decision and settings menus open real pages", async ({
   await expect(page.getByRole("heading", { name: "대시보드", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "연결 상태" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "비용 대시보드" })).toHaveCount(0);
-  await expect(page.getByText("Anthropic (재무이사)")).toBeVisible();
+  await expect(page.getByText("재무이사 (앤트로픽)")).toBeVisible();
   await expect(page.getByText("연결됨").first()).toBeVisible();
 
   await menu.getByRole("link", { name: "의사결정" }).click();
@@ -308,8 +308,8 @@ test("decision page shows a compact two-round glance for a saved session", async
 }) => {
   await page.goto("/decision?id=uE7m2G");
   await expect(page.locator("[data-glance=true]")).toBeVisible();
-  await expect(page.getByText("R1").first()).toBeVisible();
-  await expect(page.getByText("R2").first()).toBeVisible();
+  await expect(page.getByText("1라운드").first()).toBeVisible();
+  await expect(page.getByText("2라운드").first()).toBeVisible();
   await expect(
     page.locator(".glance-note").filter({ hasText: "반대:" }),
   ).toHaveCount(3);

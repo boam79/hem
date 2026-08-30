@@ -17,7 +17,7 @@ export default function SlidePage() {
           합의 점수를 만들지 않습니다.
         </p>
         <p>
-          <strong>PoLL</strong> — 패널은 Anthropic·OpenAI·Google입니다. 배심이
+          <strong>PoLL</strong> — 패널은 앤트로픽·오픈AI·구글입니다. 배심이
           승자를 고르지 않고, 사람이 메모로 선택지를 남깁니다.
         </p>
         <p className="text-muted-foreground">
@@ -26,7 +26,7 @@ export default function SlidePage() {
       </section>
       <pre className="bg-muted mt-8 overflow-x-auto rounded-lg p-4 text-xs">
 {`지표 + 안건
-  → [Anthropic 재무] [OpenAI 마케팅] [Google 진료]
+  → [앤트로픽 재무] [오픈AI 마케팅] [구글 진료]
   → 비교 그리드
   → 사람 사회자 메모 → /s/[id]`}
       </pre>

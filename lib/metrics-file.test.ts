@@ -38,7 +38,7 @@ function dummyMetrics() {
 describe("metrics cashflow table", () => {
   it("bundled metrics stay under 1000 tokens with cashflow columns", () => {
     const table = metricsToMarkdownTable(loadMetrics());
-    expect(table).toMatch(/cash_net/);
+    expect(table).toMatch(/순현금/);
     expect(estimateTokens(table)).toBeLessThanOrEqual(METRICS_TABLE_TOKEN_LIMIT);
   });
 });

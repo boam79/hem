@@ -4,6 +4,7 @@ import { MetricsSchema } from "@/lib/schema";
 import { estimateTokens } from "@/lib/tokens";
 import { BASE_RULES, ROUND2_RULES, type Persona } from "@/config/personas";
 import rawMetrics from "@/data/metrics.json";
+import { METRICS_TABLE_HEADER } from "@/lib/ko-display";
 import { demographicsLine } from "@/lib/patient-visits";
 
 export function loadMetrics(): Metrics {
@@ -18,8 +19,7 @@ export function metricsForSession(session: { metrics?: unknown } | null): Metric
 }
 
 export function metricsToMarkdownTable(metrics: Metrics): string {
-  const header =
-    "| month | lasik | smile | icl | cataract | per_doctor | rev_ref | rev_cat | inflow_ad | inflow_social | inflow_ref | inflow_ov | nat_dom | nat_cn | nat_jp | consult | cash_in | cash_out | cash_net |";
+  const header = METRICS_TABLE_HEADER;
   const sep = "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|";
   const rows = metrics.monthly.map((m) => {
     return `| ${m.month} | ${m.surgeries.lasik} | ${m.surgeries.smile} | ${m.surgeries.icl} | ${m.surgeries.cataract} | ${m.per_doctor_surgeries} | ${m.revenue_mix.refractive} | ${m.revenue_mix.cataract} | ${m.inflow.search_ad} | ${m.inflow.social} | ${m.inflow.referral} | ${m.inflow.overseas_agency} | ${m.nationality_mix.domestic} | ${m.nationality_mix.china} | ${m.nationality_mix.japan} | ${m.consult_to_surgery_rate} | ${m.cashflow.in_man} | ${m.cashflow.out_man} | ${m.cashflow.net_man} |`;
@@ -55,7 +55,7 @@ export function buildRound1UserPrompt(
 
 /** R2 min JSON: objection/changed first so a 400-token cap still keeps F4 fields. */
 export const ROUND2_MIN_EXAMPLE =
-  '{"objection":"마케팅의 회수 가정이 없습니다","changed":"유지: 현금흐름 우선","position":"보류","evidence":["inflow.search_ad 2026-07"],"risks":[],"needs_data":[]}';
+  '{"objection":"마케팅의 회수 가정이 없습니다","changed":"유지: 현금흐름 우선","position":"보류","evidence":["검색광고 유입 2026-07"],"risks":[],"needs_data":[]}';
 
 export function round2SystemHint(provider: Persona["provider"] | string): string {
   const common =
@@ -72,7 +72,7 @@ export function jsonOnlySuffix(round: 1 | 2): string {
   if (round === 2) {
     return `${base} objection과 changed는 빈 문자열 금지. 최소 예:\n${ROUND2_MIN_EXAMPLE}`;
   }
-  return `${base}\n예: {"position":"보류","evidence":["inflow.search_ad 2026-07"],"risks":[],"needs_data":[]}`;
+  return `${base}\n예: {"position":"보류","evidence":["검색광고 유입 2026-07"],"risks":[],"needs_data":[]}`;
 }
 
 export function round2EmptyRetrySuffix(): string {

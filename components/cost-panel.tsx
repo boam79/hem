@@ -78,7 +78,7 @@ export function CostPanel({
       {error ? <p className="text-destructive text-sm">{error}</p> : null}
       {data ? (
         <>
-          <p className="cost-month">{data.month} (UTC)</p>
+          <p className="cost-month">{data.month} (세계시)</p>
           <div className="cost-summary">
             <span>이번 달 추정 {formatUsd(data.spentUsd)}</span>
             <span>예산 {formatUsd(data.budgetUsd)}</span>
@@ -109,7 +109,7 @@ export function CostPanel({
       ) : null}
       {showBudgetEditor ? (
         <div className="cost-budget-row">
-          <label htmlFor="monthly-budget">월 예산(USD)</label>
+          <label htmlFor="monthly-budget">월 예산(달러)</label>
           <input
             id="monthly-budget"
             type="number"

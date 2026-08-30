@@ -96,8 +96,8 @@ export function PersonaEditor() {
     <section className="forest-panel">
       <h2 className="forest-panel-title">페르소나 편집</h2>
       <p className="forest-panel-copy">
-        이름·역할·습관·temperature를 바꿀 수 있습니다. 프로바이더와 모델 ID는
-        세 회사가 서로 다르도록 고정입니다. OpenAI nano는 temperature를 쓰지
+        이름·역할·습관·온도를 바꿀 수 있습니다. 제공사와 모델은
+        세 회사가 서로 다르도록 고정입니다. 오픈AI nano는 온도를 쓰지
         않습니다.
       </p>
       {rows.length === 0 ? (
@@ -141,7 +141,7 @@ export function PersonaEditor() {
                 onChange={(e) => patch(row.key, "habits", e.target.value)}
               />
               <label className="forest-field-label" htmlFor={`persona-temp-${row.key}`}>
-                temperature
+                온도
               </label>
               <input
                 id={`persona-temp-${row.key}`}
