@@ -3,22 +3,61 @@
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { DebateGlance } from "@/components/debate-glance";
 import {
   BoardroomDockBar,
   ForestFrame,
   ForestPageNote,
 } from "@/components/forest-shell";
+import { PERSONAS } from "@/config/personas";
 import demoShare from "@/data/demo-share.json";
 import {
-  cellsForRound,
   DEMO_SHARE_ID,
   type DebateTurnRow,
 } from "@/lib/debate";
 import { apiErrorMessage } from "@/lib/api-errors";
+import {
+  insightsAreEmpty,
+  insightsFromTurns,
+  type InsightLine,
+} from "@/lib/insights";
 import { readRecentSessions } from "@/lib/recent-sessions";
+import type { PersonaKey } from "@/lib/schema";
 
-function DebateInner() {
+const PERSONA_NAME: Record<PersonaKey, string> = {
+  cfo: PERSONAS[0].name,
+  mkt: PERSONAS[1].name,
+  md: PERSONAS[2].name,
+};
+
+function InsightList({
+  title,
+  rows,
+  empty,
+}: {
+  title: string;
+  rows: InsightLine[];
+  empty: string;
+}) {
+  return (
+    <section className="forest-panel">
+      <h2 className="forest-panel-title">{title}</h2>
+      {rows.length === 0 ? (
+        <p className="forest-panel-copy">{empty}</p>
+      ) : (
+        <ul className="insight-rows">
+          {rows.map((row) => (
+            <li key={`${row.persona}-${row.round}-${row.text}`}>
+              <span className="insight-who">{PERSONA_NAME[row.persona]}</span>
+              <span>{row.text}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+function InsightsInner() {
   const search = useSearchParams();
   const queryId = search.get("id");
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -26,10 +65,8 @@ function DebateInner() {
   const [turns, setTurns] = useState<DebateTurnRow[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [recent, setRecent] = useState<{ id: string; agenda: string }[]>([]);
 
   useEffect(() => {
-    setRecent(readRecentSessions());
     const stored = readRecentSessions()[0]?.id ?? null;
     const id = queryId || stored;
     setSessionId(id);
@@ -68,48 +105,36 @@ function DebateInner() {
       .finally(() => setLoading(false));
   }, [queryId]);
 
-  const round1 = cellsForRound(turns, 1);
-  const round2 = cellsForRound(turns, 2);
+  const insights = insightsFromTurns(turns);
 
   return (
     <ForestFrame
-      title="토론 결과"
-      subtitle="회의실 말풍선은 한 줄 결론입니다. 라운드 전체와 근거는 여기에서 봅니다."
+      title="AI 인사이트"
+      subtitle="네 번째 모델을 부르지 않습니다. 세 입장에서 반대·위험·필요 데이터만 모읍니다."
       sidebar={
         <ForestPageNote>
-          홈은 동물 캐릭터의 말풍선만 보여 줍니다. 1·2라운드 카드와 공유 링크는
-          이 메뉴입니다.
+          결정은 사람이 합니다. 여기는 토론에 이미 나온 빈칸과 반대를 한곳에
+          모은 화면입니다.
         </ForestPageNote>
       }
       footer={<BoardroomDockBar sessionId={sessionId} />}
     >
-      {recent.length > 0 ? (
-        <section className="forest-panel">
-          <h2 className="forest-panel-title">최근 회의</h2>
-          <ul className="recent-session-list">
-            {recent.map((row) => (
-              <li key={row.id}>
-                <Link className="forest-dummy-link" href={`/debate?id=${row.id}`}>
-                  {row.agenda}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
       {!loading && !sessionId ? (
         <section className="forest-panel">
-          <h2 className="forest-panel-title">아직 결과가 없습니다</h2>
+          <h2 className="forest-panel-title">아직 인사이트가 없습니다</h2>
           <p className="forest-panel-copy">
-            홈에서 토론을 시작하면 세 페르소나의 1·2라운드가 여기에 남습니다.
+            홈에서 토론을 시작하면 반대 논거와 필요 데이터가 여기에 모입니다.
           </p>
           <p className="forest-panel-copy">
             <Link className="forest-dummy-link" href="/">
               홈으로 토론 시작
             </Link>
             {" · "}
-            <Link className="forest-dummy-link" href={`/debate?id=${DEMO_SHARE_ID}`}>
-              데모 결과
+            <Link
+              className="forest-dummy-link"
+              href={`/insights?id=${DEMO_SHARE_ID}`}
+            >
+              데모 인사이트
             </Link>
           </p>
         </section>
@@ -122,19 +147,30 @@ function DebateInner() {
           <p className="forest-panel-copy">{agenda}</p>
         </section>
       ) : null}
-      {turns.length > 0 ? (
+      {sessionId && !loading && !error && !insightsAreEmpty(insights) ? (
+        <>
+          <InsightList
+            title="반대 논거"
+            rows={insights.objections}
+            empty="라운드 2 반대가 아직 없습니다."
+          />
+          <InsightList
+            title="위험"
+            rows={insights.risks}
+            empty="위험 항목이 없습니다."
+          />
+          <InsightList
+            title="필요 데이터"
+            rows={insights.needsData}
+            empty="추가로 필요한 데이터가 없습니다."
+          />
+        </>
+      ) : null}
+      {sessionId && !loading && !error && insightsAreEmpty(insights) && turns.length > 0 ? (
         <section className="forest-panel">
-          <h2 className="forest-panel-title">라운드 한눈에</h2>
-          <DebateGlance round1={round1} round2={round2} />
-          <p className="forest-results-links">
-            전체 보기:{" "}
-            <Link className="forest-dummy-link" href={`/s/${sessionId}`}>
-              /s/{sessionId}
-            </Link>
-            {" · "}
-            <Link className="forest-dummy-link" href={`/decision?id=${sessionId}`}>
-              사회자 메모
-            </Link>
+          <h2 className="forest-panel-title">모을 항목이 없습니다</h2>
+          <p className="forest-panel-copy">
+            이 세션 발언에 반대·위험·필요 데이터가 없습니다.
           </p>
         </section>
       ) : null}
@@ -142,22 +178,20 @@ function DebateInner() {
   );
 }
 
-export default function DebatePage() {
+export default function InsightsPage() {
   return (
     <Suspense
       fallback={
         <ForestFrame
-          title="토론 결과"
-          subtitle="회의실 말풍선은 한 줄 결론입니다. 라운드 전체와 근거는 여기에서 봅니다."
-          sidebar={
-            <ForestPageNote>세션을 불러오는 중…</ForestPageNote>
-          }
+          title="AI 인사이트"
+          subtitle="네 번째 모델을 부르지 않습니다. 세 입장에서 반대·위험·필요 데이터만 모읍니다."
+          sidebar={<ForestPageNote>세션을 불러오는 중…</ForestPageNote>}
         >
           <p className="forest-panel-copy">세션을 불러오는 중…</p>
         </ForestFrame>
       }
     >
-      <DebateInner />
+      <InsightsInner />
     </Suspense>
   );
 }

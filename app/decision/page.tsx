@@ -3,16 +3,15 @@
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { DebateGlance } from "@/components/debate-glance";
-import { ForestFrame, ForestPageNote } from "@/components/forest-shell";
+import {
+  BoardroomDockBar,
+  ForestFrame,
+  ForestPageNote,
+} from "@/components/forest-shell";
 import { MemoForm } from "@/components/memo-form";
 import { MemoView } from "@/components/memo-view";
 import demoShare from "@/data/demo-share.json";
-import {
-  cellsForRound,
-  DEMO_SHARE_ID,
-  type DebateTurnRow,
-} from "@/lib/debate";
+import { DEMO_SHARE_ID } from "@/lib/debate";
 import { apiErrorMessage } from "@/lib/api-errors";
 import { readRecentSessions } from "@/lib/recent-sessions";
 import { MemoSchema, type Memo } from "@/lib/schema";
@@ -22,7 +21,6 @@ function DecisionInner() {
   const queryId = search.get("id");
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [agenda, setAgenda] = useState<string | null>(null);
-  const [turns, setTurns] = useState<DebateTurnRow[]>([]);
   const [memo, setMemo] = useState<Memo | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -38,7 +36,6 @@ function DecisionInner() {
     if (id === DEMO_SHARE_ID) {
       const parsed = MemoSchema.safeParse(demoShare.memo);
       setAgenda(demoShare.agenda);
-      setTurns(demoShare.turns as DebateTurnRow[]);
       setMemo(parsed.success ? parsed.data : null);
       setLoading(false);
       return;
@@ -51,12 +48,10 @@ function DecisionInner() {
         if (!res.ok) throw new Error(apiErrorMessage(json, "세션을 찾지 못했습니다."));
         return json as {
           session: { agenda: string; memo?: unknown };
-          turns: DebateTurnRow[];
         };
       })
       .then((body) => {
         setAgenda(body.session.agenda);
-        setTurns(body.turns);
         const parsed = body.session.memo
           ? MemoSchema.safeParse(body.session.memo)
           : null;
@@ -65,7 +60,6 @@ function DecisionInner() {
       .catch((e) => {
         setError(e instanceof Error ? e.message : "세션을 찾지 못했습니다.");
         setAgenda(null);
-        setTurns([]);
         setMemo(null);
       })
       .finally(() => setLoading(false));
@@ -81,6 +75,7 @@ function DecisionInner() {
           않습니다.
         </ForestPageNote>
       }
+      footer={<BoardroomDockBar sessionId={sessionId} />}
     >
       {!loading && !sessionId ? (
         <section className="forest-panel">
@@ -115,21 +110,6 @@ function DecisionInner() {
         <section className="forest-panel">
           <h2 className="forest-panel-title">안건</h2>
           <p className="forest-panel-copy">{agenda}</p>
-        </section>
-      ) : null}
-      {turns.length > 0 ? (
-        <section className="forest-panel">
-          <h2 className="forest-panel-title">토론 한눈에</h2>
-          <DebateGlance
-            round1={cellsForRound(turns, 1)}
-            round2={cellsForRound(turns, 2)}
-          />
-          <p className="forest-results-links">
-            전체 보기:{" "}
-            <Link className="forest-dummy-link" href={`/s/${sessionId}`}>
-              /s/{sessionId}
-            </Link>
-          </p>
         </section>
       ) : null}
       {memo ? <MemoView memo={memo} /> : null}

@@ -2,9 +2,20 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ForestFrame, ForestPageNote } from "@/components/forest-shell";
+import {
+  BoardroomDockBar,
+  ForestFrame,
+  ForestPageNote,
+} from "@/components/forest-shell";
+import { MetricsStatsPanel } from "@/components/metrics-stats-panel";
 import { DEMO_SHARE_ID } from "@/lib/debate";
+import { parseUploadedMetrics } from "@/lib/metrics-stats";
+import {
+  readMetricsUploadStore,
+  type MetricsUploadStore,
+} from "@/lib/metrics-upload-store";
 import { readRecentSessions, type RecentSession } from "@/lib/recent-sessions";
+import type { Metrics } from "@/lib/schema";
 
 type Health = {
   anthropic: boolean;
@@ -24,9 +35,14 @@ export default function DashboardPage() {
   const [health, setHealth] = useState<Health | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [recent, setRecent] = useState<RecentSession[]>([]);
+  const [upload, setUpload] = useState<MetricsUploadStore | null>(null);
+  const [metrics, setMetrics] = useState<Metrics | null>(null);
 
   useEffect(() => {
     setRecent(readRecentSessions());
+    const store = readMetricsUploadStore();
+    setUpload(store);
+    setMetrics(store ? parseUploadedMetrics(store.metrics) : null);
     void fetch("/api/health")
       .then(async (res) => {
         if (!res.ok) throw new Error("health_failed");
@@ -39,14 +55,31 @@ export default function DashboardPage() {
   return (
     <ForestFrame
       title="대시보드"
-      subtitle="연결 상태와 이 브라우저에서 연 최근 회의를 봅니다."
+      subtitle="올린 지표와 이 브라우저에서 연 최근 회의를 봅니다."
       sidebar={
         <ForestPageNote>
-          비용과 남은 예산은 설정에서 봅니다. 여기서는 3사 연결과 최근 세션만
+          비용과 남은 예산은 설정에서 봅니다. 여기서는 올린 지표와 3사 연결을
           둡니다.
         </ForestPageNote>
       }
+      footer={<BoardroomDockBar sessionId={recent[0]?.id ?? null} />}
     >
+      {metrics ? (
+        <>
+          {upload?.label ? (
+            <p className="forest-panel-copy">{upload.label}</p>
+          ) : null}
+          <MetricsStatsPanel metrics={metrics} />
+        </>
+      ) : (
+        <section className="forest-panel">
+          <h2 className="forest-panel-title">올린 지표</h2>
+          <p className="forest-panel-copy">
+            아직 이 브라우저에 올린 지표가 없습니다. 파일 관리에서 CSV·엑셀을
+            올리면 월별 표가 여기에 뜹니다.
+          </p>
+        </section>
+      )}
       <section className="forest-panel">
         <h2 className="forest-panel-title">연결 상태</h2>
         {error ? <p className="text-destructive text-sm">{error}</p> : null}

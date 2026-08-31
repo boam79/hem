@@ -17,6 +17,10 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
+  boardroomDockActive,
+  boardroomDockHrefs,
+} from "@/lib/boardroom-dock";
+import {
   forestNavActive,
   timelineStates,
   type ForestNavId,
@@ -240,27 +244,48 @@ export function ForestShell({
 }
 
 export function BoardroomDock({ sessionId }: { sessionId: string | null }) {
-  const debateHref = sessionId ? `/debate?id=${sessionId}` : "/debate";
-  const decisionHref = sessionId ? `/decision?id=${sessionId}` : "/decision";
+  const pathname = usePathname();
+  const hrefs = boardroomDockHrefs(sessionId);
+  const active = boardroomDockActive(pathname);
   return (
     <nav className="boardroom-dock" aria-label="회의 보기">
-      <Link href={debateHref}>
+      <Link
+        href={hrefs.minutes}
+        className={cn(active === "minutes" && "is-active")}
+      >
         <MessagesSquare className="size-5" strokeWidth={2.1} />
         회의록
       </Link>
-      <Link href="/dashboard">
+      <Link
+        href={hrefs.metrics}
+        className={cn(active === "metrics" && "is-active")}
+      >
         <LayoutDashboard className="size-5" strokeWidth={2.1} />
         지표 대시보드
       </Link>
-      <Link href={decisionHref}>
+      <Link
+        href={hrefs.scenario}
+        className={cn(active === "scenario" && "is-active")}
+      >
         <Target className="size-5" strokeWidth={2.1} />
         시나리오 결과
       </Link>
-      <Link href={debateHref} className="dock-insight">
+      <Link
+        href={hrefs.insights}
+        className={cn("dock-insight", active === "insights" && "is-active")}
+      >
         <Sparkles className="size-5" strokeWidth={2.1} />
         AI 인사이트
       </Link>
     </nav>
+  );
+}
+
+export function BoardroomDockBar({ sessionId }: { sessionId: string | null }) {
+  return (
+    <div className="boardroom-dock-page">
+      <BoardroomDock sessionId={sessionId} />
+    </div>
   );
 }
 
