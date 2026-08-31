@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { LogOut } from "lucide-react";
 import { Disclaimer } from "@/components/disclaimer";
 import { HomeMetricsUpload } from "@/components/home-metrics-upload";
 import { ForestShell } from "@/components/forest-shell";
@@ -231,12 +232,13 @@ export default function Home() {
         <Button
           type="button"
           size="lg"
-          className="forest-start-btn header-next-turn"
-          aria-label="시뮬레이션 다음 턴"
-          disabled={loadingRound !== 0 || !agendaOk}
-          onClick={openChooser}
+          variant="outline"
+          className="header-leave-btn"
+          aria-label="회의 나가기"
+          onClick={leaveMeeting}
         >
-          {loadingRound === 0 ? "시뮬레이션 다음 턴 →" : "토론 중…"}
+          <LogOut className="size-3.5" strokeWidth={2.4} />
+          회의 나가기
         </Button>
       }
       sidebarLead={
@@ -400,7 +402,6 @@ export default function Home() {
         round2={round2}
         names={personaNames}
         streamPreview={streamPreview}
-        onLeave={leaveMeeting}
       />
     </ForestShell>
   );

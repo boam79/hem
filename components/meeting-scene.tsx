@@ -2,7 +2,6 @@
 
 import type { ReactNode } from "react";
 import Image from "next/image";
-import { LogOut } from "lucide-react";
 import { PaperStack } from "@/components/paper-stack";
 import { PERSONAS } from "@/config/personas";
 import type { DebateCell } from "@/lib/debate";
@@ -45,7 +44,6 @@ export function MeetingScene({
   round1,
   round2,
   streamPreview,
-  onLeave,
 }: {
   fileCount: number;
   burstId: number;
@@ -55,7 +53,6 @@ export function MeetingScene({
   round2: DebateCell[];
   names?: Partial<Record<PersonaKey, string>>;
   streamPreview?: Partial<Record<PersonaKey, string>>;
-  onLeave: () => void;
 }) {
   const waiting =
     paperStackMode({
@@ -113,10 +110,6 @@ export function MeetingScene({
             </p>
           ) : null}
         </div>
-        <button type="button" className="leave-meeting-btn" onClick={onLeave}>
-          <LogOut className="size-3.5" strokeWidth={2.4} />
-          회의 나가기
-        </button>
       </div>
     </div>
   );

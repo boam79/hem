@@ -799,12 +799,19 @@ body {
   box-shadow: 0 0 0 3px rgb(34 197 94 / 0.2);
 }
 
-.header-next-turn {
+.header-leave-btn {
   height: 2.55rem !important;
-  padding-left: 1.15rem !important;
+  gap: 0.4rem;
+  border: 1px solid #d7e2f0 !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  padding-left: 1.05rem !important;
   padding-right: 1.15rem !important;
   font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--forest-mint-deep) !important;
   white-space: nowrap;
+  box-shadow: 0 6px 16px rgb(15 23 42 / 0.08);
 }
 
 .start-chooser-backdrop {
@@ -929,24 +936,6 @@ body {
 .bubble-md::after {
   right: 1.4rem;
   left: auto;
-}
-
-.leave-meeting-btn {
-  position: absolute;
-  top: 0.85rem;
-  right: 0.85rem;
-  z-index: 8;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  border: 1px solid #d7e2f0;
-  border-radius: 999px;
-  background: #fff;
-  padding: 0.4rem 0.9rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--forest-mint-deep);
-  box-shadow: 0 6px 16px rgb(15 23 42 / 0.1);
 }
 
 .paper-pile-anchor {

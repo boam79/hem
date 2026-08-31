@@ -174,8 +174,13 @@ test("home has agenda, the meeting room, and a compact upload", async ({
   );
   await expect(
     page.getByRole("button", { name: "시뮬레이션 다음 턴" }),
+  ).toHaveCount(0);
+  await expect(
+    page.locator(".forest-header").getByRole("button", { name: "회의 나가기" }),
   ).toBeVisible();
-  await expect(page.getByRole("button", { name: "회의 나가기" })).toBeVisible();
+  await expect(
+    page.locator(".forest-scene").getByRole("button", { name: "회의 나가기" }),
+  ).toHaveCount(0);
   await expect(page.getByText("Boardroom").first()).toBeVisible();
   await expect(page.getByText("병원 경영 시뮬레이터").first()).toBeVisible();
   await expect(page.getByRole("button", { name: "데이터 검토" })).toBeDisabled();
@@ -195,21 +200,22 @@ test("home has agenda, the meeting room, and a compact upload", async ({
   ).toHaveCount(0);
 });
 
-test("agenda sits below the next-turn header and above the start button", async ({
+test("agenda sits below the header leave button and above the start button", async ({
   page,
 }) => {
   await page.goto("/");
   const agenda = await page.locator("#agenda").boundingBox();
   const category = await page.locator("#category").boundingBox();
-  const nextTurn = await page
-    .getByRole("button", { name: "시뮬레이션 다음 턴" })
+  const leave = await page
+    .locator(".forest-header")
+    .getByRole("button", { name: "회의 나가기" })
     .boundingBox();
   const start = await page.getByRole("button", { name: "토론 시작" }).boundingBox();
   expect(agenda).toBeTruthy();
   expect(category).toBeTruthy();
-  expect(nextTurn).toBeTruthy();
+  expect(leave).toBeTruthy();
   expect(start).toBeTruthy();
-  expect(nextTurn!.y).toBeLessThan(agenda!.y);
+  expect(leave!.y).toBeLessThan(agenda!.y);
   expect(agenda!.y).toBeLessThan(category!.y);
   expect(category!.y).toBeLessThan(start!.y);
 });
@@ -227,11 +233,7 @@ test("start chooser offers uploaded data or continue without it", async ({
   ).toBeDisabled();
   await expect(page.getByRole("button", { name: "그냥 진행" })).toBeEnabled();
   await page.getByRole("button", { name: "취소" }).click();
-  await page.getByRole("button", { name: "시뮬레이션 다음 턴" }).click();
-  await expect(
-    page.getByRole("dialog", { name: "토론을 어떻게 진행할까요?" }),
-  ).toBeVisible();
-  await page.getByRole("button", { name: "취소" }).click();
+  await page.getByRole("button", { name: "회의 나가기" }).click();
   await expect(
     page.getByRole("dialog", { name: "토론을 어떻게 진행할까요?" }),
   ).toHaveCount(0);
