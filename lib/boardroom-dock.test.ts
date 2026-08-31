@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { boardroomDockActive, boardroomDockHrefs, BOARDROOM_DOCK_TABS } from "@/lib/boardroom-dock";
 
 describe("boardroomDockHrefs", () => {
-  it("sends the four home dock tabs to four different paths", () => {
+  it("sends the four meeting views to four different paths", () => {
     const hrefs = boardroomDockHrefs(null);
     const paths = Object.values(hrefs);
     expect(new Set(paths).size).toBe(4);
@@ -31,7 +31,7 @@ describe("boardroomDockHrefs", () => {
 });
 
 describe("boardroomDockActive", () => {
-  it("maps each product page to one dock tab", () => {
+  it("maps each product page to one meeting view", () => {
     expect(boardroomDockActive("/debate")).toBe("minutes");
     expect(boardroomDockActive("/dashboard")).toBe("metrics");
     expect(boardroomDockActive("/decision")).toBe("scenario");

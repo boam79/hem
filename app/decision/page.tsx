@@ -3,11 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import {
-  BoardroomDockBar,
-  ForestFrame,
-  ForestPageNote,
-} from "@/components/forest-shell";
+import { ForestFrame, ForestPageNote } from "@/components/forest-shell";
 import { MemoForm } from "@/components/memo-form";
 import { MemoView } from "@/components/memo-view";
 import demoShare from "@/data/demo-share.json";
@@ -75,7 +71,6 @@ function DecisionInner() {
           않습니다.
         </ForestPageNote>
       }
-      footer={<BoardroomDockBar sessionId={sessionId} />}
     >
       {!loading && !sessionId ? (
         <section className="forest-panel">

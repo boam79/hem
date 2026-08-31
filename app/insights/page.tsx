@@ -3,11 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import {
-  BoardroomDockBar,
-  ForestFrame,
-  ForestPageNote,
-} from "@/components/forest-shell";
+import { ForestFrame, ForestPageNote } from "@/components/forest-shell";
 import { PERSONAS } from "@/config/personas";
 import demoShare from "@/data/demo-share.json";
 import {
@@ -117,7 +113,6 @@ function InsightsInner() {
           모은 화면입니다.
         </ForestPageNote>
       }
-      footer={<BoardroomDockBar sessionId={sessionId} />}
     >
       {!loading && !sessionId ? (
         <section className="forest-panel">

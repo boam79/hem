@@ -383,7 +383,7 @@ describe("forestNavActive", () => {
     expect(forestNavActive("/settings", "settings")).toBe(true);
   });
 
-  it("uses the same four meeting labels as the home dock", () => {
+  it("uses the same four meeting labels as the top menu", () => {
     expect(
       FOREST_NAV_LINKS.filter(
         (item) => item.id !== "home" && item.id !== "files",

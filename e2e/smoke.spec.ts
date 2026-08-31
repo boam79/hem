@@ -190,6 +190,9 @@ test("home has agenda, the meeting room, and a compact upload", async ({
   expect(minutesBox).toBeTruthy();
   expect(minutesBox!.height).toBeGreaterThan(44);
   await expect(headerMinutes.getByText("회의록")).toBeVisible();
+  await expect(
+    page.getByRole("navigation", { name: "회의 보기" }),
+  ).toHaveCount(0);
 });
 
 test("agenda sits below the next-turn header and above the start button", async ({
@@ -304,34 +307,34 @@ test("uploading a dummy csv stacks papers on home", async ({ page }) => {
   await expect(page.locator(".char-name")).toHaveCount(0);
 });
 
-test("home dock tabs open four different views", async ({ page }) => {
+test("top menu tabs open four different views", async ({ page }) => {
   await page.goto("/");
-  const dock = page.getByRole("navigation", { name: "회의 보기" });
-  await expect(dock.getByRole("link", { name: "회의록" })).toHaveAttribute(
+  const menu = page.getByRole("navigation", { name: "주요 메뉴" });
+  await expect(menu.getByRole("link", { name: "회의록" })).toHaveAttribute(
     "href",
     "/debate",
   );
-  await expect(dock.getByRole("link", { name: "지표 대시보드" })).toHaveAttribute(
+  await expect(menu.getByRole("link", { name: "지표 대시보드" })).toHaveAttribute(
     "href",
     "/dashboard",
   );
-  await expect(dock.getByRole("link", { name: "시나리오 결과" })).toHaveAttribute(
+  await expect(menu.getByRole("link", { name: "시나리오 결과" })).toHaveAttribute(
     "href",
     "/decision",
   );
-  await expect(dock.getByRole("link", { name: "AI 인사이트" })).toHaveAttribute(
+  await expect(menu.getByRole("link", { name: "AI 인사이트" })).toHaveAttribute(
     "href",
     "/insights",
   );
 
-  await dock.getByRole("link", { name: "회의록" }).click();
+  await menu.getByRole("link", { name: "회의록" }).click();
   await expect(page).toHaveURL(/\/debate/);
   await expect(page.getByRole("heading", { name: "회의록" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "AI 인사이트" })).toHaveCount(0);
 
   await page.goto("/");
   await page
-    .getByRole("navigation", { name: "회의 보기" })
+    .getByRole("navigation", { name: "주요 메뉴" })
     .getByRole("link", { name: "지표 대시보드" })
     .click();
   await expect(page).toHaveURL(/\/dashboard/);
@@ -340,7 +343,7 @@ test("home dock tabs open four different views", async ({ page }) => {
 
   await page.goto("/");
   await page
-    .getByRole("navigation", { name: "회의 보기" })
+    .getByRole("navigation", { name: "주요 메뉴" })
     .getByRole("link", { name: "시나리오 결과" })
     .click();
   await expect(page).toHaveURL(/\/decision/);
@@ -349,7 +352,7 @@ test("home dock tabs open four different views", async ({ page }) => {
 
   await page.goto("/");
   await page
-    .getByRole("navigation", { name: "회의 보기" })
+    .getByRole("navigation", { name: "주요 메뉴" })
     .getByRole("link", { name: "AI 인사이트" })
     .click();
   await expect(page).toHaveURL(/\/insights/);
@@ -368,23 +371,19 @@ test("AI insights lists objections without a debate glance", async ({
   await expect(page.getByText("획득비용")).toBeVisible();
 });
 
-test("top menu and dock share the four meeting views", async ({ page }) => {
+test("home has no floating meeting dock", async ({ page }) => {
   await page.goto("/");
   const menu = page.getByRole("navigation", { name: "주요 메뉴" });
-  const dock = page.getByRole("navigation", { name: "회의 보기" });
+  await expect(page.getByRole("navigation", { name: "회의 보기" })).toHaveCount(
+    0,
+  );
   for (const name of [
     "회의록",
     "지표 대시보드",
     "시나리오 결과",
     "AI 인사이트",
   ] as const) {
-    const menuLink = menu.getByRole("link", { name });
-    const dockLink = dock.getByRole("link", { name });
-    await expect(menuLink).toBeVisible();
-    await expect(dockLink).toBeVisible();
-    const menuHref = await menuLink.getAttribute("href");
-    const dockHref = await dockLink.getAttribute("href");
-    expect(menuHref?.split("?")[0]).toBe(dockHref?.split("?")[0]);
+    await expect(menu.getByRole("link", { name })).toBeVisible();
   }
 });
 

@@ -400,7 +400,6 @@ export default function Home() {
         round2={round2}
         names={personaNames}
         streamPreview={streamPreview}
-        sessionId={sessionId}
         onLeave={leaveMeeting}
       />
     </ForestShell>

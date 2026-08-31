@@ -16,11 +16,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
-  BOARDROOM_DOCK_TABS,
-  boardroomDockActive,
-  boardroomDockHrefs,
-} from "@/lib/boardroom-dock";
-import {
   forestNavActive,
   FOREST_NAV_LINKS,
   timelineStates,
@@ -242,40 +237,6 @@ export function ForestShell({
         <div className="forest-scene-column">{children}</div>
       </div>
     </ForestFrame>
-  );
-}
-
-export function BoardroomDock({ sessionId }: { sessionId: string | null }) {
-  const pathname = usePathname();
-  const hrefs = boardroomDockHrefs(sessionId);
-  const active = boardroomDockActive(pathname);
-  return (
-    <nav className="boardroom-dock" aria-label="회의 보기">
-      {BOARDROOM_DOCK_TABS.map((tab) => {
-        const Icon = NAV_ICONS[tab.id];
-        return (
-          <Link
-            key={tab.id}
-            href={hrefs[tab.id]}
-            className={cn(
-              tab.id === "insights" && "dock-insight",
-              active === tab.id && "is-active",
-            )}
-          >
-            <Icon className="size-5" strokeWidth={2.1} />
-            {tab.label}
-          </Link>
-        );
-      })}
-    </nav>
-  );
-}
-
-export function BoardroomDockBar({ sessionId }: { sessionId: string | null }) {
-  return (
-    <div className="boardroom-dock-page">
-      <BoardroomDock sessionId={sessionId} />
-    </div>
   );
 }
 

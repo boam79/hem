@@ -4,11 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { DebateGlance } from "@/components/debate-glance";
-import {
-  BoardroomDockBar,
-  ForestFrame,
-  ForestPageNote,
-} from "@/components/forest-shell";
+import { ForestFrame, ForestPageNote } from "@/components/forest-shell";
 import demoShare from "@/data/demo-share.json";
 import {
   cellsForRound,
@@ -81,7 +77,6 @@ function DebateInner() {
           이 메뉴입니다.
         </ForestPageNote>
       }
-      footer={<BoardroomDockBar sessionId={sessionId} />}
     >
       {recent.length > 0 ? (
         <section className="forest-panel">

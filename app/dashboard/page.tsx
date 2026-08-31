@@ -2,11 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  BoardroomDockBar,
-  ForestFrame,
-  ForestPageNote,
-} from "@/components/forest-shell";
+import { ForestFrame, ForestPageNote } from "@/components/forest-shell";
 import { MetricsStatsPanel } from "@/components/metrics-stats-panel";
 import { DEMO_SHARE_ID } from "@/lib/debate";
 import { parseUploadedMetrics } from "@/lib/metrics-stats";
@@ -62,7 +58,6 @@ export default function DashboardPage() {
           둡니다.
         </ForestPageNote>
       }
-      footer={<BoardroomDockBar sessionId={recent[0]?.id ?? null} />}
     >
       {metrics ? (
         <>
