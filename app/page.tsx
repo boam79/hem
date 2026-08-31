@@ -3,10 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Disclaimer } from "@/components/disclaimer";
 import { HomeMetricsUpload } from "@/components/home-metrics-upload";
-import {
-  BoardroomDock,
-  ForestShell,
-} from "@/components/forest-shell";
+import { ForestShell } from "@/components/forest-shell";
 import { MeetingScene } from "@/components/meeting-scene";
 import { Button } from "@/components/ui/button";
 import {
@@ -44,7 +41,9 @@ const CATEGORIES: { value: Category; label: string }[] = [
 ];
 
 export default function Home() {
-  const [agenda, setAgenda] = useState("백내장 검색광고 예산 30% 증액");
+  const [agenda, setAgenda] = useState(
+    "1. 외래 환자 수 감소 원인 분석\n2. 마케팅 캠페인 예산 검토\n3. 신규 진료과 개설 타당성 검토\n4. 비용 절감 방안 논의",
+  );
   const [category, setCategory] = useState<Category>("marketing");
   const [metrics, setMetrics] = useState<unknown | null>(null);
   const [metricsLabel, setMetricsLabel] = useState<string | null>(null);
@@ -220,9 +219,12 @@ export default function Home() {
           <label className="forest-field-label" htmlFor="agenda">
             회의 안건
           </label>
+          <p className="forest-field-hint forest-field-lead">
+            이번 턴의 주요 안건을 입력하세요.
+          </p>
           <Textarea
             id="agenda"
-            rows={6}
+            rows={8}
             className="forest-agenda-input"
             value={agenda}
             aria-invalid={!agendaOk}
@@ -307,9 +309,9 @@ export default function Home() {
         names={personaNames}
         streamPreview={streamPreview}
         metrics={metrics}
+        sessionId={sessionId}
         onLeave={leaveMeeting}
       />
-      <BoardroomDock sessionId={sessionId} />
     </ForestShell>
   );
 }

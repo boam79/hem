@@ -113,10 +113,10 @@ function ForestHeaderBar({
   return (
     <header className={cn("forest-header", home && "is-home-header")}>
       {home ? (
-        <div className="header-brand-row">
+        <>
           <ForestBrand />
           <ForestNav />
-        </div>
+        </>
       ) : (
         <div className="min-w-0">
           {title ? (
@@ -132,7 +132,6 @@ function ForestHeaderBar({
         </div>
       )}
       <div className="forest-header-tools">
-        {home ? disclaimer : null}
         <span className="sim-live">
           <span className="sim-live-dot" />
           시뮬레이션 진행 중
@@ -230,6 +229,7 @@ export function ForestShell({
     >
       <div className="forest-home-split">
         <section className="forest-upload-column" aria-label="안건">
+          {disclaimer}
           {sidebarLead}
           {sidebarExtra}
         </section>

@@ -9,9 +9,9 @@ export const WAITING_BUBBLE = "자료를 올려 주세요.";
 export const LOADING_BUBBLE = "발언 준비 중…";
 
 export const IDLE_BUBBLES: Record<PersonaKey, string> = {
-  cfo: "외래가 8% 줄었습니다. 비용 구조부터 봅시다.",
-  mkt: "세분 캠페인과 디지털 인지도를 제안합니다.",
-  md: "새 과는 경험이 좋아지지만 인력·장비가 먼저입니다.",
+  cfo: "외래가 8% 줄었습니다. 비용 구조 분석과 효율화가 필요합니다.",
+  mkt: "세분 캠페인과 디지털 채널 중심 브랜드 인지도를 제안합니다.",
+  md: "새 과는 환자 경험이 좋아지지만, 장비와 인력 계획이 먼저입니다.",
 };
 
 export const UPLOAD_BUBBLES: Record<PersonaKey, string> = {

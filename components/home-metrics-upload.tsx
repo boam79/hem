@@ -62,6 +62,9 @@ export function HomeMetricsUpload({
   return (
     <section className="forest-agenda home-upload-card">
       <p className="forest-field-label">지표 업로드</p>
+      <p className="forest-field-hint forest-field-lead">
+        병원 주요 지표 파일을 업로드하세요.
+      </p>
       {latest ? (
         <p className="home-upload-file">
           <FileSpreadsheet className="size-4" />
@@ -125,8 +128,8 @@ export function HomeMetricsUpload({
       {error ? (
         <p className="text-destructive mt-2 text-xs">{error}</p>
       ) : null}
-      <p className="forest-field-hint mt-2">
-        올린 지표는 회의 테이블 서류로 펼쳐집니다. 원본은 서버에 저장하지 않습니다.{" "}
+      <p className="forest-tip">
+        올린 파일에 맞춰 테이블 위 자료가 바뀝니다. 원본은 서버에 저장하지 않습니다.{" "}
         <a className="forest-dummy-link" href="/files">
           파일 관리
         </a>

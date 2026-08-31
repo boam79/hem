@@ -168,6 +168,10 @@ test("home has agenda, the meeting room, and a compact upload", async ({
   await expect(page.locator("#agenda")).toBeVisible();
   await expect(page.locator("#metrics-file")).toHaveCount(0);
   await expect(page.locator("#home-metrics-file")).toBeVisible();
+  await expect(page.getByRole("button", { name: "토론 시작" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "토론 시작" })).toContainText(
+    "시뮬레이션 다음 턴",
+  );
   await expect(page.getByRole("button", { name: "회의 나가기" })).toBeVisible();
   await expect(page.getByText("Boardroom").first()).toBeVisible();
   await expect(page.getByText("병원 경영 시뮬레이터").first()).toBeVisible();

@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import { LogOut } from "lucide-react";
+import { BoardroomDock } from "@/components/forest-shell";
 import { PaperStack } from "@/components/paper-stack";
 import { TableDocs } from "@/components/table-docs";
 import { PERSONAS } from "@/config/personas";
@@ -54,6 +55,7 @@ export function MeetingScene({
   round2,
   streamPreview,
   metrics,
+  sessionId,
   onLeave,
 }: {
   fileCount: number;
@@ -65,6 +67,7 @@ export function MeetingScene({
   names?: Partial<Record<PersonaKey, string>>;
   streamPreview?: Partial<Record<PersonaKey, string>>;
   metrics?: unknown;
+  sessionId: string | null;
   onLeave: () => void;
 }) {
   const waiting =
@@ -79,7 +82,7 @@ export function MeetingScene({
     <div className="forest-scene-frame">
       <div className="forest-scene">
         <Image
-          src="/boardroom-room.png"
+          src="/boardroom-room.png?v=03match20"
           alt="Boardroom 회의실 — 재무이사, 마케팅실장, 진료원장"
           fill
           sizes="100vw"
@@ -139,6 +142,7 @@ export function MeetingScene({
           <LogOut className="size-3.5" strokeWidth={2.4} />
           회의 나가기
         </button>
+        <BoardroomDock sessionId={sessionId} />
       </div>
     </div>
   );
