@@ -1,24 +1,48 @@
-export function boardroomDockHrefs(sessionId: string | null): {
-  minutes: string;
-  metrics: string;
-  scenario: string;
-  insights: string;
-} {
+export const BOARDROOM_DOCK_TABS = [
+  {
+    id: "minutes",
+    label: "회의록",
+    path: "/debate",
+    sessionQuery: true,
+  },
+  {
+    id: "metrics",
+    label: "지표 대시보드",
+    path: "/dashboard",
+    sessionQuery: false,
+  },
+  {
+    id: "scenario",
+    label: "시나리오 결과",
+    path: "/decision",
+    sessionQuery: true,
+  },
+  {
+    id: "insights",
+    label: "AI 인사이트",
+    path: "/insights",
+    sessionQuery: true,
+  },
+] as const;
+
+export type BoardroomDockId = (typeof BOARDROOM_DOCK_TABS)[number]["id"];
+
+export function boardroomDockHrefs(sessionId: string | null): Record<
+  BoardroomDockId,
+  string
+> {
   const q = sessionId ? `?id=${encodeURIComponent(sessionId)}` : "";
-  return {
-    minutes: `/debate${q}`,
-    metrics: "/dashboard",
-    scenario: `/decision${q}`,
-    insights: `/insights${q}`,
-  };
+  return Object.fromEntries(
+    BOARDROOM_DOCK_TABS.map((tab) => [
+      tab.id,
+      tab.sessionQuery ? `${tab.path}${q}` : tab.path,
+    ]),
+  ) as Record<BoardroomDockId, string>;
 }
 
-export function boardroomDockActive(
-  pathname: string,
-): "minutes" | "metrics" | "scenario" | "insights" | null {
-  if (pathname.startsWith("/insights")) return "insights";
-  if (pathname.startsWith("/debate")) return "minutes";
-  if (pathname.startsWith("/dashboard")) return "metrics";
-  if (pathname.startsWith("/decision")) return "scenario";
-  return null;
+export function boardroomDockActive(pathname: string): BoardroomDockId | null {
+  const hit = BOARDROOM_DOCK_TABS.find(
+    (tab) => pathname === tab.path || pathname.startsWith(`${tab.path}/`),
+  );
+  return hit?.id ?? null;
 }

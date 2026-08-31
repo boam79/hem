@@ -67,7 +67,7 @@ function DecisionInner() {
 
   return (
     <ForestFrame
-      title="의사결정"
+      title="시나리오 결과"
       subtitle="모델은 결정하지 않습니다. 합의·쟁점·공백·선택지만 사람이 적습니다."
       sidebar={
         <ForestPageNote>
@@ -130,7 +130,7 @@ export default function DecisionPage() {
     <Suspense
       fallback={
         <ForestFrame
-          title="의사결정"
+          title="시나리오 결과"
           subtitle="모델은 결정하지 않습니다. 합의·쟁점·공백·선택지만 사람이 적습니다."
           sidebar={
             <ForestPageNote>세션을 불러오는 중…</ForestPageNote>

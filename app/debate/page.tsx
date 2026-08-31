@@ -73,7 +73,7 @@ function DebateInner() {
 
   return (
     <ForestFrame
-      title="토론 결과"
+      title="회의록"
       subtitle="회의실 말풍선은 한 줄 결론입니다. 라운드 전체와 근거는 여기에서 봅니다."
       sidebar={
         <ForestPageNote>
@@ -147,7 +147,7 @@ export default function DebatePage() {
     <Suspense
       fallback={
         <ForestFrame
-          title="토론 결과"
+          title="회의록"
           subtitle="회의실 말풍선은 한 줄 결론입니다. 라운드 전체와 근거는 여기에서 봅니다."
           sidebar={
             <ForestPageNote>세션을 불러오는 중…</ForestPageNote>

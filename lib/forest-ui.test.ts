@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type { DebateCell } from "@/lib/debate";
+import { BOARDROOM_DOCK_TABS } from "@/lib/boardroom-dock";
 import {
   BUBBLE_MAX,
   fileKind,
   forestNavActive,
+  FOREST_NAV_LINKS,
   glanceLine,
   glanceNote,
   GLANCE_NOTE_MAX,
@@ -371,12 +373,21 @@ describe("forestNavActive", () => {
   it("highlights one workspace item per path", () => {
     expect(forestNavActive("/", "home")).toBe(true);
     expect(forestNavActive("/", "files")).toBe(false);
-    expect(forestNavActive("/", "debate")).toBe(false);
-    expect(forestNavActive("/debate", "debate")).toBe(true);
+    expect(forestNavActive("/", "minutes")).toBe(false);
+    expect(forestNavActive("/debate", "minutes")).toBe(true);
     expect(forestNavActive("/files", "files")).toBe(true);
-    expect(forestNavActive("/", "dashboard")).toBe(false);
-    expect(forestNavActive("/dashboard", "dashboard")).toBe(true);
-    expect(forestNavActive("/decision", "decision")).toBe(true);
+    expect(forestNavActive("/", "metrics")).toBe(false);
+    expect(forestNavActive("/dashboard", "metrics")).toBe(true);
+    expect(forestNavActive("/decision", "scenario")).toBe(true);
+    expect(forestNavActive("/insights", "insights")).toBe(true);
     expect(forestNavActive("/settings", "settings")).toBe(true);
+  });
+
+  it("uses the same four meeting labels as the home dock", () => {
+    expect(
+      FOREST_NAV_LINKS.filter(
+        (item) => item.id !== "home" && item.id !== "files",
+      ).map((item) => item.label),
+    ).toEqual(BOARDROOM_DOCK_TABS.map((tab) => tab.label));
   });
 });

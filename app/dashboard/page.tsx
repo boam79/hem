@@ -54,7 +54,7 @@ export default function DashboardPage() {
 
   return (
     <ForestFrame
-      title="대시보드"
+      title="지표 대시보드"
       subtitle="올린 지표와 이 브라우저에서 연 최근 회의를 봅니다."
       sidebar={
         <ForestPageNote>

@@ -1,4 +1,9 @@
 import type { DebateCell } from "@/lib/debate";
+import {
+  BOARDROOM_DOCK_TABS,
+  boardroomDockActive,
+  type BoardroomDockId,
+} from "@/lib/boardroom-dock";
 import { koreanizePublicText } from "@/lib/ko-display";
 import type { PersonaKey } from "@/lib/schema";
 
@@ -96,30 +101,32 @@ export function glanceNote(text: string | undefined): string | null {
 
 export type ForestNavId =
   | "home"
-  | "debate"
-  | "dashboard"
+  | BoardroomDockId
   | "files"
-  | "decision"
   | "settings";
+
+export const FOREST_NAV_LINKS: {
+  id: ForestNavId;
+  label: string;
+  href: string;
+}[] = [
+  { id: "home", label: "홈", href: "/" },
+  ...BOARDROOM_DOCK_TABS.map((tab) => ({
+    id: tab.id,
+    label: tab.label,
+    href: tab.path,
+  })),
+  { id: "files", label: "파일 관리", href: "/files" },
+];
 
 export function forestNavActive(
   pathname: string,
   id: ForestNavId,
 ): boolean {
-  switch (id) {
-    case "home":
-      return pathname === "/";
-    case "debate":
-      return pathname === "/debate";
-    case "files":
-      return pathname === "/files";
-    case "dashboard":
-      return pathname === "/dashboard";
-    case "decision":
-      return pathname === "/decision";
-    case "settings":
-      return pathname === "/settings";
-  }
+  if (id === "home") return pathname === "/";
+  if (id === "files") return pathname === "/files";
+  if (id === "settings") return pathname === "/settings";
+  return boardroomDockActive(pathname) === id;
 }
 
 export function fileKind(name: string): "csv" | "xlsx" {

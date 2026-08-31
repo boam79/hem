@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { boardroomDockActive, boardroomDockHrefs } from "@/lib/boardroom-dock";
+import { boardroomDockActive, boardroomDockHrefs, BOARDROOM_DOCK_TABS } from "@/lib/boardroom-dock";
 
 describe("boardroomDockHrefs", () => {
   it("sends the four home dock tabs to four different paths", () => {
@@ -18,6 +18,15 @@ describe("boardroomDockHrefs", () => {
     expect(hrefs.metrics).toBe("/dashboard");
     expect(hrefs.scenario).toBe("/decision?id=uE7m2G");
     expect(hrefs.insights).toBe("/insights?id=uE7m2G");
+  });
+
+  it("names the four tabs 회의록, 지표 대시보드, 시나리오 결과, AI 인사이트", () => {
+    expect(BOARDROOM_DOCK_TABS.map((tab) => tab.label)).toEqual([
+      "회의록",
+      "지표 대시보드",
+      "시나리오 결과",
+      "AI 인사이트",
+    ]);
   });
 });
 

@@ -37,6 +37,7 @@
 | [progress/2026-08-30-debate-korean.md](progress/2026-08-30-debate-korean.md) | Executor: 토론 결과 영문 지표명·약어 한글 순화 |
 | [progress/2026-08-31-boardroom-03.md](progress/2026-08-31-boardroom-03.md) | Executor: 홈을 03 Boardroom 네이비 시안으로 |
 | [progress/2026-08-31-debate-start-chooser.md](progress/2026-08-31-debate-start-chooser.md) | Executor: 홈 「토론 시작」+ 올린 데이터/그냥 진행 선택 |
+| [progress/2026-08-31-nav-dock-match.md](progress/2026-08-31-nav-dock-match.md) | Executor: 상단 메뉴와 하단 도크 네 칸 맞춤 |
 | [progress/2026-08-29-no-persona-bubbles.md](progress/2026-08-29-no-persona-bubbles.md) | 종이더미 위치 · 페르소나 말풍선·이름표 제거 |
 
 루트 `PRD.md`는 여기로 가는 포인터다.

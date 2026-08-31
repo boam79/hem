@@ -10,18 +10,19 @@ import {
   Home,
   LayoutDashboard,
   MessagesSquare,
-  Scale,
   Settings,
   Sparkles,
   Target,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
+  BOARDROOM_DOCK_TABS,
   boardroomDockActive,
   boardroomDockHrefs,
 } from "@/lib/boardroom-dock";
 import {
   forestNavActive,
+  FOREST_NAV_LINKS,
   timelineStates,
   type ForestNavId,
   type TimelineStepId,
@@ -29,19 +30,20 @@ import {
   type UploadedMetricsFile,
 } from "@/lib/forest-ui";
 
-const NAV: {
-  id: ForestNavId;
-  label: string;
-  href: string;
-  Icon: typeof Home;
-}[] = [
-  { id: "home", label: "홈", href: "/", Icon: Home },
-  { id: "debate", label: "토론 결과", href: "/debate", Icon: MessagesSquare },
-  { id: "dashboard", label: "대시보드", href: "/dashboard", Icon: LayoutDashboard },
-  { id: "files", label: "파일 관리", href: "/files", Icon: FolderOpen },
-  { id: "decision", label: "의사결정", href: "/decision", Icon: Scale },
-  { id: "settings", label: "설정", href: "/settings", Icon: Settings },
-];
+const NAV_ICONS: Record<ForestNavId, typeof Home> = {
+  home: Home,
+  minutes: MessagesSquare,
+  metrics: LayoutDashboard,
+  scenario: Target,
+  insights: Sparkles,
+  files: FolderOpen,
+  settings: Settings,
+};
+
+const NAV = FOREST_NAV_LINKS.map((item) => ({
+  ...item,
+  Icon: NAV_ICONS[item.id],
+}));
 
 const STEPS: {
   id: TimelineStepId;
@@ -249,34 +251,22 @@ export function BoardroomDock({ sessionId }: { sessionId: string | null }) {
   const active = boardroomDockActive(pathname);
   return (
     <nav className="boardroom-dock" aria-label="회의 보기">
-      <Link
-        href={hrefs.minutes}
-        className={cn(active === "minutes" && "is-active")}
-      >
-        <MessagesSquare className="size-5" strokeWidth={2.1} />
-        회의록
-      </Link>
-      <Link
-        href={hrefs.metrics}
-        className={cn(active === "metrics" && "is-active")}
-      >
-        <LayoutDashboard className="size-5" strokeWidth={2.1} />
-        지표 대시보드
-      </Link>
-      <Link
-        href={hrefs.scenario}
-        className={cn(active === "scenario" && "is-active")}
-      >
-        <Target className="size-5" strokeWidth={2.1} />
-        시나리오 결과
-      </Link>
-      <Link
-        href={hrefs.insights}
-        className={cn("dock-insight", active === "insights" && "is-active")}
-      >
-        <Sparkles className="size-5" strokeWidth={2.1} />
-        AI 인사이트
-      </Link>
+      {BOARDROOM_DOCK_TABS.map((tab) => {
+        const Icon = NAV_ICONS[tab.id];
+        return (
+          <Link
+            key={tab.id}
+            href={hrefs[tab.id]}
+            className={cn(
+              tab.id === "insights" && "dock-insight",
+              active === tab.id && "is-active",
+            )}
+          >
+            <Icon className="size-5" strokeWidth={2.1} />
+            {tab.label}
+          </Link>
+        );
+      })}
     </nav>
   );
 }

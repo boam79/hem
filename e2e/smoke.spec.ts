@@ -319,7 +319,7 @@ test("home dock tabs open four different views", async ({ page }) => {
 
   await dock.getByRole("link", { name: "회의록" }).click();
   await expect(page).toHaveURL(/\/debate/);
-  await expect(page.getByRole("heading", { name: "토론 결과" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "회의록" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "AI 인사이트" })).toHaveCount(0);
 
   await page.goto("/");
@@ -329,7 +329,7 @@ test("home dock tabs open four different views", async ({ page }) => {
     .click();
   await expect(page).toHaveURL(/\/dashboard/);
   await expect(page.getByRole("heading", { name: "올린 지표" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "토론 결과" })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "회의록", exact: true })).toHaveCount(0);
 
   await page.goto("/");
   await page
@@ -361,12 +361,32 @@ test("AI insights lists objections without a debate glance", async ({
   await expect(page.getByText("획득비용")).toBeVisible();
 });
 
+test("top menu and dock share the four meeting views", async ({ page }) => {
+  await page.goto("/");
+  const menu = page.getByRole("navigation", { name: "주요 메뉴" });
+  const dock = page.getByRole("navigation", { name: "회의 보기" });
+  for (const name of [
+    "회의록",
+    "지표 대시보드",
+    "시나리오 결과",
+    "AI 인사이트",
+  ] as const) {
+    const menuLink = menu.getByRole("link", { name });
+    const dockLink = dock.getByRole("link", { name });
+    await expect(menuLink).toBeVisible();
+    await expect(dockLink).toBeVisible();
+    const menuHref = await menuLink.getAttribute("href");
+    const dockHref = await dockLink.getAttribute("href");
+    expect(menuHref?.split("?")[0]).toBe(dockHref?.split("?")[0]);
+  }
+});
+
 test("debate results live on a separate menu", async ({ page }) => {
   await page.goto("/");
   const menu = page.getByRole("navigation", { name: "주요 메뉴" });
-  await menu.getByRole("link", { name: "토론 결과" }).click();
+  await menu.getByRole("link", { name: "회의록" }).click();
   await expect(page).toHaveURL(/\/debate/);
-  await expect(page.getByRole("heading", { name: "토론 결과" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "회의록" })).toBeVisible();
   await page.goto("/debate?id=w4demo");
   await expect(page.locator("[data-glance=true]")).toBeVisible();
   await expect(page.getByText("1라운드").first()).toBeVisible();
@@ -387,21 +407,21 @@ test("dashboard decision and settings menus open real pages", async ({
 }) => {
   await page.goto("/");
   const menu = page.getByRole("navigation", { name: "주요 메뉴" });
-  await menu.getByRole("link", { name: "대시보드" }).click();
+  await menu.getByRole("link", { name: "지표 대시보드" }).click();
   await expect(page).toHaveURL(/\/dashboard/);
-  await expect(page.getByRole("heading", { name: "대시보드", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "지표 대시보드" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "올린 지표" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "연결 상태" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "비용 대시보드" })).toHaveCount(0);
   await expect(page.getByText("재무이사 (앤트로픽)")).toBeVisible();
   await expect(page.getByText("연결됨").first()).toBeVisible();
 
-  await menu.getByRole("link", { name: "의사결정" }).click();
+  await menu.getByRole("link", { name: "시나리오 결과" }).click();
   await expect(page).toHaveURL(/\/decision/);
-  await expect(page.getByRole("heading", { name: "의사결정" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "시나리오 결과" })).toBeVisible();
   await expect(page.getByText("사회자 메모")).toBeVisible();
 
-  await menu.getByRole("link", { name: "설정" }).click();
+  await page.locator(".forest-header").getByRole("link", { name: "설정" }).click();
   await expect(page).toHaveURL(/\/settings/);
   await expect(page.getByRole("heading", { name: "설정" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "페르소나 편집" })).toBeVisible();
@@ -421,7 +441,7 @@ test("decision page shows the human memo, not the debate glance", async ({
 }) => {
   await page.goto("/decision?id=uE7m2G");
   await expect(page.locator("[data-glance=true]")).toHaveCount(0);
-  await expect(page.getByRole("heading", { name: "의사결정" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "시나리오 결과" })).toBeVisible();
   await expect(page.getByText("합의점")).toBeVisible();
   await expect(
     page.getByText("검색광고 증액은 회수 가정이 필요합니다"),
