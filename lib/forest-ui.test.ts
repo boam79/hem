@@ -97,7 +97,7 @@ describe("personaBubbleText", () => {
     expect(personaBubbleText(waiting)).toBe(WAITING_BUBBLE);
   });
 
-  it("keeps persona bubbles off until a debate starts", () => {
+  it("shows persona bubbles after upload, matching the 03 table scene", () => {
     expect(
       shouldShowPersonaBubble({
         persona: "cfo",
@@ -106,7 +106,7 @@ describe("personaBubbleText", () => {
         round1: empty,
         round2: empty,
       }),
-    ).toBe(false);
+    ).toBe(true);
     expect(
       showTableWaitingPrompt({
         hasUploads: true,

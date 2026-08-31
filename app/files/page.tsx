@@ -10,7 +10,6 @@ import {
   ForestPageNote,
 } from "@/components/forest-shell";
 import { MetricsStatsPanel } from "@/components/metrics-stats-panel";
-import { apiErrorMessage } from "@/lib/api-errors";
 import {
   downloadDummyMetricsFiles,
   fileKind,
@@ -23,6 +22,7 @@ import {
   saveMetricsUploadStore,
 } from "@/lib/metrics-upload-store";
 import { parseUploadedMetrics } from "@/lib/metrics-stats";
+import { parseMetricsUploadFile } from "@/lib/parse-metrics-client";
 import type { Metrics } from "@/lib/schema";
 
 export default function FilesPage() {
@@ -43,36 +43,30 @@ export default function FilesPage() {
 
   async function parseMetricsFile(file: File) {
     setError(null);
-    const body = new FormData();
-    body.append("file", file);
-    const res = await fetch("/api/metrics/parse", {
-      method: "POST",
-      body,
-    });
-    const json = await res.json();
-    if (!res.ok) {
-      setError(apiErrorMessage(json));
-      return;
-    }
-    const nextFile: UploadedMetricsFile = {
-      id: `${Date.now()}-${file.name}`,
-      name: file.name,
-      uploadedAt: formatShortDate(),
-      sizeLabel: formatBytes(file.size),
-      kind: fileKind(file.name),
-    };
-    const label = `${json.hospital} · ${json.months}개월 (업로드)`;
-    setUploads((prev) => {
-      const files = [...prev, nextFile];
-      saveMetricsUploadStore({
-        metrics: json.metrics,
-        label,
-        files,
+    try {
+      const json = await parseMetricsUploadFile(file);
+      const nextFile: UploadedMetricsFile = {
+        id: `${Date.now()}-${file.name}`,
+        name: file.name,
+        uploadedAt: formatShortDate(),
+        sizeLabel: formatBytes(file.size),
+        kind: fileKind(file.name),
+      };
+      const label = `${json.hospital} · ${json.months}개월 (업로드)`;
+      setUploads((prev) => {
+        const files = [...prev, nextFile];
+        saveMetricsUploadStore({
+          metrics: json.metrics,
+          label,
+          files,
+        });
+        return files;
       });
-      return files;
-    });
-    setMetricsLabel(label);
-    setMetrics(parseUploadedMetrics(json.metrics));
+      setMetricsLabel(label);
+      setMetrics(parseUploadedMetrics(json.metrics));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "파일을 읽지 못했습니다.");
+    }
   }
 
   function onFileInputChange(e: ChangeEvent<HTMLInputElement>) {

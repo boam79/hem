@@ -35,6 +35,7 @@
 | [progress/2026-08-30-data-review-stats-plan.md](progress/2026-08-30-data-review-stats-plan.md) | Planner: 데이터 검토 회의 + 업로드 통계 (메뉴 추가 없음) |
 | [progress/2026-08-30-data-review-stats.md](progress/2026-08-30-data-review-stats.md) | Executor: `/files` 통계 표 · 홈 「데이터 검토」 · HTTPS E2E 27 |
 | [progress/2026-08-30-debate-korean.md](progress/2026-08-30-debate-korean.md) | Executor: 토론 결과 영문 지표명·약어 한글 순화 |
+| [progress/2026-08-31-boardroom-03.md](progress/2026-08-31-boardroom-03.md) | Executor: 홈을 03 Boardroom 네이비 시안으로 |
 | [progress/2026-08-29-no-persona-bubbles.md](progress/2026-08-29-no-persona-bubbles.md) | 종이더미 위치 · 페르소나 말풍선·이름표 제거 |
 
 루트 `PRD.md`는 여기로 가는 포인터다.

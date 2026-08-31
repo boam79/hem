@@ -10,7 +10,7 @@ PRD AC 감사: `doc/progress/2026-08-28-prd-final-audit.md`
 
 2026-08-29: 파일 관리 `/files` 전용. 대시보드에서 비용 패널 제거. 대기 말풍선은 테이블 중앙 1개. 완료는 Planner가 표시한다.
 
-2026-08-30 Planner: 토론 결과의 영문 지표명·약어를 한글로. 표 헤더·프롬프트는 한글, 저장된 세션은 화면에서 치환. 배지 앤트로픽·오픈AI·구글. 메뉴 추가 없음. 앞서 데이터 검토는 `/files` 통계 + 홈 보조 버튼.
+2026-08-30 Planner: 고도화 제안 P1 쟁점 모음(LLM 0) · P2 업로드 통계 확장 · P3 이상월 칩 · P4 심사 안건 채우기 · P5 공유 한 장. 상세 `doc/progress/2026-08-30-upgrade-proposals.md`. 구현은 패키지 1개 지정 후.
 
 ## Key Challenges and Analysis
 
@@ -51,11 +51,13 @@ Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
 - [x] keepalive 주 2회 — 스케줄 `0 3 * * 1,4`. HTTPS POST 12:12:22Z, Vercel Cron 12:16:07Z. GH Actions 시크릿은 사용자 몫.
 - [x] 제한 429 HTTPS — 세션 POST만, 라운드 없음. `rate_limited` 429 (이번 턴 재확인).
 - [x] 홈 UI를 `doc/design/02.png`와 같게 (민트 셸 + 회의실 + 업로드 종이더미·스파클). HTTPS E2E 15. 배포 https://boardroom-six-delta.vercel.app
+- [ ] 홈 UI를 `doc/design/03.png`와 같게 (네이비 Boardroom · 사람 3명 · 테이블 SVG 차트). 단위 117. 배포·HTTPS E2E 사용자 확인 대기.
 - [ ] 테이블 중앙 종이더미 위치 + 페르소나 말풍선/이름표 제거. HTTPS 사용자 확인 대기.
 - [ ] 바인더·타임라인 2026 + 토론 중 점토 말풍선 3개. HTTPS 사용자 확인 대기.
 - [ ] 400KB 이내 전 진료과·성별·나이대·지역 환자 더미 업로드. 파서가 환자행을 월별 지표로 합침. HTTPS 사용자 확인 대기.
 - [ ] 업로드 통계·데이터 검토. 메뉴 추가 없음. 단위 104 · HTTPS E2E 27. 배포 https://boardroom-six-delta.vercel.app 사용자 확인 대기(데이터 검토 실클릭은 비용).
 - [ ] 토론 한글 순화. 지표 키·약어·배지. 단위 110. HTTPS 사용자 확인 대기.
+- [ ] 고도화. 제안서 `doc/progress/2026-08-30-upgrade-proposals.md`. 패키지 미지정.
 
 ## Executor's Feedback or Assistance Requests
 
@@ -99,6 +101,9 @@ Haiku R2 재시도 수정 후(`ba66843`): `cA_9I2` `4e4XEM` `NQSmdi` — 세 세
 
 2026-08-30 토론한글(Executor): 지표 표·근거 예시를 한글. 화면은 `koreanizePublicText`로 저장된 영문 키도 순현금·검색광고 유입 등으로. 배지 앤트로픽·오픈AI·구글. 단위 110. 실토론 클릭 없음.
 
+2026-08-30 Planner: 고도화 5패키지. 라운드 3·자동 합의·4번째 모델은 제외. 사용자가 P1–P5 중 고르면 칸 분해.
+2026-08-31 Executor: 사용자가 시안 3번(`doc/design/03.png`)으로 홈을 바꿈. 민트 포레스트 → 네이비 Boardroom. 헤더 「시뮬레이션 다음 턴」(accessible name은 토론 시작). 홈 안건+업로드. 테이블 SVG 서류 6장. 하단 도크. 사이드바 6칸 유지. 단위 117. 배포·HTTPS E2E는 사용자 확인 후. 문서 `doc/progress/2026-08-31-boardroom-03.md`.
+
 
 
 
@@ -125,3 +130,4 @@ heading `대시보드`는 `비용 대시보드`와도 매칭된다. Playwright�
 `shouldShowPersonaBubble`이 `return false`면 토론이 시작돼도 홈 말풍선이 없다. 말풍선은 머리 위 점토 PNG(페르소나 색·꼬리 방향)이고, 이름표 칩은 다시 올리지 않는다.
 월별 지표 CSV에 없는 열을 넣으면 예전 파서는 `알 수 없는 열`로 거절했다. 환자행(진료과·성별·나이대·지역)은 별도 헤더로 읽고 12개월로 합친다. `consult_to_surgery_rate`는 스키마가 0.55~0.70이라 집계 후 클램프한다.
 토론 본문의 영문 키는 프롬프트 표 헤더가 영어라 모델이 베낀다. 표·evidence 예시를 한글로 두고, 저장된 세션은 DB를 고치지 않고 화면에서만 치환한다. CAC와 같이 한글 조사 앞은 `\b`가 안 맞는다.
+03 시안은 헤더에 「시뮬레이션 다음 턴」이 있다. Playwright는 `aria-label="토론 시작"`으로 기존 버튼을 찾는다. 같은 accessible name 버튼을 헤더와 왼쪽에 두면 boundingBox가 깨진다. 홈 업로드는 `#home-metrics-file`, `/files`만 `#metrics-file`. 테이블 차트는 recharts 없이 SVG. 인사이트용 4번째 LLM은 두지 않고 도크 AI 인사이트는 `/debate` 링크다.

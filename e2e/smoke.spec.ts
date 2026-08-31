@@ -161,18 +161,22 @@ test("files page has csv/xlsx upload and dummy links", async ({ page }) => {
   await expect(page.getByRole("button", { name: "파일 선택" })).toBeVisible();
 });
 
-test("home has agenda and the meeting room, not the file picker", async ({
+test("home has agenda, the meeting room, and a compact upload", async ({
   page,
 }) => {
   await page.goto("/");
   await expect(page.locator("#agenda")).toBeVisible();
   await expect(page.locator("#metrics-file")).toHaveCount(0);
+  await expect(page.locator("#home-metrics-file")).toBeVisible();
   await expect(page.getByRole("button", { name: "회의 나가기" })).toBeVisible();
-  await expect(page.getByText("포레스트 병원").first()).toBeVisible();
+  await expect(page.getByText("Boardroom").first()).toBeVisible();
+  await expect(page.getByText("병원 경영 시뮬레이터").first()).toBeVisible();
   await expect(page.getByRole("button", { name: "데이터 검토" })).toBeDisabled();
+  await expect(page.getByRole("link", { name: "회의록" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "지표 대시보드" })).toBeVisible();
 });
 
-test("agenda and category sit above the start button", async ({
+test("agenda and category sit below the next-turn header button", async ({
   page,
 }) => {
   await page.goto("/");
@@ -182,8 +186,8 @@ test("agenda and category sit above the start button", async ({
   expect(agenda).toBeTruthy();
   expect(category).toBeTruthy();
   expect(start).toBeTruthy();
-  expect(agenda!.y).toBeLessThan(start!.y);
-  expect(category!.y).toBeLessThan(start!.y);
+  expect(start!.y).toBeLessThan(agenda!.y);
+  expect(agenda!.y).toBeLessThan(category!.y);
 });
 
 test("home keeps the meeting room without waiting speech bubbles", async ({
@@ -243,9 +247,10 @@ test("uploading a dummy csv stacks papers on home", async ({ page }) => {
   );
   await expect(page.locator("[data-motion=stack-up]")).toBeVisible();
   await expect(page.locator("[data-table-prompt=true]")).toHaveCount(0);
-  await expect(page.locator("[data-bubble=cfo]")).toHaveCount(0);
-  await expect(page.locator("[data-bubble=mkt]")).toHaveCount(0);
-  await expect(page.locator("[data-bubble=md]")).toHaveCount(0);
+  await expect(page.locator("[data-bubble=cfo]")).toBeVisible();
+  await expect(page.locator("[data-bubble=mkt]")).toBeVisible();
+  await expect(page.locator("[data-bubble=md]")).toBeVisible();
+  await expect(page.locator("[data-table-doc]")).toHaveCount(6);
   await expect(page.locator(".char-name")).toHaveCount(0);
 });
 

@@ -198,6 +198,7 @@ export function shouldShowPersonaBubble(opts: {
   streamPreview?: string;
 }): boolean {
   if (opts.loadingRound !== 0) return true;
+  if (opts.hasUploads) return true;
   return opts.round1.length > 0 || opts.round2.length > 0;
 }
 

@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Disclaimer } from "@/components/disclaimer";
+import { HomeMetricsUpload } from "@/components/home-metrics-upload";
 import {
+  BoardroomDock,
   ForestShell,
-  ForestTimeline,
 } from "@/components/forest-shell";
 import { MeetingScene } from "@/components/meeting-scene";
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,11 @@ import {
 import { apiErrorMessage } from "@/lib/api-errors";
 import type { DebateCell } from "@/lib/debate";
 import { rememberSession } from "@/lib/recent-sessions";
-import { readMetricsUploadStore } from "@/lib/metrics-upload-store";
+import {
+  readMetricsUploadStore,
+  type MetricsUploadStore,
+} from "@/lib/metrics-upload-store";
+import type { UploadedMetricsFile } from "@/lib/forest-ui";
 import { readRoundTurns } from "@/lib/round-client";
 import type { Category, PersonaKey } from "@/lib/schema";
 
@@ -43,7 +48,7 @@ export default function Home() {
   const [category, setCategory] = useState<Category>("marketing");
   const [metrics, setMetrics] = useState<unknown | null>(null);
   const [metricsLabel, setMetricsLabel] = useState<string | null>(null);
-  const [fileCount, setFileCount] = useState(0);
+  const [uploads, setUploads] = useState<UploadedMetricsFile[]>([]);
   const [sparkleBurst, setSparkleBurst] = useState(0);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [round1, setRound1] = useState<DebateCell[]>([]);
@@ -61,10 +66,28 @@ export default function Home() {
   const prevFileCount = useRef(0);
   const clientAgendaError = agendaError(agenda);
   const agendaOk = isAgendaValid(agenda);
+  const fileCount = uploads.length;
   const hasUploads = fileCount > 0;
   const dataReviewOk = canStartDataReview(hasUploads);
   const roundNumber: 1 | 2 =
     round2.length > 0 || loadingRound === 2 ? 2 : 1;
+
+  function applyStore(store: MetricsUploadStore | null) {
+    if (!store) {
+      setMetrics(null);
+      setMetricsLabel(null);
+      setUploads([]);
+      prevFileCount.current = 0;
+      return;
+    }
+    setMetrics(store.metrics);
+    setMetricsLabel(store.label);
+    setUploads(store.files);
+    if (store.files.length > prevFileCount.current) {
+      setSparkleBurst((n) => n + 1);
+    }
+    prevFileCount.current = store.files.length;
+  }
 
   useEffect(() => {
     void fetch("/api/personas")
@@ -81,21 +104,7 @@ export default function Home() {
 
   useEffect(() => {
     function hydrate() {
-      const stored = readMetricsUploadStore();
-      if (!stored) {
-        setMetrics(null);
-        setMetricsLabel(null);
-        setFileCount(0);
-        prevFileCount.current = 0;
-        return;
-      }
-      setMetrics(stored.metrics);
-      setMetricsLabel(stored.label);
-      setFileCount(stored.files.length);
-      if (stored.files.length > prevFileCount.current) {
-        setSparkleBurst((n) => n + 1);
-      }
-      prevFileCount.current = stored.files.length;
+      applyStore(readMetricsUploadStore());
     }
     hydrate();
     window.addEventListener("storage", hydrate);
@@ -194,14 +203,26 @@ export default function Home() {
     <ForestShell
       roundNumber={roundNumber}
       disclaimer={<Disclaimer />}
+      headerEnd={
+        <Button
+          type="button"
+          size="lg"
+          className="forest-start-btn header-next-turn"
+          aria-label="토론 시작"
+          disabled={loadingRound !== 0 || !agendaOk}
+          onClick={() => void start(agenda)}
+        >
+          {loadingRound === 0 ? "시뮬레이션 다음 턴" : "토론 중…"}
+        </Button>
+      }
       sidebarLead={
         <section className="forest-agenda forest-agenda-lead">
           <label className="forest-field-label" htmlFor="agenda">
-            안건
+            회의 안건
           </label>
           <Textarea
             id="agenda"
-            rows={3}
+            rows={6}
             className="forest-agenda-input"
             value={agenda}
             aria-invalid={!agendaOk}
@@ -234,62 +255,47 @@ export default function Home() {
         </section>
       }
       sidebarExtra={
-        <section className="forest-agenda">
-          <p className="forest-field-hint mb-3">
-            {metricsLabel ? metricsLabel : "없으면 기본 합성 지표를 씁니다."}{" "}
-            <a className="forest-dummy-link" href="/files">
-              파일 관리
-            </a>
-            에서 올립니다.
-          </p>
-          <Button
-            type="button"
-            size="lg"
-            className="forest-start-btn w-full"
-            disabled={loadingRound !== 0 || !agendaOk}
-            onClick={() => void start(agenda)}
-          >
-            {loadingRound === 0 ? "토론 시작" : "토론 중…"}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            className="forest-review-btn w-full"
-            disabled={loadingRound !== 0 || !dataReviewOk}
-            onClick={() => void start(DATA_REVIEW_AGENDA)}
-          >
-            데이터 검토
-          </Button>
-          <p className="forest-field-hint mt-2">
-            {dataReviewOk
-              ? "안건 없이 올린 지표의 위험·가정·필요 데이터를 올립니다."
-              : "파일 관리에서 올리면 안건 없이 지표만 검토할 수 있습니다."}
-          </p>
-          {error ? (
-            <p className="text-destructive mt-2 text-xs">{error}</p>
-          ) : null}
-          {sessionId && round1.length > 0 ? (
+        <>
+          <HomeMetricsUpload
+            files={uploads}
+            onStore={(store, parsed) => {
+              applyStore(store);
+              if (parsed) setMetrics(store.metrics);
+            }}
+          />
+          <section className="forest-agenda">
+            {metricsLabel ? (
+              <p className="forest-field-hint mb-3">{metricsLabel}</p>
+            ) : null}
+            <Button
+              type="button"
+              variant="outline"
+              className="forest-review-btn w-full"
+              disabled={loadingRound !== 0 || !dataReviewOk}
+              onClick={() => void start(DATA_REVIEW_AGENDA)}
+            >
+              데이터 검토
+            </Button>
             <p className="forest-field-hint mt-2">
-              {round1Ms !== null
-                ? `라운드 1 ${round1Ms}ms · `
-                : null}
-              <a className="forest-dummy-link" href={`/debate?id=${sessionId}`}>
-                토론 결과 보기
-              </a>
+              {dataReviewOk
+                ? "안건 없이 올린 지표의 위험·가정·필요 데이터를 올립니다."
+                : "지표를 올리면 안건 없이 지표만 검토할 수 있습니다."}
             </p>
-          ) : null}
-        </section>
+            {error ? (
+              <p className="text-destructive mt-2 text-xs">{error}</p>
+            ) : null}
+            {sessionId && round1.length > 0 ? (
+              <p className="forest-field-hint mt-2">
+                {round1Ms !== null ? `라운드 1 ${round1Ms}ms · ` : null}
+                <a className="forest-dummy-link" href={`/debate?id=${sessionId}`}>
+                  토론 결과 보기
+                </a>
+              </p>
+            ) : null}
+          </section>
+        </>
       }
-      footer={
-        <ForestTimeline
-          hasUploads={hasUploads}
-          loadingRound={loadingRound}
-          round1Count={round1.length}
-          round2Count={round2.length}
-          sessionId={sessionId}
-          roundNumber={roundNumber}
-        />
-      }
+      footer={null}
     >
       <MeetingScene
         fileCount={fileCount}
@@ -300,8 +306,10 @@ export default function Home() {
         round2={round2}
         names={personaNames}
         streamPreview={streamPreview}
+        metrics={metrics}
         onLeave={leaveMeeting}
       />
+      <BoardroomDock sessionId={sessionId} />
     </ForestShell>
   );
 }

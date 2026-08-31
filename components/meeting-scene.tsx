@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import Image from "next/image";
 import { LogOut } from "lucide-react";
 import { PaperStack } from "@/components/paper-stack";
+import { TableDocs } from "@/components/table-docs";
 import { PERSONAS } from "@/config/personas";
 import type { DebateCell } from "@/lib/debate";
 import {
@@ -13,6 +14,7 @@ import {
   showTableWaitingPrompt,
   WAITING_BUBBLE,
 } from "@/lib/forest-ui";
+import { parseUploadedMetrics } from "@/lib/metrics-stats";
 import type { PersonaKey } from "@/lib/schema";
 
 const BUBBLE_SLOT: Record<PersonaKey, string> = {
@@ -21,34 +23,18 @@ const BUBBLE_SLOT: Record<PersonaKey, string> = {
   md: "bubble-md",
 };
 
-const BUBBLE_ART: Record<PersonaKey, string> = {
-  cfo: "/clay-bubble-cfo.png",
-  mkt: "/clay-bubble-mkt.png",
-  md: "/clay-bubble-md.png?v=tail-r",
-};
-
-function ClayBubble({
+function SpeechBubble({
   className,
-  art,
   children,
   "data-bubble": dataBubble,
 }: {
   className: string;
-  art: string;
   children: ReactNode;
   "data-bubble"?: PersonaKey;
 }) {
   return (
-    <div className={`clay-bubble ${className}`} data-bubble={dataBubble}>
-      <Image
-        src={art}
-        alt=""
-        fill
-        sizes="280px"
-        className="clay-bubble-art"
-        unoptimized
-      />
-      <span className="clay-bubble-text">{children}</span>
+    <div className={`speech-bubble ${className}`} data-bubble={dataBubble}>
+      <span className="speech-bubble-text">{children}</span>
     </div>
   );
 }
@@ -61,6 +47,7 @@ export function MeetingScene({
   round1,
   round2,
   streamPreview,
+  metrics,
   onLeave,
 }: {
   fileCount: number;
@@ -71,6 +58,7 @@ export function MeetingScene({
   round2: DebateCell[];
   names?: Partial<Record<PersonaKey, string>>;
   streamPreview?: Partial<Record<PersonaKey, string>>;
+  metrics?: unknown;
   onLeave: () => void;
 }) {
   const waiting =
@@ -79,22 +67,18 @@ export function MeetingScene({
       loadingRound,
       round1Count: round1.length,
     }) === "waiting";
+  const parsed = parseUploadedMetrics(metrics);
 
   return (
     <div className="forest-scene-frame">
       <div className="forest-scene">
         <Image
-          src={
-            waiting
-              ? "/forest-room-idle.png?v=y2026"
-              : "/forest-room-stacked.png?v=y2026"
-          }
-          alt="포레스트 병원 회의실 — 너구리 재무이사, 여우 마케팅실장, 고양이 진료원장"
+          src="/boardroom-room.png"
+          alt="Boardroom 회의실 — 재무이사, 마케팅실장, 진료원장"
           fill
           sizes="(max-width: 960px) 100vw, min(1200px, calc(100vw - 300px))"
           className="forest-scene-art"
           priority
-          unoptimized
         />
         {PERSONAS.map((p) => {
           const opts = {
@@ -107,14 +91,13 @@ export function MeetingScene({
           };
           if (!shouldShowPersonaBubble(opts)) return null;
           return (
-            <ClayBubble
+            <SpeechBubble
               key={`bubble-${p.key}`}
-              art={BUBBLE_ART[p.key]}
-              className={`speech-bubble ${BUBBLE_SLOT[p.key]}`}
+              className={BUBBLE_SLOT[p.key]}
               data-bubble={p.key}
             >
               {personaBubbleText(opts)}
-            </ClayBubble>
+            </SpeechBubble>
           );
         })}
         <div className="paper-pile-anchor">
@@ -122,7 +105,9 @@ export function MeetingScene({
             fileCount={fileCount}
             burstId={burstId}
             waiting={waiting}
-          />
+          >
+            {waiting || !parsed ? null : <TableDocs metrics={parsed} />}
+          </PaperStack>
           {showTableWaitingPrompt({
             hasUploads,
             loadingRound,

@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { sheetCountFromActivity, stackMotion } from "@/lib/forest-ui";
 
 function Sparkle({ className }: { className: string }) {
@@ -10,10 +11,12 @@ export function PaperStack({
   fileCount,
   burstId,
   waiting,
+  children,
 }: {
   fileCount: number;
   burstId: number;
   waiting: boolean;
+  children?: ReactNode;
 }) {
   const stacked = !waiting;
   const sheets = sheetCountFromActivity(fileCount, stacked);
@@ -38,6 +41,7 @@ export function PaperStack({
             <Sparkle className="sparkle-burst sparkle-b1" />
             <Sparkle className="sparkle-burst sparkle-b2" />
           </span>
+          {children}
         </>
       ) : null}
     </div>
