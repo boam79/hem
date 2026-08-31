@@ -68,7 +68,7 @@ export function MeetingScene({
     <div className="forest-scene-frame">
       <div className="forest-scene">
         <Image
-          src="/boardroom-room.png?v=03y2026"
+          src="/boardroom-room.png?v=03y2026b"
           alt="Boardroom 회의실 — 재무이사, 마케팅실장, 진료원장"
           fill
           sizes="100vw"
