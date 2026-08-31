@@ -5,7 +5,6 @@ import Image from "next/image";
 import { LogOut } from "lucide-react";
 import { BoardroomDock } from "@/components/forest-shell";
 import { PaperStack } from "@/components/paper-stack";
-import { TableDocs } from "@/components/table-docs";
 import { PERSONAS } from "@/config/personas";
 import type { DebateCell } from "@/lib/debate";
 import {
@@ -15,7 +14,6 @@ import {
   showTableWaitingPrompt,
   WAITING_BUBBLE,
 } from "@/lib/forest-ui";
-import { parseUploadedMetrics } from "@/lib/metrics-stats";
 import type { PersonaKey } from "@/lib/schema";
 
 const BUBBLE_SLOT: Record<PersonaKey, string> = {
@@ -54,7 +52,6 @@ export function MeetingScene({
   round1,
   round2,
   streamPreview,
-  metrics,
   sessionId,
   onLeave,
 }: {
@@ -66,7 +63,6 @@ export function MeetingScene({
   round2: DebateCell[];
   names?: Partial<Record<PersonaKey, string>>;
   streamPreview?: Partial<Record<PersonaKey, string>>;
-  metrics?: unknown;
   sessionId: string | null;
   onLeave: () => void;
 }) {
@@ -76,7 +72,6 @@ export function MeetingScene({
       loadingRound,
       round1Count: round1.length,
     }) === "waiting";
-  const parsed = parseUploadedMetrics(metrics);
 
   return (
     <div className="forest-scene-frame">
@@ -124,9 +119,7 @@ export function MeetingScene({
             fileCount={fileCount}
             burstId={burstId}
             waiting={waiting}
-          >
-            {waiting || !parsed ? null : <TableDocs metrics={parsed} />}
-          </PaperStack>
+          />
           {showTableWaitingPrompt({
             hasUploads,
             loadingRound,

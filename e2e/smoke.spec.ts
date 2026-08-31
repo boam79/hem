@@ -255,7 +255,7 @@ test("uploading a dummy csv stacks papers on home", async ({ page }) => {
   await expect(page.locator("[data-bubble=cfo]")).toBeVisible();
   await expect(page.locator("[data-bubble=mkt]")).toBeVisible();
   await expect(page.locator("[data-bubble=md]")).toBeVisible();
-  await expect(page.locator("[data-table-doc]")).toHaveCount(6);
+  await expect(page.locator("[data-table-doc]")).toHaveCount(0);
   await expect(page.locator(".char-name")).toHaveCount(0);
 });
 
