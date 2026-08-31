@@ -212,7 +212,7 @@ export default function Home() {
           disabled={loadingRound !== 0 || !agendaOk}
           onClick={() => void start(agenda)}
         >
-          {loadingRound === 0 ? "시뮬레이션 다음 턴" : "토론 중…"}
+          {loadingRound === 0 ? "시뮬레이션 다음 턴 →" : "토론 중…"}
         </Button>
       }
       sidebarLead={

@@ -8,6 +8,12 @@ export const BUBBLE_MAX = 80;
 export const WAITING_BUBBLE = "자료를 올려 주세요.";
 export const LOADING_BUBBLE = "발언 준비 중…";
 
+export const IDLE_BUBBLES: Record<PersonaKey, string> = {
+  cfo: "외래가 8% 줄었습니다. 비용 구조부터 봅시다.",
+  mkt: "세분 캠페인과 디지털 인지도를 제안합니다.",
+  md: "새 과는 경험이 좋아지지만 인력·장비가 먼저입니다.",
+};
+
 export const UPLOAD_BUBBLES: Record<PersonaKey, string> = {
   cfo: "업로드 완료! 재무 데이터를 확인했어요.",
   mkt: "마케팅 성과 데이터도 분석할 준비 됐어요!",
@@ -197,9 +203,8 @@ export function shouldShowPersonaBubble(opts: {
   round2: DebateCell[];
   streamPreview?: string;
 }): boolean {
-  if (opts.loadingRound !== 0) return true;
-  if (opts.hasUploads) return true;
-  return opts.round1.length > 0 || opts.round2.length > 0;
+  void opts;
+  return true;
 }
 
 export function personaBubbleText(opts: {
@@ -221,7 +226,7 @@ export function personaBubbleText(opts: {
   if (position) return truncateBubble(position);
   if (loadingRound === 2) return LOADING_BUBBLE;
   if (hasUploads) return UPLOAD_BUBBLES[persona];
-  return WAITING_BUBBLE;
+  return IDLE_BUBBLES[persona];
 }
 
 export type TimelineStepId =

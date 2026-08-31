@@ -75,7 +75,7 @@ function ForestNav() {
             aria-current={active ? "page" : undefined}
           >
             <item.Icon className="size-4" strokeWidth={2.1} />
-            {item.label}
+            <span className="nav-text">{item.label}</span>
           </Link>
         );
       })}
@@ -101,28 +101,38 @@ function ForestHeaderBar({
   roundNumber,
   disclaimer,
   headerEnd,
+  home,
 }: {
   title: string;
   subtitle: string;
   roundNumber?: 1 | 2;
   disclaimer?: ReactNode;
   headerEnd?: ReactNode;
+  home?: boolean;
 }) {
   return (
-    <header className="forest-header">
-      <div className="min-w-0">
-        {title ? (
-          <div className="flex flex-wrap items-center gap-2">
-            <h1 className="forest-header-title">{title}</h1>
-            {roundNumber ? (
-              <span className="round-badge">Round {roundNumber}</span>
-            ) : null}
-          </div>
-        ) : null}
-        {subtitle ? <p className="forest-header-sub">{subtitle}</p> : null}
-        {disclaimer}
-      </div>
+    <header className={cn("forest-header", home && "is-home-header")}>
+      {home ? (
+        <div className="header-brand-row">
+          <ForestBrand />
+          <ForestNav />
+        </div>
+      ) : (
+        <div className="min-w-0">
+          {title ? (
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="forest-header-title">{title}</h1>
+              {roundNumber ? (
+                <span className="round-badge">Round {roundNumber}</span>
+              ) : null}
+            </div>
+          ) : null}
+          {subtitle ? <p className="forest-header-sub">{subtitle}</p> : null}
+          {disclaimer}
+        </div>
+      )}
       <div className="forest-header-tools">
+        {home ? disclaimer : null}
         <span className="sim-live">
           <span className="sim-live-dot" />
           시뮬레이션 진행 중
@@ -145,6 +155,7 @@ export function ForestFrame({
   sidebar,
   footer,
   headerEnd,
+  home,
   children,
 }: {
   title: string;
@@ -154,15 +165,21 @@ export function ForestFrame({
   sidebar?: ReactNode;
   footer?: ReactNode;
   headerEnd?: ReactNode;
+  home?: boolean;
   children: ReactNode;
 }) {
   return (
-    <div className="forest-app" data-theme="boardroom-03">
-      <aside className="forest-sidebar">
-        <ForestBrand />
-        <ForestNav />
-        {sidebar}
-      </aside>
+    <div
+      className={cn("forest-app", home && "is-home")}
+      data-theme="boardroom-03"
+    >
+      {home ? null : (
+        <aside className="forest-sidebar">
+          <ForestBrand />
+          <ForestNav />
+          {sidebar}
+        </aside>
+      )}
       <div className="forest-main">
         <ForestHeaderBar
           title={title}
@@ -170,6 +187,7 @@ export function ForestFrame({
           roundNumber={roundNumber}
           disclaimer={disclaimer}
           headerEnd={headerEnd}
+          home={home}
         />
         <div className="forest-workspace">{children}</div>
         {footer}
@@ -207,6 +225,7 @@ export function ForestShell({
       disclaimer={disclaimer}
       footer={footer}
       headerEnd={headerEnd}
+      home
       sidebar={null}
     >
       <div className="forest-home-split">
@@ -226,19 +245,19 @@ export function BoardroomDock({ sessionId }: { sessionId: string | null }) {
   return (
     <nav className="boardroom-dock" aria-label="회의 보기">
       <Link href={debateHref}>
-        <MessagesSquare className="size-4" strokeWidth={2.1} />
+        <MessagesSquare className="size-5" strokeWidth={2.1} />
         회의록
       </Link>
       <Link href="/dashboard">
-        <LayoutDashboard className="size-4" strokeWidth={2.1} />
+        <LayoutDashboard className="size-5" strokeWidth={2.1} />
         지표 대시보드
       </Link>
       <Link href={decisionHref}>
-        <Target className="size-4" strokeWidth={2.1} />
+        <Target className="size-5" strokeWidth={2.1} />
         시나리오 결과
       </Link>
       <Link href={debateHref} className="dock-insight">
-        <Sparkles className="size-4" strokeWidth={2.1} />
+        <Sparkles className="size-5" strokeWidth={2.1} />
         AI 인사이트
       </Link>
     </nav>

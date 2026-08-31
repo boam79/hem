@@ -22,8 +22,8 @@ import {
   spokenFromStream,
   timelineStates,
   truncateBubble,
+  IDLE_BUBBLES,
   UPLOAD_BUBBLES,
-  WAITING_BUBBLE,
 } from "@/lib/forest-ui";
 
 describe("sheetCountFromUploads", () => {
@@ -84,7 +84,7 @@ describe("stackMotion", () => {
 describe("personaBubbleText", () => {
   const empty: DebateCell[] = [];
 
-  it("hides persona bubbles until a file or a debate starts", () => {
+  it("shows 03-style idle bubbles before a file lands", () => {
     const waiting = {
       persona: "cfo" as const,
       hasUploads: false,
@@ -93,8 +93,8 @@ describe("personaBubbleText", () => {
       round2: empty,
     };
     expect(showTableWaitingPrompt(waiting)).toBe(true);
-    expect(shouldShowPersonaBubble(waiting)).toBe(false);
-    expect(personaBubbleText(waiting)).toBe(WAITING_BUBBLE);
+    expect(shouldShowPersonaBubble(waiting)).toBe(true);
+    expect(personaBubbleText(waiting)).toBe(IDLE_BUBBLES.cfo);
   });
 
   it("shows persona bubbles after upload, matching the 03 table scene", () => {

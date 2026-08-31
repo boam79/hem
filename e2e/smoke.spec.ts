@@ -190,14 +190,15 @@ test("agenda and category sit below the next-turn header button", async ({
   expect(agenda!.y).toBeLessThan(category!.y);
 });
 
-test("home keeps the meeting room without waiting speech bubbles", async ({
+test("home keeps the meeting room with 03 idle bubbles", async ({
   page,
 }) => {
   await page.goto("/");
-  await expect(page.locator("[data-bubble=cfo]")).toHaveCount(0);
-  await expect(page.locator("[data-bubble=mkt]")).toHaveCount(0);
-  await expect(page.locator("[data-bubble=md]")).toHaveCount(0);
+  await expect(page.locator("[data-bubble=cfo]")).toBeVisible();
+  await expect(page.locator("[data-bubble=mkt]")).toBeVisible();
+  await expect(page.locator("[data-bubble=md]")).toBeVisible();
   await expect(page.locator(".char-name")).toHaveCount(0);
+  await expect(page.locator("[data-role-chip]")).toHaveCount(3);
   await expect(page.locator("[data-stack=waiting]")).toBeVisible();
   await expect(page.locator("[data-stack=waiting]")).toHaveAttribute(
     "data-sheet-count",
@@ -210,14 +211,14 @@ test("home keeps the meeting room without waiting speech bubbles", async ({
   await expect(page.locator("[data-glance=true]")).toHaveCount(0);
 });
 
-test("agenda panel sits left of the meeting room", async ({ page }) => {
+test("agenda panel sits on the left of the meeting room", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
   const agenda = await page.locator("#agenda").boundingBox();
   const scene = await page.locator(".forest-scene").boundingBox();
   expect(agenda).toBeTruthy();
   expect(scene).toBeTruthy();
-  expect(agenda!.x).toBeLessThan(scene!.x);
+  expect(agenda!.x).toBeLessThan(scene!.x + scene!.width / 3);
 });
 
 test("file management is a dedicated menu", async ({ page }) => {

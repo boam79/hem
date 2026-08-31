@@ -23,6 +23,12 @@ const BUBBLE_SLOT: Record<PersonaKey, string> = {
   md: "bubble-md",
 };
 
+const ROLE_CHIP: Record<PersonaKey, string> = {
+  cfo: "CFO",
+  mkt: "마케터",
+  md: "진료진",
+};
+
 function SpeechBubble({
   className,
   children,
@@ -76,10 +82,20 @@ export function MeetingScene({
           src="/boardroom-room.png"
           alt="Boardroom 회의실 — 재무이사, 마케팅실장, 진료원장"
           fill
-          sizes="(max-width: 960px) 100vw, min(1200px, calc(100vw - 300px))"
+          sizes="100vw"
           className="forest-scene-art"
           priority
+          unoptimized
         />
+        {PERSONAS.map((p) => (
+          <span
+            key={`role-${p.key}`}
+            className={`role-chip role-chip-${p.key}`}
+            data-role-chip={p.key}
+          >
+            {ROLE_CHIP[p.key]}
+          </span>
+        ))}
         {PERSONAS.map((p) => {
           const opts = {
             persona: p.key,
