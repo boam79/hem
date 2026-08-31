@@ -80,7 +80,7 @@ function ForestNav() {
             className={cn("forest-nav-item", active && "is-active")}
             aria-current={active ? "page" : undefined}
           >
-            <item.Icon className="size-4" strokeWidth={2.1} />
+            <item.Icon className="size-6" strokeWidth={2.35} />
             <span className="nav-text">{item.label}</span>
           </Link>
         );

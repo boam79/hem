@@ -183,6 +183,13 @@ test("home has agenda, the meeting room, and a compact upload", async ({
   await expect(page.getByRole("link", { name: "지표 대시보드" })).toBeVisible();
   await expect(page.getByRole("link", { name: "시나리오 결과" })).toBeVisible();
   await expect(page.getByRole("link", { name: "AI 인사이트" })).toBeVisible();
+  const headerMinutes = page
+    .getByRole("navigation", { name: "주요 메뉴" })
+    .getByRole("link", { name: "회의록" });
+  const minutesBox = await headerMinutes.boundingBox();
+  expect(minutesBox).toBeTruthy();
+  expect(minutesBox!.height).toBeGreaterThan(44);
+  await expect(headerMinutes.getByText("회의록")).toBeVisible();
 });
 
 test("agenda sits below the next-turn header and above the start button", async ({
