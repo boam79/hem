@@ -306,36 +306,6 @@ body {
   color: var(--forest-muted);
 }
 
-.role-chip {
-  position: absolute;
-  z-index: 5;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 0.94);
-  padding: 0.18rem 0.58rem;
-  font-size: 0.68rem;
-  font-weight: 800;
-  box-shadow: 0 4px 12px rgb(15 23 42 / 0.14);
-}
-
-.role-chip-cfo {
-  top: 58%;
-  left: 18%;
-  color: #1e3a8a;
-}
-
-.role-chip-mkt {
-  top: 56%;
-  left: 48%;
-  color: #be123c;
-}
-
-.role-chip-md {
-  top: 58%;
-  right: 16%;
-  left: auto;
-  color: #0f766e;
-}
-
 .forest-sidebar {
   display: flex;
   flex-direction: column;
@@ -1793,10 +1763,6 @@ body {
   .forest-app.is-home .forest-scene-frame,
   .forest-app.is-home .forest-scene {
     min-height: 28rem;
-  }
-
-  .forest-app.is-home .role-chip {
-    display: none;
   }
 
   .debate-glance,

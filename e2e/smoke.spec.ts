@@ -202,7 +202,7 @@ test("home keeps the meeting room with 03 idle bubbles", async ({
   await expect(page.locator("[data-bubble=mkt]")).toBeVisible();
   await expect(page.locator("[data-bubble=md]")).toBeVisible();
   await expect(page.locator(".char-name")).toHaveCount(0);
-  await expect(page.locator("[data-role-chip]")).toHaveCount(3);
+  await expect(page.locator("[data-role-chip]")).toHaveCount(0);
   await expect(page.locator("[data-stack=waiting]")).toBeVisible();
   await expect(page.locator("[data-stack=waiting]")).toHaveAttribute(
     "data-sheet-count",
