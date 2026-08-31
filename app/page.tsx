@@ -22,6 +22,7 @@ import {
   canStartDataReview,
   isAgendaValid,
 } from "@/lib/agenda";
+import { debateStartBody } from "@/lib/debate-start";
 import { apiErrorMessage } from "@/lib/api-errors";
 import type { DebateCell } from "@/lib/debate";
 import { rememberSession } from "@/lib/recent-sessions";
@@ -61,6 +62,7 @@ export default function Home() {
   const [personaNames, setPersonaNames] = useState<
     Partial<Record<PersonaKey, string>>
   >({});
+  const [chooserOpen, setChooserOpen] = useState(false);
   const runId = useRef(0);
   const prevFileCount = useRef(0);
   const clientAgendaError = agendaError(agenda);
@@ -110,7 +112,26 @@ export default function Home() {
     return () => window.removeEventListener("storage", hydrate);
   }, []);
 
-  async function start(agendaText: string) {
+  useEffect(() => {
+    if (!chooserOpen) return;
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") setChooserOpen(false);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [chooserOpen]);
+
+  function openChooser() {
+    setError(null);
+    if (!isAgendaValid(agenda)) {
+      setError(agendaError(agenda));
+      return;
+    }
+    setChooserOpen(true);
+  }
+
+  async function start(agendaText: string, useUploadedMetrics: boolean) {
+    setChooserOpen(false);
     setError(null);
     if (!isAgendaValid(agendaText)) {
       setError(agendaError(agendaText));
@@ -128,11 +149,14 @@ export default function Home() {
       const s = await fetch("/api/session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          agenda: agendaText.trim(),
-          category,
-          ...(metrics ? { metrics } : {}),
-        }),
+        body: JSON.stringify(
+          debateStartBody({
+            agenda: agendaText,
+            category,
+            metrics,
+            useUploadedMetrics,
+          }),
+        ),
       });
       const sj = await s.json();
       if (runId.current !== my) return;
@@ -196,6 +220,7 @@ export default function Home() {
     setStreamPreview({});
     setSparkleBurst(0);
     setError(null);
+    setChooserOpen(false);
   }
 
   return (
@@ -207,9 +232,9 @@ export default function Home() {
           type="button"
           size="lg"
           className="forest-start-btn header-next-turn"
-          aria-label="토론 시작"
+          aria-label="시뮬레이션 다음 턴"
           disabled={loadingRound !== 0 || !agendaOk}
-          onClick={() => void start(agenda)}
+          onClick={openChooser}
         >
           {loadingRound === 0 ? "시뮬레이션 다음 턴 →" : "토론 중…"}
         </Button>
@@ -254,6 +279,16 @@ export default function Home() {
               ))}
             </SelectContent>
           </Select>
+          <Button
+            type="button"
+            size="lg"
+            className="forest-start-btn mt-3 w-full"
+            aria-label="토론 시작"
+            disabled={loadingRound !== 0 || !agendaOk}
+            onClick={openChooser}
+          >
+            {loadingRound === 0 ? "토론 시작" : "토론 중…"}
+          </Button>
         </section>
       }
       sidebarExtra={
@@ -274,7 +309,7 @@ export default function Home() {
               variant="outline"
               className="forest-review-btn w-full"
               disabled={loadingRound !== 0 || !dataReviewOk}
-              onClick={() => void start(DATA_REVIEW_AGENDA)}
+              onClick={() => void start(DATA_REVIEW_AGENDA, true)}
             >
               데이터 검토
             </Button>
@@ -297,7 +332,64 @@ export default function Home() {
           </section>
         </>
       }
-      footer={null}
+      footer={
+        chooserOpen ? (
+          <div
+            className="start-chooser-backdrop"
+            onClick={() => setChooserOpen(false)}
+          >
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="start-chooser-title"
+              className="start-chooser"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <h2 id="start-chooser-title" className="start-chooser-title">
+                토론을 어떻게 진행할까요?
+              </h2>
+              <p className="start-chooser-copy">
+                올린 파일을 넣을지, 기본 합성 지표만 쓸지 고릅니다. 결정은 하지
+                않습니다.
+              </p>
+              <Button
+                type="button"
+                size="lg"
+                className="forest-start-btn w-full"
+                disabled={!metrics}
+                onClick={() => void start(agenda, true)}
+              >
+                올린 데이터로 진행
+              </Button>
+              <p className="forest-field-hint mt-1.5 mb-3">
+                {metrics
+                  ? "지금 올린 파일을 세 입장에 넣습니다."
+                  : "올린 파일이 없습니다. 지표를 올리면 이 칸을 고를 수 있습니다."}
+              </p>
+              <Button
+                type="button"
+                size="lg"
+                variant="outline"
+                className="forest-review-btn mt-0 w-full"
+                onClick={() => void start(agenda, false)}
+              >
+                그냥 진행
+              </Button>
+              <p className="forest-field-hint mt-1.5 mb-3">
+                올린 파일은 넣지 않고 기본 합성 지표만 씁니다.
+              </p>
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full"
+                onClick={() => setChooserOpen(false)}
+              >
+                취소
+              </Button>
+            </div>
+          </div>
+        ) : null
+      }
     >
       <MeetingScene
         fileCount={fileCount}

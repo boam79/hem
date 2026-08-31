@@ -789,6 +789,39 @@ body {
   white-space: nowrap;
 }
 
+.start-chooser-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(15 23 42 / 0.45);
+  padding: 1.25rem;
+}
+
+.start-chooser {
+  width: min(22.5rem, 100%);
+  border-radius: 16px;
+  background: #fff;
+  padding: 1.15rem 1.1rem 1rem;
+  box-shadow: 0 22px 50px rgb(15 23 42 / 0.22);
+}
+
+.start-chooser-title {
+  margin: 0 0 0.4rem;
+  font-size: 1.05rem;
+  font-weight: 750;
+  letter-spacing: -0.03em;
+}
+
+.start-chooser-copy {
+  margin: 0 0 0.9rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--forest-muted);
+}
+
 .home-upload-file {
   display: flex;
   align-items: center;

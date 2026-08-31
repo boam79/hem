@@ -12,9 +12,12 @@ PRD AC 감사: `doc/progress/2026-08-28-prd-final-audit.md`
 
 2026-08-30 Planner: 고도화 제안 P1 쟁점 모음(LLM 0) · P2 업로드 통계 확장 · P3 이상월 칩 · P4 심사 안건 채우기 · P5 공유 한 장. 상세 `doc/progress/2026-08-30-upgrade-proposals.md`. 구현은 패키지 1개 지정 후.
 
+2026-08-31: 홈에 보이는 「토론 시작」이 없었다. 헤더만 「시뮬레이션 다음 턴」이고 누르면 바로 LLM이 돌았다. 안건 아래에 「토론 시작」을 두고, 시작 시 올린 데이터로 할지 그냥 진행할지 고른다.
+
 ## Key Challenges and Analysis
 
-사이드바 6칸을 더 늘리면 02 셸이 답답해진다. 통계는 올린 직후 `/files`에 표를 붙이고, 안건 없는 회의는 홈 「데이터 검토」만 추가한다. 인사이트용 4번째 LLM은 두지 않는다. 「토론 시작」의 안건 10자 규칙은 유지한다. 데이터 검토는 고정 안건을 POST에만 넣는다. E2E는 그 버튼을 누르지 않는다.
+사이드바 6칸을 더 늘리면 02 셸이 답답해진다. 통계는 올린 직후 `/files`에 표를 붙이고, 안건 없는 회의는 홈 「데이터 검토」만 추가한다. 인사이트용 4번째 LLM은 두지 않는다. 「토론 시작」의 안건 10자 규칙은 유지한다. 데이터 검토는 고정 안건을 POST에만 넣는다. E2E는 「데이터 검토」와 선택 창의 「올린 데이터로 진행」「그냥 진행」을 누르지 않는다. 「토론 시작」클릭은 선택 창만 연다.
+헤더 「시뮬레이션 다음 턴」과 왼쪽 「토론 시작」을 같은 accessible name으로 두면 boundingBox가 깨진다. 헤더는 `aria-label="시뮬레이션 다음 턴"`.
 경량 모델 유지: haiku / gpt-5.4-nano / flash-lite. nano는 reasoning 모델이라 temperature 미지원. reasoningEffort는 `none`만 허용.
 Gemini 크레딧 결제 후 md 셀은 프로덕션에서 성공. Haiku·nano JSON 복구 커밋 `32168f5` 후 세션 `4fyIcc` R1 okCount=3. 사용자 수동 확인 대기(지우지 않음). R2 수정 커밋 `7eda3e3` 후 세션 `uE7m2G` R1 ok=3, R2 ok=3.
 2026-08-28 AC 감사: F1–F6·W1–W4 코드+테스트+HTTPS. **W3 5×10은 `/goal` 재개 후 50/50** (objection 50/50, 셀 실패 0). keepalive Vercel Cron 성공. GH Actions 시크릿은 사용자 몫.
@@ -31,8 +34,12 @@ Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
 1. 고정 안건 상수 + 통계 요약 함수 + 단위 테스트. 성공: 안건 10~200자, 더미 지표에서 12행·합계.
 2. `/files`에 업로드 통계 표. 성공: 더미 CSV 후 병원명·월 열. LLM 없음.
 3. 홈 「데이터 검토」. 업로드 없으면 disabled. 누르면 고정 안건으로 기존 세션·라운드. 성공: 단위 + E2E는 노출/disabled만. 클릭 금지.
-4. HTTPS E2E 배포 후. 성공: 파일 관리 표, 홈 버튼. 「데이터 검토」「토론 시작」 실클릭 없음.
+4. HTTPS E2E 배포 후. 성공: 파일 관리 표, 홈 버튼. 「데이터 검토」실클릭 없음. 선택 창의 「올린 데이터로 진행」「그냥 진행」실클릭 없음.
 2026-08-29 홈 02 UI: `doc/progress/2026-08-29-forest-ui-02.md`. HTTPS E2E 15. 배포 https://boardroom-six-delta.vercel.app
+2026-08-31 Planner: 안건 아래 「토론 시작」+ 올린 데이터/그냥 진행 선택. `doc/progress/2026-08-31-debate-start-chooser.md`.
+1. `debateStartBody` 단위 테스트. 성공: 올린 지표 포함/생략.
+2. 홈 버튼·선택 창. 성공: 안건 아래 「토론 시작」, 파일 없으면 「올린 데이터로 진행」disabled, 취소로 닫힘. LLM 호출 없음.
+3. HTTPS E2E 배포 후. 성공: 선택 창 노출. 「그냥 진행」「올린 데이터로 진행」실클릭 없음.
 
 ## Project Status Board
 
@@ -58,6 +65,7 @@ Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
 - [ ] 업로드 통계·데이터 검토. 메뉴 추가 없음. 단위 104 · HTTPS E2E 27. 배포 https://boardroom-six-delta.vercel.app 사용자 확인 대기(데이터 검토 실클릭은 비용).
 - [ ] 토론 한글 순화. 지표 키·약어·배지. 단위 110. HTTPS 사용자 확인 대기.
 - [ ] 고도화. 제안서 `doc/progress/2026-08-30-upgrade-proposals.md`. 패키지 미지정.
+- [ ] 홈 「토론 시작」+ 올린 데이터/그냥 진행 선택. 사용자 확인 대기.
 
 ## Executor's Feedback or Assistance Requests
 
@@ -117,6 +125,8 @@ Haiku R2 재시도 수정 후(`ba66843`): `cA_9I2` `4e4XEM` `NQSmdi` — 세 세
 
 2026-08-31 Executor: 홈 도크 4칸이 같은 화면이었다. 회의록=/debate, 지표=/dashboard(올린 지표), 시나리오=/decision(메모만), AI 인사이트=/insights(반대·위험·필요 데이터, 4번째 LLM 없음).
 
+2026-08-31 Executor: 안건 아래에 보이는 「토론 시작」을 둠. 헤더 「시뮬레이션 다음 턴」은 시안 유지(accessible name은 시뮬레이션 다음 턴). 둘 다 선택 창만 연다. 「올린 데이터로 진행」은 업로드가 있을 때만, 「그냥 진행」은 기본 합성 지표. 데이터 검토는 기존처럼 올린 지표+고정 안건. 실 LLM 버튼은 E2E에서 누르지 않음.
+
 
 ## Lessons
 
@@ -141,5 +151,5 @@ heading `대시보드`는 `비용 대시보드`와도 매칭된다. Playwright�
 `shouldShowPersonaBubble`이 `return false`면 토론이 시작돼도 홈 말풍선이 없다. 말풍선은 머리 위 점토 PNG(페르소나 색·꼬리 방향)이고, 이름표 칩은 다시 올리지 않는다.
 월별 지표 CSV에 없는 열을 넣으면 예전 파서는 `알 수 없는 열`로 거절했다. 환자행(진료과·성별·나이대·지역)은 별도 헤더로 읽고 12개월로 합친다. `consult_to_surgery_rate`는 스키마가 0.55~0.70이라 집계 후 클램프한다.
 토론 본문의 영문 키는 프롬프트 표 헤더가 영어라 모델이 베낀다. 표·evidence 예시를 한글로 두고, 저장된 세션은 DB를 고치지 않고 화면에서만 치환한다. CAC와 같이 한글 조사 앞은 `\b`가 안 맞는다.
-03 시안은 헤더에 「시뮬레이션 다음 턴」이 있다. Playwright는 `aria-label="토론 시작"`으로 기존 버튼을 찾는다. 같은 accessible name 버튼을 헤더와 왼쪽에 두면 boundingBox가 깨진다. 홈 업로드는 `#home-metrics-file`, `/files`만 `#metrics-file`. 테이블 차트는 recharts 없이 SVG. 인사이트용 4번째 LLM은 두지 않는다. 홈 도크는 회의록 `/debate` · 지표 `/dashboard` · 시나리오 `/decision` · 인사이트 `/insights`로 나눈다. 인사이트는 기존 턴의 반대·위험·필요 데이터만 모은다.
+03 시안은 헤더에 「시뮬레이션 다음 턴」이 있다. 왼쪽 안건 아래에 보이는 「토론 시작」을 둔다. 같은 accessible name을 헤더와 왼쪽에 두면 boundingBox가 깨진다. 헤더는 `aria-label="시뮬레이션 다음 턴"`. 「토론 시작」클릭은 선택 창만 연다. 실 LLM은 「올린 데이터로 진행」「그냥 진행」「데이터 검토」다. E2E는 그 셋을 누르지 않는다. 홈 업로드는 `#home-metrics-file`, `/files`만 `#metrics-file`. 테이블 차트는 recharts 없이 SVG. 인사이트용 4번째 LLM은 두지 않는다. 홈 도크는 회의록 `/debate` · 지표 `/dashboard` · 시나리오 `/decision` · 인사이트 `/insights`로 나눈다. 인사이트는 기존 턴의 반대·위험·필요 데이터만 모은다.
 03 시안 테이블 서류는 장면 PNG에 구워져 있다. 손익계산서·진료과별 현황 SVG 카드를 그 위에 올리면 시안과 다른 스티커가 된다. 업로드 여부는 `data-stack`만으로 두고, HTML 서류 오버레이는 그리지 않는다.

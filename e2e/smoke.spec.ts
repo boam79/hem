@@ -169,9 +169,12 @@ test("home has agenda, the meeting room, and a compact upload", async ({
   await expect(page.locator("#metrics-file")).toHaveCount(0);
   await expect(page.locator("#home-metrics-file")).toBeVisible();
   await expect(page.getByRole("button", { name: "토론 시작" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "토론 시작" })).toContainText(
-    "시뮬레이션 다음 턴",
+  await expect(page.getByRole("button", { name: "토론 시작" })).toHaveText(
+    "토론 시작",
   );
+  await expect(
+    page.getByRole("button", { name: "시뮬레이션 다음 턴" }),
+  ).toBeVisible();
   await expect(page.getByRole("button", { name: "회의 나가기" })).toBeVisible();
   await expect(page.getByText("Boardroom").first()).toBeVisible();
   await expect(page.getByText("병원 경영 시뮬레이터").first()).toBeVisible();
@@ -182,18 +185,46 @@ test("home has agenda, the meeting room, and a compact upload", async ({
   await expect(page.getByRole("link", { name: "AI 인사이트" })).toBeVisible();
 });
 
-test("agenda and category sit below the next-turn header button", async ({
+test("agenda sits below the next-turn header and above the start button", async ({
   page,
 }) => {
   await page.goto("/");
   const agenda = await page.locator("#agenda").boundingBox();
   const category = await page.locator("#category").boundingBox();
+  const nextTurn = await page
+    .getByRole("button", { name: "시뮬레이션 다음 턴" })
+    .boundingBox();
   const start = await page.getByRole("button", { name: "토론 시작" }).boundingBox();
   expect(agenda).toBeTruthy();
   expect(category).toBeTruthy();
+  expect(nextTurn).toBeTruthy();
   expect(start).toBeTruthy();
-  expect(start!.y).toBeLessThan(agenda!.y);
+  expect(nextTurn!.y).toBeLessThan(agenda!.y);
   expect(agenda!.y).toBeLessThan(category!.y);
+  expect(category!.y).toBeLessThan(start!.y);
+});
+
+test("start chooser offers uploaded data or continue without it", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "토론 시작" }).click();
+  await expect(
+    page.getByRole("dialog", { name: "토론을 어떻게 진행할까요?" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "올린 데이터로 진행" }),
+  ).toBeDisabled();
+  await expect(page.getByRole("button", { name: "그냥 진행" })).toBeEnabled();
+  await page.getByRole("button", { name: "취소" }).click();
+  await page.getByRole("button", { name: "시뮬레이션 다음 턴" }).click();
+  await expect(
+    page.getByRole("dialog", { name: "토론을 어떻게 진행할까요?" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "취소" }).click();
+  await expect(
+    page.getByRole("dialog", { name: "토론을 어떻게 진행할까요?" }),
+  ).toHaveCount(0);
 });
 
 test("home keeps the meeting room with 03 idle bubbles", async ({
@@ -247,6 +278,11 @@ test("uploading a dummy csv stacks papers on home", async ({ page }) => {
   await page.getByRole("link", { name: "홈에서 토론 시작" }).click();
   await expect(page).toHaveURL(/\/$/);
   await expect(page.getByRole("button", { name: "데이터 검토" })).toBeEnabled();
+  await page.getByRole("button", { name: "토론 시작" }).click();
+  await expect(
+    page.getByRole("button", { name: "올린 데이터로 진행" }),
+  ).toBeEnabled();
+  await page.getByRole("button", { name: "취소" }).click();
   await expect(page.locator("[data-stack=stacked]")).toBeVisible();
   await expect(page.locator("[data-stack=stacked]")).toHaveAttribute(
     "data-sheet-count",
