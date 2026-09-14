@@ -16,6 +16,7 @@ import {
 } from "@/lib/prompt";
 import { canStartRound2 } from "@/lib/round-gate";
 import { retryTurnGate } from "@/lib/round-retry";
+import { isDbNetworkError } from "@/lib/db-errors";
 import type { PersonaKey, TurnPayload } from "@/lib/schema";
 import { getSupabase, supabaseConfigured } from "@/lib/supabase";
 
@@ -34,36 +35,69 @@ export type RunRoundResult =
   | { ok: false; status: number; error: string }
   | { ok: true; turns: RoundTurnOut[] };
 
+function roundDbFail(
+  error: { message?: string } | null,
+): RunRoundResult | null {
+  if (!error) return null;
+  if (isDbNetworkError(error.message)) {
+    return { ok: false, status: 503, error: "db_unavailable" };
+  }
+  return { ok: false, status: 500, error: error.message || "db_error" };
+}
+
+function catchRound(err: unknown): RunRoundResult {
+  if (isDbNetworkError(err)) {
+    return { ok: false, status: 503, error: "db_unavailable" };
+  }
+  return {
+    ok: false,
+    status: 500,
+    error: err instanceof Error ? err.message : "round_failed",
+  };
+}
+
 export async function loadLivePersonas(): Promise<[Persona, Persona, Persona]> {
   if (!supabaseConfigured()) return mergePersonas([]);
-  const db = getSupabase();
-  const { data } = await db.from("persona_overrides").select("*");
-  const overrides: PersonaOverride[] = [];
-  for (const row of data ?? []) {
-    const parsed = PersonaOverrideSchema.safeParse({
-      key: row.key,
-      name: row.name,
-      role: row.role,
-      habits: row.habits,
-      temperature: Number(row.temperature),
-    });
-    if (parsed.success) overrides.push(parsed.data);
+  try {
+    const db = getSupabase();
+    const { data, error } = await db.from("persona_overrides").select("*");
+    if (error) {
+      if (isDbNetworkError(error.message)) return mergePersonas([]);
+      return mergePersonas([]);
+    }
+    const overrides: PersonaOverride[] = [];
+    for (const row of data ?? []) {
+      const parsed = PersonaOverrideSchema.safeParse({
+        key: row.key,
+        name: row.name,
+        role: row.role,
+        habits: row.habits,
+        temperature: Number(row.temperature),
+      });
+      if (parsed.success) overrides.push(parsed.data);
+    }
+    return mergePersonas(overrides);
+  } catch {
+    return mergePersonas([]);
   }
-  return mergePersonas(overrides);
 }
 
 export async function loadBudgetUsd(): Promise<number> {
   if (!supabaseConfigured()) return DEFAULT_MONTHLY_BUDGET_USD;
-  const db = getSupabase();
-  const { data } = await db
-    .from("app_settings")
-    .select("monthly_budget_usd")
-    .eq("id", 1)
-    .maybeSingle();
-  const value = Number(data?.monthly_budget_usd);
-  return Number.isFinite(value) && value > 0
-    ? value
-    : DEFAULT_MONTHLY_BUDGET_USD;
+  try {
+    const db = getSupabase();
+    const { data } = await db
+      .from("app_settings")
+      .select("monthly_budget_usd")
+      .eq("id", 1)
+      .maybeSingle();
+    const value = Number(data?.monthly_budget_usd);
+    return Number.isFinite(value) && value > 0
+      ? value
+      : DEFAULT_MONTHLY_BUDGET_USD;
+  } catch {
+    return DEFAULT_MONTHLY_BUDGET_USD;
+  }
 }
 
 export async function runRound(opts: {
@@ -75,12 +109,15 @@ export async function runRound(opts: {
     return { ok: false, status: 503, error: "supabase_unconfigured" };
   }
   const { sessionId, round, onDelta } = opts;
+  try {
   const db = getSupabase();
-  const { data: session } = await db
+  const { data: session, error: sessionError } = await db
     .from("sessions")
     .select("*")
     .eq("id", sessionId)
     .maybeSingle();
+  const sessionFail = roundDbFail(sessionError);
+  if (sessionFail) return sessionFail;
   if (!session) {
     return { ok: false, status: 404, error: "not_found" };
   }
@@ -173,6 +210,9 @@ export async function runRound(opts: {
   }
 
   return { ok: true, turns };
+  } catch (err) {
+    return catchRound(err);
+  }
 }
 
 export async function retryPersonaTurn(opts: {
@@ -184,12 +224,15 @@ export async function retryPersonaTurn(opts: {
     return { ok: false, status: 503, error: "supabase_unconfigured" };
   }
   const { sessionId, round, persona } = opts;
+  try {
   const db = getSupabase();
-  const { data: session } = await db
+  const { data: session, error: sessionError } = await db
     .from("sessions")
     .select("*")
     .eq("id", sessionId)
     .maybeSingle();
+  const sessionFail = roundDbFail(sessionError);
+  if (sessionFail) return sessionFail;
   if (!session) {
     return { ok: false, status: 404, error: "not_found" };
   }
@@ -269,4 +312,7 @@ export async function retryPersonaTurn(opts: {
       },
     ],
   };
+  } catch (err) {
+    return catchRound(err);
+  }
 }

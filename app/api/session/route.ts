@@ -1,5 +1,6 @@
 import { PERSONAS } from "@/config/personas";
 import { AGENDA_MAX, AGENDA_MIN, DEFAULT_DAILY_SESSION_CAP } from "@/config/limits";
+import { jsonFromCaught, jsonFromSupabaseError } from "@/lib/db-errors";
 import { newSessionId } from "@/lib/id";
 import { clientIp, hourKey, wouldExceed } from "@/lib/ratelimit";
 import { MetricsSchema, SessionCreateSchema } from "@/lib/schema";
@@ -38,52 +39,59 @@ export async function POST(req: Request) {
     );
   }
 
-  const db = getSupabase();
-  const ip = clientIp(req.headers);
-  const key = hourKey(ip, new Date());
-  const { data: row } = await db
-    .from("rate_limits")
-    .select("count")
-    .eq("key", key)
-    .maybeSingle();
-  const count = row?.count ?? 0;
-  if (wouldExceed(count)) {
-    return Response.json({ error: "rate_limited" }, { status: 429 });
-  }
+  try {
+    const db = getSupabase();
+    const ip = clientIp(req.headers);
+    const key = hourKey(ip, new Date());
+    const { data: row, error: rateError } = await db
+      .from("rate_limits")
+      .select("count")
+      .eq("key", key)
+      .maybeSingle();
+    if (rateError) return jsonFromSupabaseError(rateError);
+    const count = row?.count ?? 0;
+    if (wouldExceed(count)) {
+      return Response.json({ error: "rate_limited" }, { status: 429 });
+    }
 
-  const cap = Number(process.env.DAILY_SESSION_CAP || DEFAULT_DAILY_SESSION_CAP);
-  const start = new Date();
-  start.setUTCHours(0, 0, 0, 0);
-  const { count: today } = await db
-    .from("sessions")
-    .select("id", { count: "exact", head: true })
-    .gte("created_at", start.toISOString());
-  if ((today ?? 0) >= cap) {
-    return Response.json(
-      { error: "daily_cap", message: `오늘 세션 한도 ${cap}건` },
-      { status: 429 },
-    );
-  }
+    const cap = Number(process.env.DAILY_SESSION_CAP || DEFAULT_DAILY_SESSION_CAP);
+    const start = new Date();
+    start.setUTCHours(0, 0, 0, 0);
+    const { count: today, error: capError } = await db
+      .from("sessions")
+      .select("id", { count: "exact", head: true })
+      .gte("created_at", start.toISOString());
+    if (capError) return jsonFromSupabaseError(capError);
+    if ((today ?? 0) >= cap) {
+      return Response.json(
+        { error: "daily_cap", message: `오늘 세션 한도 ${cap}건` },
+        { status: 429 },
+      );
+    }
 
-  await db.from("rate_limits").upsert({
-    key,
-    count: count + 1,
-    updated_at: new Date().toISOString(),
-  });
+    const { error: upsertError } = await db.from("rate_limits").upsert({
+      key,
+      count: count + 1,
+      updated_at: new Date().toISOString(),
+    });
+    if (upsertError) return jsonFromSupabaseError(upsertError);
 
-  const id = newSessionId();
-  const createdAt = new Date().toISOString();
-  const { error } = await db.from("sessions").insert({
-    id,
-    agenda: parsed.data.agenda,
-    category: parsed.data.category,
-    metrics: uploaded.data ?? null,
-    created_at: createdAt,
-  });
-  if (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    const id = newSessionId();
+    const createdAt = new Date().toISOString();
+    const { error } = await db.from("sessions").insert({
+      id,
+      agenda: parsed.data.agenda,
+      category: parsed.data.category,
+      metrics: uploaded.data ?? null,
+      created_at: createdAt,
+    });
+    if (error) {
+      return jsonFromSupabaseError(error);
+    }
+    return Response.json({ id, createdAt }, { status: 201 });
+  } catch (err) {
+    return jsonFromCaught(err);
   }
-  return Response.json({ id, createdAt }, { status: 201 });
 }
 
 export async function GET(req: Request) {
@@ -94,23 +102,28 @@ export async function GET(req: Request) {
   if (!supabaseConfigured()) {
     return Response.json({ error: "supabase_unconfigured" }, { status: 503 });
   }
-  const db = getSupabase();
-  const { data: session, error } = await db
-    .from("sessions")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
-  if (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+  try {
+    const db = getSupabase();
+    const { data: session, error } = await db
+      .from("sessions")
+      .select("*")
+      .eq("id", id)
+      .maybeSingle();
+    if (error) {
+      return jsonFromSupabaseError(error);
+    }
+    if (!session) {
+      return Response.json({ error: "not_found" }, { status: 404 });
+    }
+    const { data: turns, error: turnError } = await db
+      .from("turns")
+      .select("*")
+      .eq("session_id", id)
+      .order("round")
+      .order("persona");
+    if (turnError) return jsonFromSupabaseError(turnError);
+    return Response.json({ session, turns: turns ?? [] });
+  } catch (err) {
+    return jsonFromCaught(err);
   }
-  if (!session) {
-    return Response.json({ error: "not_found" }, { status: 404 });
-  }
-  const { data: turns } = await db
-    .from("turns")
-    .select("*")
-    .eq("session_id", id)
-    .order("round")
-    .order("persona");
-  return Response.json({ session, turns: turns ?? [] });
 }

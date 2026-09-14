@@ -1,6 +1,12 @@
+import {
+  DB_UNAVAILABLE_MESSAGE,
+  isDbNetworkError,
+} from "@/lib/db-errors";
+
 const MESSAGES: Record<string, string> = {
   supabase_unconfigured:
     "데이터베이스가 아직 연결되지 않았습니다. Supabase 환경 변수를 설정해야 합니다.",
+  db_unavailable: DB_UNAVAILABLE_MESSAGE,
   invalid_agenda: "안건 길이나 유형이 올바르지 않습니다.",
   invalid_memo: "메모 항목을 확인하세요.",
   invalid_metrics: "업로드한 지표가 스키마와 맞지 않습니다.",
@@ -16,12 +22,32 @@ const MESSAGES: Record<string, string> = {
   providers_must_differ: "세 페르소나의 제공사는 서로 달라야 합니다.",
 };
 
+export function humanizeCaughtError(
+  err: unknown,
+  fallback = "요청에 실패했습니다.",
+): string {
+  const msg = err instanceof Error ? err.message : String(err ?? fallback);
+  if (isDbNetworkError(msg) || /Unexpected token/.test(msg)) {
+    return DB_UNAVAILABLE_MESSAGE;
+  }
+  return msg || fallback;
+}
+
 export function apiErrorMessage(
   payload: { error?: string; message?: string },
   fallback = "요청에 실패했습니다.",
 ): string {
-  if (payload.message) return payload.message;
+  if (payload.message && !isDbNetworkError(payload.message)) {
+    return payload.message;
+  }
   if (payload.error && MESSAGES[payload.error]) return MESSAGES[payload.error];
-  if (payload.error) return payload.error;
+  if (payload.message && isDbNetworkError(payload.message)) {
+    return DB_UNAVAILABLE_MESSAGE;
+  }
+  if (payload.error) {
+    return isDbNetworkError(payload.error)
+      ? DB_UNAVAILABLE_MESSAGE
+      : payload.error;
+  }
   return fallback;
 }

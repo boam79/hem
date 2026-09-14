@@ -5,15 +5,23 @@ import {
   publicPersonas,
 } from "@/lib/persona-overrides";
 import { loadLivePersonas } from "@/lib/run-round";
+import { jsonFromCaught, jsonFromSupabaseError, isDbNetworkError } from "@/lib/db-errors";
 import { getSupabase, supabaseConfigured } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const personas = supabaseConfigured()
-    ? await loadLivePersonas()
-    : PERSONAS;
-  return Response.json({ personas: publicPersonas(personas) });
+  try {
+    const personas = supabaseConfigured()
+      ? await loadLivePersonas()
+      : PERSONAS;
+    return Response.json({ personas: publicPersonas(personas) });
+  } catch (err) {
+    if (isDbNetworkError(err)) {
+      return Response.json({ personas: publicPersonas(PERSONAS) });
+    }
+    return jsonFromCaught(err);
+  }
 }
 
 export async function PUT(req: Request) {
@@ -33,29 +41,37 @@ export async function PUT(req: Request) {
   if (new Set(merged.map((p) => p.provider)).size !== 3) {
     return Response.json({ error: "providers_must_differ" }, { status: 400 });
   }
-  const db = getSupabase();
-  const now = new Date().toISOString();
-  for (const row of parsed.data.personas) {
-    const { error } = await db.from("persona_overrides").upsert({
-      key: row.key,
-      name: row.name,
-      role: row.role,
-      habits: row.habits,
-      temperature: row.temperature,
-      updated_at: now,
-    });
-    if (error) {
-      return Response.json({ error: error.message }, { status: 500 });
+  try {
+    const db = getSupabase();
+    const now = new Date().toISOString();
+    for (const row of parsed.data.personas) {
+      const { error } = await db.from("persona_overrides").upsert({
+        key: row.key,
+        name: row.name,
+        role: row.role,
+        habits: row.habits,
+        temperature: row.temperature,
+        updated_at: now,
+      });
+      if (error) {
+        return jsonFromSupabaseError(error);
+      }
     }
+    return Response.json({ personas: publicPersonas(merged) });
+  } catch (err) {
+    return jsonFromCaught(err);
   }
-  return Response.json({ personas: publicPersonas(merged) });
 }
 
 export async function DELETE() {
   if (!supabaseConfigured()) {
     return Response.json({ error: "supabase_unconfigured" }, { status: 503 });
   }
-  const db = getSupabase();
-  await db.from("persona_overrides").delete().in("key", ["cfo", "mkt", "md"]);
-  return Response.json({ personas: publicPersonas(PERSONAS) });
+  try {
+    const db = getSupabase();
+    await db.from("persona_overrides").delete().in("key", ["cfo", "mkt", "md"]);
+    return Response.json({ personas: publicPersonas(PERSONAS) });
+  } catch (err) {
+    return jsonFromCaught(err);
+  }
 }

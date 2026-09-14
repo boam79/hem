@@ -253,6 +253,29 @@ describe("personaBubbleText", () => {
     expect(text.length).toBe(BUBBLE_MAX + 1);
     expect(truncateBubble(long).length).toBe(BUBBLE_MAX + 1);
   });
+
+  it("puts the first evidence next to the position so the room shows table numbers", () => {
+    const cell: DebateCell = {
+      persona: "cfo",
+      provider: "anthropic",
+      status: "ok",
+      payload: {
+        position: "검색광고 증액은 보류",
+        evidence: ["검색광고 유입 2026-07"],
+        risks: [],
+        needs_data: [],
+      },
+    };
+    expect(
+      personaBubbleText({
+        persona: "cfo",
+        hasUploads: true,
+        loadingRound: 0,
+        round1: [cell],
+        round2: empty,
+      }),
+    ).toContain("검색광고 유입 2026-07");
+  });
 });
 
 describe("spokenFromStream", () => {

@@ -22,7 +22,7 @@ import {
   debateStartBody,
   shouldStartWithUploadedMetrics,
 } from "@/lib/debate-start";
-import { apiErrorMessage } from "@/lib/api-errors";
+import { apiErrorMessage, humanizeCaughtError } from "@/lib/api-errors";
 import type { DebateCell } from "@/lib/debate";
 import { rememberSession, readRecentSessions } from "@/lib/recent-sessions";
 import {
@@ -157,10 +157,17 @@ export default function Home() {
           }),
         ),
       });
-      const sj = await s.json();
+      const sj = (await s.json().catch(() => ({}))) as {
+        id?: string;
+        error?: string;
+        message?: string;
+      };
       if (runId.current !== my) return;
       if (!s.ok) {
         throw new Error(apiErrorMessage(sj));
+      }
+      if (!sj.id) {
+        throw new Error(humanizeCaughtError("fetch failed"));
       }
       setSessionId(sj.id);
       rememberSession(sj.id, agendaText.trim());
@@ -200,7 +207,7 @@ export default function Home() {
     } catch (e) {
       if (runId.current !== my) return;
       if (e instanceof Error && e.message === "aborted") return;
-      setError(e instanceof Error ? e.message : "실패");
+      setError(humanizeCaughtError(e));
     } finally {
       if (runId.current === my) {
         setStreamPreview({});
@@ -280,6 +287,11 @@ export default function Home() {
           >
             {loadingRound === 0 ? "토론 시작" : "토론 중…"}
           </Button>
+          {error ? (
+            <p className="text-destructive mt-2 text-sm" role="alert">
+              {error}
+            </p>
+          ) : null}
           {metricsLabel ? (
             <p
               className="forest-field-hint mt-2"
@@ -324,9 +336,6 @@ export default function Home() {
                 ? "안건 없이 올린 지표의 위험·가정·필요 데이터를 올립니다."
                 : "지표를 올리면 안건 없이 지표만 검토할 수 있습니다."}
             </p>
-            {error ? (
-              <p className="text-destructive mt-2 text-xs">{error}</p>
-            ) : null}
             {recentHome[0] ? (
               <p className="forest-field-hint mt-2">
                 최근 회의{" "}

@@ -83,6 +83,7 @@ Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
 - [x] R4 E2E `합의점` strict 수정. 커밋 `caa9f19`.
 - [ ] 홈 「토론 시작」+ 올린 데이터/그냥 진행 선택. 사용자 확인 대기.
 - [ ] 올린 파일이 있으면 「토론 시작」이 그 지표를 씀. 유형 드롭다운 제거. 단위 통과. HTTPS·실토론은 배포 후 사용자 확인 대기.
+- [ ] 일시 중지된 Supabase 복구 + fetch failed 한글화. 단위 통과. 배포 후 「토론 시작」사용자 확인 대기.
 - [ ] 상단 메뉴와 하단 도크 네 칸 이름·경로 일치. 사용자 확인 대기.
 - [ ] 하단 도크 삭제 · 테이블 서류 2026. HTTPS 사용자 확인 대기.
 - [ ] 테이블 서류 2026 숫자 깨짐 수정. HTTPS 사용자 확인 대기.
@@ -165,6 +166,8 @@ Haiku R2 재시도 수정 후(`ba66843`): `cA_9I2` `4e4XEM` `NQSmdi` — 세 세
 
 2026-09-14 Executor: 올린 파일+토론 시작. 선택 창의 「그냥 진행」이 기본 `S안과(가상)`만 써서 업로드가 빠졌다. 파일이 있으면 토론 시작이 `useUploadedMetrics: true`. 유형 칸은 프롬프트에 안 들어가서 UI에서 삭제, POST category는 `marketing` 고정. 홈 말풍선은 한 줄 입장이라 숫자는 회의록 근거에 있다. E2E는 업로드 후 「토론 시작」을 누르지 않음(실 LLM). 사용자 확인 대기.
 
+2026-09-14 Executor: 스크린샷의 `TypeError: fetch failed`는 boardroom Supabase가 `INACTIVE`. restore 후 `ACTIVE_HEALTHY`. health는 실제 ping. 안건 여러 항목을 표와 연결. 홈 오류는 토론 시작 아래. 사용자 확인 대기.
+
 
 ## Lessons
 
@@ -187,6 +190,7 @@ heading `대시보드`는 `비용 대시보드`와도 매칭된다. Playwright�
 
 02 시안과 서류를 맞추려면 회의실과 다른 PNG를 올리면 안 된다. 바인더처럼 `forest-room-idle.png` / `forest-room-stacked.png`에 구워 넣는다. 아이소메트릭 서류 PNG를 나무 위에 합성하면 구워도 후광이 남는다. 원본 회의실에 서류를 인페인트해야 조명·원근이 같다.
 `shouldShowPersonaBubble`이 `return false`면 토론이 시작돼도 홈 말풍선이 없다. 말풍선은 머리 위 점토 PNG(페르소나 색·꼬리 방향)이고, 이름표 칩은 다시 올리지 않는다.
+Free Supabase가 `INACTIVE`면 세션 GET/POST가 `TypeError: fetch failed`로 떨어진다. `/api/health`의 supabase true는 env만 본 값이라 속인다. 복구는 restore이고, health는 `sessions` ping을 해야 한다.
 월별 지표 CSV에 없는 열을 넣으면 예전 파서는 `알 수 없는 열`로 거절했다. 환자행(진료과·성별·나이대·지역)은 별도 헤더로 읽고 12개월로 합친다. `consult_to_surgery_rate`는 스키마가 0.55~0.70이라 집계 후 클램프한다.
 토론 본문의 영문 키는 프롬프트 표 헤더가 영어라 모델이 베낀다. 표·evidence 예시를 한글로 두고, 저장된 세션은 DB를 고치지 않고 화면에서만 치환한다. CAC와 같이 한글 조사 앞은 `\b`가 안 맞는다.
 03 시안은 헤더에 「시뮬레이션 다음 턴」이 있다. 그 버튼은 「토론 시작」과 같이 선택 창만 연다(초기화가 아님). 사용자는 중복이라 헤더에서 지우고, 「회의 나가기」를 그 자리에 둔다. 「회의 나가기」는 세션·라운드·말풍선만 지우고 안건·올린 파일은 남긴다. LLM을 부르지 않는다. 왼쪽 안건 아래에 보이는 「토론 시작」만 진행이다. 「토론 시작」클릭은 선택 창만 연다. 실 LLM은 「올린 데이터로 진행」「그냥 진행」「데이터 검토」다. E2E는 그 셋을 누르지 않는다. 2026-09-14: 올린 파일이 있으면 「토론 시작」이 바로 그 지표로 LLM을 부른다. 파일 없을 때만 선택 창. 유형 드롭다운은 DB 태그라 가중치가 없고 홈에서 뺐다. POST category는 `marketing` 고정. E2E는 업로드 뒤 「토론 시작」을 누르지 않는다. 홈 업로드는 `#home-metrics-file`, `/files`만 `#metrics-file`. 테이블 차트는 recharts 없이 SVG. 인사이트용 4번째 LLM은 두지 않는다. 네 보기(회의록 `/debate` · 지표 `/dashboard` · 시나리오 `/decision` · 인사이트 `/insights`)는 상단·사이드 주요 메뉴만 쓴다. 하단 플로팅 도크는 두지 않는다. 설정은 헤더 버튼, 파일 관리는 상단 6칸에 남긴다. 인사이트는 기존 턴의 반대·위험·필요 데이터만 모은다.

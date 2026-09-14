@@ -178,6 +178,21 @@ export function latestPosition(
   return text ? koreanizePublicText(text) : undefined;
 }
 
+export function latestEvidence(
+  persona: PersonaKey,
+  round1: DebateCell[],
+  round2: DebateCell[],
+): string | undefined {
+  const from = (cells: DebateCell[]) => {
+    const item = cells
+      .find((cell) => cell.persona === persona)
+      ?.payload?.evidence?.[0]
+      ?.trim();
+    return item ? koreanizePublicText(item) : undefined;
+  };
+  return from(round2) || from(round1);
+}
+
 export function spokenFromStream(streamPreview?: string): string | undefined {
   const raw = streamPreview?.trim();
   if (!raw) return undefined;
@@ -230,7 +245,10 @@ export function personaBubbleText(opts: {
   }
   if (loadingRound === 1) return LOADING_BUBBLE;
   const position = latestPosition(persona, round1, round2);
-  if (position) return truncateBubble(position);
+  if (position) {
+    const evidence = latestEvidence(persona, round1, round2);
+    return truncateBubble(evidence ? `${position} · ${evidence}` : position);
+  }
   if (loadingRound === 2) return LOADING_BUBBLE;
   if (hasUploads) return UPLOAD_BUBBLES[persona];
   return IDLE_BUBBLES[persona];

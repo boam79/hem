@@ -1,6 +1,8 @@
 import { sseData, type RoundStreamEvent } from "@/lib/sse";
 import { runRound } from "@/lib/run-round";
 import { RoundRequestSchema } from "@/lib/schema";
+import { humanizeCaughtError, apiErrorMessage } from "@/lib/api-errors";
+import { isDbNetworkError } from "@/lib/db-errors";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -27,7 +29,11 @@ export async function POST(req: Request) {
           },
         });
         if (!result.ok) {
-          send({ type: "error", error: result.error });
+          send({
+            type: "error",
+            error: result.error,
+            message: apiErrorMessage({ error: result.error }),
+          });
           return;
         }
         for (const turn of result.turns) {
@@ -37,8 +43,8 @@ export async function POST(req: Request) {
       } catch (err) {
         send({
           type: "error",
-          error: "round_failed",
-          message: err instanceof Error ? err.message : "round failed",
+          error: isDbNetworkError(err) ? "db_unavailable" : "round_failed",
+          message: humanizeCaughtError(err, "라운드를 실행하지 못했습니다."),
         });
       } finally {
         controller.close();

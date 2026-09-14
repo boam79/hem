@@ -46,6 +46,7 @@
 | [progress/2026-09-14-e2e-consensus-strict.md](progress/2026-09-14-e2e-consensus-strict.md) | Executor: R4 합의점 E2E strict |
 | [progress/2026-09-14-full-upgrade.md](progress/2026-09-14-full-upgrade.md) | Executor: H1·P1·P4·P5·R1·P2·P3·H2 일괄 |
 | [progress/2026-09-14-upload-metrics-start.md](progress/2026-09-14-upload-metrics-start.md) | Executor: 올린 지표로 토론 시작 · 유형 UI 제거 |
+| [progress/2026-09-14-db-unavailable-debate.md](progress/2026-09-14-db-unavailable-debate.md) | Executor: 일시 중지 DB 복구 · TypeError 한글화 |
 | [progress/2026-08-29-no-persona-bubbles.md](progress/2026-08-29-no-persona-bubbles.md) | 종이더미 위치 · 페르소나 말풍선·이름표 제거 |
 
 루트 `PRD.md`는 여기로 가는 포인터다.

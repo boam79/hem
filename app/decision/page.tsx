@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { ForestFrame, ForestPageNote } from "@/components/forest-shell";
 import { IssueBundle } from "@/components/issue-bundle";
+import { SessionLoadError } from "@/components/session-load-error";
 import { MemoForm } from "@/components/memo-form";
 import { MemoView } from "@/components/memo-view";
 import { DEMO_SHARE_ID } from "@/lib/debate";
@@ -62,7 +63,13 @@ function DecisionInner() {
         </p>
       ) : null}
       {loading ? <p className="forest-panel-copy">세션을 불러오는 중…</p> : null}
-      {error ? <p className="text-destructive text-sm">{error}</p> : null}
+      {error ? (
+        <SessionLoadError
+          error={error}
+          demoHref={`/decision?id=w4demo`}
+          demoLabel="저장된 메모 예시"
+        />
+      ) : null}
       {agenda ? (
         <section className="forest-panel">
           <h2 className="forest-panel-title">안건</h2>

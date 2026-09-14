@@ -3,6 +3,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { ForestFrame, ForestPageNote } from "@/components/forest-shell";
+import { SessionLoadError } from "@/components/session-load-error";
 import { PERSONAS } from "@/config/personas";
 import { DEMO_SHARE_ID } from "@/lib/debate";
 import {
@@ -89,7 +90,13 @@ function InsightsInner() {
         </section>
       ) : null}
       {loading ? <p className="forest-panel-copy">세션을 불러오는 중…</p> : null}
-      {error ? <p className="text-destructive text-sm">{error}</p> : null}
+      {error ? (
+        <SessionLoadError
+          error={error}
+          demoHref={`/insights?id=${DEMO_SHARE_ID}`}
+          demoLabel="데모 인사이트"
+        />
+      ) : null}
       {agenda ? (
         <section className="forest-panel">
           <h2 className="forest-panel-title">안건</h2>

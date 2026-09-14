@@ -40,6 +40,24 @@ export function metricsPromptSourceLine(source: MetricsPromptSource): string {
   return `[지표 출처] 기본 합성 지표입니다. 병원: ${source.hospitalName}.`;
 }
 
+export function splitAgendaItems(agenda: string): string[] {
+  const lines = agenda
+    .split(/\n+/)
+    .map((line) => line.replace(/^\s*\d+[\.、)]\s*/, "").trim())
+    .filter(Boolean);
+  return lines.length > 0 ? lines : [agenda.trim()].filter(Boolean);
+}
+
+export function agendaPromptBlock(agenda: string): string {
+  const items = splitAgendaItems(agenda);
+  if (items.length <= 1) {
+    return `안건: ${agenda}`;
+  }
+  return `안건 목록 (각 항목을 아래 지표 표의 숫자와 연결해 발언합니다):\n${items
+    .map((item, index) => `${index + 1}. ${item}`)
+    .join("\n")}`;
+}
+
 export function metricsToMarkdownTable(metrics: Metrics): string {
   const header = METRICS_TABLE_HEADER;
   const sep = "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|";
@@ -73,7 +91,7 @@ export function buildRound1UserPrompt(
   table: string,
   source: MetricsPromptSource,
 ): string {
-  return `${metricsPromptSourceLine(source)}\n\n안건: ${agenda}\n\n[지표]\n${table}`;
+  return `${metricsPromptSourceLine(source)}\n\n${agendaPromptBlock(agenda)}\n\n[지표]\n${table}`;
 }
 
 /** R2 min JSON: objection/changed first so a 400-token cap still keeps F4 fields. */
@@ -127,7 +145,7 @@ export function buildRound2UserPrompt(
 
 ${metricsPromptSourceLine(source)}
 
-안건: ${agenda}
+${agendaPromptBlock(agenda)}
 
 [지표]
 ${table}

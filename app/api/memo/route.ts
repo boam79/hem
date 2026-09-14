@@ -1,3 +1,4 @@
+import { jsonFromCaught, jsonFromSupabaseError } from "@/lib/db-errors";
 import { MemoPutSchema } from "@/lib/schema";
 import { getSupabase, supabaseConfigured } from "@/lib/supabase";
 
@@ -10,18 +11,22 @@ export async function PUT(req: Request) {
   if (!supabaseConfigured()) {
     return Response.json({ error: "supabase_unconfigured" }, { status: 503 });
   }
-  const db = getSupabase();
-  const { data, error } = await db
-    .from("sessions")
-    .update({ memo: parsed.data.memo })
-    .eq("id", parsed.data.sessionId)
-    .select("id")
-    .maybeSingle();
-  if (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+  try {
+    const db = getSupabase();
+    const { data, error } = await db
+      .from("sessions")
+      .update({ memo: parsed.data.memo })
+      .eq("id", parsed.data.sessionId)
+      .select("id")
+      .maybeSingle();
+    if (error) {
+      return jsonFromSupabaseError(error);
+    }
+    if (!data) {
+      return Response.json({ error: "not_found" }, { status: 404 });
+    }
+    return Response.json({ ok: true });
+  } catch (err) {
+    return jsonFromCaught(err);
   }
-  if (!data) {
-    return Response.json({ error: "not_found" }, { status: 404 });
-  }
-  return Response.json({ ok: true });
 }

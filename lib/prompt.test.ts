@@ -52,4 +52,21 @@ describe("metrics prompt source", () => {
     expect(prompt).toContain("기본 합성 지표");
     expect(prompt).toContain("S안과(가상)");
   });
+
+  it("splits numbered agenda lines so each item is tied to the table", () => {
+    const listed = [
+      "1. 외래 환자 수 감소 원인 분석",
+      "2. 마케팅 캠페인 예산 검토",
+      "3. 신규 진료과 개설 타당성 검토",
+    ].join("\n");
+    const prompt = buildRound1UserPrompt(
+      listed,
+      "| 월 | 순현금 |",
+      { uploaded: true, hospitalName: "로컬스토브병원(가상)" },
+    );
+    expect(prompt).toContain("안건 목록");
+    expect(prompt).toContain("외래 환자 수 감소 원인 분석");
+    expect(prompt).toContain("마케팅 캠페인 예산 검토");
+    expect(prompt).toContain("로컬스토브병원(가상)");
+  });
 });

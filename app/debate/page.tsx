@@ -5,6 +5,7 @@ import Link from "next/link";
 import { DebateGlance } from "@/components/debate-glance";
 import { IssueBundle } from "@/components/issue-bundle";
 import { ForestFrame, ForestPageNote } from "@/components/forest-shell";
+import { SessionLoadError } from "@/components/session-load-error";
 import { DEMO_SHARE_ID, cellsForRound } from "@/lib/debate";
 import { insightsFromTurns } from "@/lib/insights";
 import { apiErrorMessage } from "@/lib/api-errors";
@@ -108,7 +109,12 @@ function DebateInner() {
         </section>
       ) : null}
       {loading ? <p className="forest-panel-copy">세션을 불러오는 중…</p> : null}
-      {error ? <p className="text-destructive text-sm">{error}</p> : null}
+      {error ? (
+        <SessionLoadError
+          error={error}
+          demoHref={`/debate?id=${DEMO_SHARE_ID}`}
+        />
+      ) : null}
       {retryError ? <p className="text-destructive text-sm">{retryError}</p> : null}
       {agenda ? (
         <section className="forest-panel">

@@ -219,6 +219,10 @@ describe("api errors", () => {
     expect(apiErrorMessage({ error: "rate_limited" })).toMatch(/한 시간/);
     expect(apiErrorMessage({ error: "daily_cap" })).toMatch(/한도/);
     expect(apiErrorMessage({ error: "invalid_agenda" })).toMatch(/안건/);
+    expect(
+      apiErrorMessage({ error: "TypeError: fetch failed" }),
+    ).toMatch(/일시 중지/);
+    expect(apiErrorMessage({ error: "db_unavailable" })).toMatch(/일시 중지/);
   });
 });
 
