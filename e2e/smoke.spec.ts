@@ -36,7 +36,7 @@ test("precomputed share page is public and shows three provider badges", async (
   await expect(page.getByText("앤트로픽").first()).toBeVisible();
   await expect(page.getByText("오픈AI").first()).toBeVisible();
   await expect(page.getByText("구글").first()).toBeVisible();
-  await expect(page.getByText("합의점")).toBeVisible();
+  await expect(page.getByText("합의점", { exact: true })).toBeVisible();
   await expect(page.getByText("반대:")).toHaveCount(3);
 });
 
@@ -461,14 +461,15 @@ test("dashboard decision and settings menus open real pages", async ({
 test("decision page shows the human memo, not the debate glance", async ({
   page,
 }) => {
-  await page.goto("/decision?id=uE7m2G");
+  await page.goto("/decision?id=w4demo");
   await expect(page.locator("[data-glance=true]")).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "시나리오 결과" })).toBeVisible();
-  await expect(page.getByText("합의점")).toBeVisible();
+  await expect(page.getByText("합의점", { exact: true })).toBeVisible();
+  await expect(page.getByText("1. 합의점")).toHaveCount(0);
   await expect(
-    page.getByText("검색광고 증액은 회수 가정이 필요합니다"),
+    page.getByText("검색광고가 주 유입 채널이라는 점은 세 부서가 지표로 인정합니다."),
   ).toBeVisible();
-  await expect(page.getByRole("button", { name: "메모 저장" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "메모 저장" })).toHaveCount(0);
 });
 
 test("metrics parse accepts dummy csv with cashflow and patient stats", async ({

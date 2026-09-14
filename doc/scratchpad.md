@@ -12,6 +12,8 @@ PRD AC 감사: `doc/progress/2026-08-28-prd-final-audit.md`
 
 2026-08-30 Planner: 고도화 제안 P1 쟁점 모음(LLM 0) · P2 업로드 통계 확장 · P3 이상월 칩 · P4 심사 안건 채우기 · P5 공유 한 장. 상세 `doc/progress/2026-08-30-upgrade-proposals.md`. 구현은 패키지 1개 지정 후.
 
+2026-09-14 Planner: 리팩토링 R1–R5 + 신뢰 H1·H2 + 기존 P1–P5. 경량 3사 실토론은 비용 때문에 빼지 않는다. 대회(9/21) 전: R4 → H1 → P1 → P4 → P5. CSS 전면 분리는 하지 않는다. `doc/progress/2026-09-14-refactor-upgrade-proposals.md`.
+
 2026-08-31: 홈에 보이는 「토론 시작」이 없었다. 헤더만 「시뮬레이션 다음 턴」이고 누르면 바로 LLM이 돌았다. 안건 아래에 「토론 시작」을 두고, 시작 시 올린 데이터로 할지 그냥 진행할지 고른다.
 2026-08-31: 상단 메뉴(토론 결과·대시보드·의사결정)와 하단 도크(회의록·지표 대시보드·시나리오 결과·AI 인사이트)가 이름·아이콘이 달랐다. 같은 네 칸으로 맞춘다. 설정은 헤더 버튼, 파일 관리는 상단에 남긴다.
 
@@ -22,6 +24,7 @@ PRD AC 감사: `doc/progress/2026-08-28-prd-final-audit.md`
 경량 모델 유지: haiku / gpt-5.4-nano / flash-lite. nano는 reasoning 모델이라 temperature 미지원. reasoningEffort는 `none`만 허용.
 Gemini 크레딧 결제 후 md 셀은 프로덕션에서 성공. Haiku·nano JSON 복구 커밋 `32168f5` 후 세션 `4fyIcc` R1 okCount=3. 사용자 수동 확인 대기(지우지 않음). R2 수정 커밋 `7eda3e3` 후 세션 `uE7m2G` R1 ok=3, R2 ok=3.
 2026-08-28 AC 감사: F1–F6·W1–W4 코드+테스트+HTTPS. **W3 5×10은 `/goal` 재개 후 50/50** (objection 50/50, 셀 실패 0). keepalive Vercel Cron 성공. GH Actions 시크릿은 사용자 몫.
+대회 7일 남음. 홈 CSS·page.tsx 큰 분리는 레이아웃 회귀 위험이 커서 미룬다. 세션 fetch 복제(R1)와 E2E `합의점`(R4)만 싸다. 경량 3사 실토론·H1 실측은 비용 이유로 빼지 않는다. 새 메뉴·4번째 LLM은 계속 금지.
 
 ## High-level Task Breakdown
 
@@ -37,6 +40,14 @@ Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
 3. 홈 「데이터 검토」. 업로드 없으면 disabled. 누르면 고정 안건으로 기존 세션·라운드. 성공: 단위 + E2E는 노출/disabled만. 클릭 금지.
 4. HTTPS E2E 배포 후. 성공: 파일 관리 표, 홈 버튼. 「데이터 검토」실클릭 없음. 선택 창의 「올린 데이터로 진행」「그냥 진행」실클릭 없음.
 2026-08-29 홈 02 UI: `doc/progress/2026-08-29-forest-ui-02.md`. HTTPS E2E 15. 배포 https://boardroom-six-delta.vercel.app
+2026-09-14 Planner: 리팩토링·고도화. 상세 `doc/progress/2026-09-14-refactor-upgrade-proposals.md`.
+1. R4 E2E `합의점` strict. 성공: 해당 스모크 초록. LLM 없음.
+2. H1 Haiku R2 빈 objection. 성공: HTTPS 3회 R2 okCount=3. 실측 포함.
+3. P1 쟁점 모음. 성공: 데모 세션에서 필요 데이터 3개+, 합의 칸 비움.
+4. P4 심사 안건 채우기. 성공: 버튼 후 안건 10자+. 토론 시작 실클릭 없음.
+5. P5 공유 한 장. 성공: `/s/[id]`에 링크 복사.
+공개 후 R1 세션 훅. 실패 셀 재시도는 H2.
+
 2026-08-31 Planner: 안건 아래 「토론 시작」+ 올린 데이터/그냥 진행 선택. `doc/progress/2026-08-31-debate-start-chooser.md`.
 1. `debateStartBody` 단위 테스트. 성공: 올린 지표 포함/생략.
 2. 홈 버튼·선택 창. 성공: 안건 아래 「토론 시작」, 파일 없으면 「올린 데이터로 진행」disabled, 취소로 닫힘. LLM 호출 없음.
@@ -65,7 +76,8 @@ Haiku R2 빈 objection: `doc/progress/2026-08-28-haiku-r2-empty-objection.md`
 - [ ] 400KB 이내 전 진료과·성별·나이대·지역 환자 더미 업로드. 파서가 환자행을 월별 지표로 합침. HTTPS 사용자 확인 대기.
 - [ ] 업로드 통계·데이터 검토. 메뉴 추가 없음. 단위 104 · HTTPS E2E 27. 배포 https://boardroom-six-delta.vercel.app 사용자 확인 대기(데이터 검토 실클릭은 비용).
 - [ ] 토론 한글 순화. 지표 키·약어·배지. 단위 110. HTTPS 사용자 확인 대기.
-- [ ] 고도화. 제안서 `doc/progress/2026-08-30-upgrade-proposals.md`. 패키지 미지정.
+- [ ] 고도화. 08-30 P1–P5 + 09-14 R1–R5·H1·H2. 패키지 미지정. 대회 전 추천 R4→H1→P1→P4→P5. 경량 LLM 실측은 포함.
+- [ ] R4 E2E `합의점` strict 수정. HTTPS 사용자 확인 대기.
 - [ ] 홈 「토론 시작」+ 올린 데이터/그냥 진행 선택. 사용자 확인 대기.
 - [ ] 상단 메뉴와 하단 도크 네 칸 이름·경로 일치. 사용자 확인 대기.
 - [ ] 하단 도크 삭제 · 테이블 서류 2026. HTTPS 사용자 확인 대기.
@@ -145,6 +157,8 @@ Haiku R2 재시도 수정 후(`ba66843`): `cA_9I2` `4e4XEM` `NQSmdi` — 세 세
 
 2026-09-14 Executor: 홈 헤더를 한 줄로 줄임. 셸 `100dvh`로 전체화면에서 페이지 스크롤이 없게. 회의실 비율은 그대로. HTTPS 사용자 확인 대기.
 
+2026-09-14 Executor: R4. `합의점`/`1. 합의점`을 `data-memo`로 나눔. 시나리오 결과 스모크는 `w4demo`. 실세션 `uE7m2G` GET은 500(fetch failed). HTTPS 해당 테스트 통과.
+
 
 ## Lessons
 
@@ -157,11 +171,11 @@ Gemini 크레딧 부족 시 셀은 발언 불가. 코드로 우회하지 않음.
 OpenAI structured output에는 `.optional()`과 min/max를 빼고 모든 키를 required로 둔 뒤, 파싱 후 길이를 클립한다.
 Haiku R2는 전각 콜론(`：`)이나 키 뒤 한국어 값에 `:`를 빼 jsonrepair가 `Colon expected`를 던진다. 전각→반각 치환 후 `"key" 한글` 사이에 `:`를 넣는다.
 R2 JSON 재시도 예시에 objection/changed가 없으면 nano가 빈 문자열을 낸다. R2 전용 예시를 쓴다.
-프로덕션 E2E에서 유효 안건으로 “토론 시작”을 누르면 실 LLM이 돈다. DB 미연결을 가정한 클릭 테스트는 HTTPS에서 쓰지 않는다.
+프로덕션 E2E에서 유효 안건으로 “토론 시작”을 누르면 실 LLM이 돈다. 기본 스모크는 그 셋을 누르지 않는다. 검증·고도화(H1)는 HTTPS 실토론을 포함한다. 2026-09-14 사용자: 경량 모델이라 비용 때문에 LLM 작업을 빼지 않는다. 4번째 모델은 여전히 없다.
 Haiku R2 빈 objection은 전각 콜론 수정 후에도 재발한다(5안건 중 4, 에러 `round2 requires non-empty objection and changed`). 성공 셀 F4와 별개로 셀 실패율이 높다.
 IP 시간당 10은 50회 eval을 시각마다 10건+대기로 만든다. 프로세스 sleep은 hang이 아니다. jsonl resume과 fetch 90초 타임아웃을 둔다.
 홈 `#metrics-file`은 Playwright `toBeVisible()`이 필요해서 `display:none`/`visibility:hidden`/`sr-only`를 쓰지 않는다. 드롭존 위 `opacity: 0.02` 오버레이로 크기를 유지한다.
-heading `대시보드`는 `비용 대시보드`와도 매칭된다. Playwright는 `exact: true`가 필요하다.
+heading `대시보드`는 `비용 대시보드`와도 매칭된다. Playwright는 `exact: true`가 필요하다. `합의점`은 `1. 합의점`에도 부분 일치한다. 시나리오 결과처럼 저장된 제목과 입력 칸이 같이 있으면 `exact: true`로 나눈다.
 홈에서 토론이 시작되면 결과 카드 때문에 회의실을 compact로 접고 `.speech-bubble { display: none }`을 켜면 02 시안의 말풍선이 사라진다. 카드는 `/debate`로 빼고 회의실은 접지 않는다.
 아이소메트릭 테이블에서 CSS `top`을 키우면 화면 아래 = 테이블 앞. 종이더미는 `translate(-50%, -100%)`로 박스 바닥을 테이블에 붙인다. 여우 앞(`top` 54%)은 뒤쪽, 바인더 삼각형(72%)은 앞쪽. 세 캐릭터 사이 빈 나무면은 바닥 약 61.5%. `.paper-pile-wrap { overflow: hidden }`는 그림자를 네모로 잘라 이질적으로 보인다. 타워 PNG를 창으로 자르거나 같은 타일을 반복하면 02 시안의 종이산이 아니다. 업로드 후는 `clay-paper-stack.png`를 통째로 둔다. PNG 바닥 네온과 노란 CSS 글로우가 겹치면 스티커처럼 뜬다. `sepia(1)`은 민트를 죽인다. 발치 라임을 회색으로 바꾸면 나무 위에 회판이 생긴다. 라임은 지우고(투명), 아랫장은 크림으로, 접촉은 나무색 AO, `sepia(0.1)`만. 같은 PNG URL은 브라우저가 네온 버전을 붙잡으니 `?v=`로 캐시를 깬다.
 

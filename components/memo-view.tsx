@@ -19,7 +19,7 @@ export function MemoView({ memo }: { memo: Memo }) {
     <div className="mt-8 grid gap-4">
       <Card>
         <CardHeader>
-          <CardTitle>합의점</CardTitle>
+          <CardTitle data-memo="view-consensus">합의점</CardTitle>
         </CardHeader>
         <CardContent>
           {memo.consensus.length === 0 ? (

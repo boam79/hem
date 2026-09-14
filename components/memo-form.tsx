@@ -103,7 +103,7 @@ export function MemoForm({ sessionId }: { sessionId: string }) {
       </p>
       <Card>
         <CardHeader>
-          <CardTitle>1. 합의점</CardTitle>
+          <CardTitle data-memo="form-consensus">1. 합의점</CardTitle>
         </CardHeader>
         <CardContent>
           <Textarea

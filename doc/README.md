@@ -42,6 +42,8 @@
 | [progress/2026-09-01-year-digit-fix.md](progress/2026-09-01-year-digit-fix.md) | Executor: 테이블 서류 「2026」 깨진 숫자 수정 |
 | [progress/2026-09-01-header-leave.md](progress/2026-09-01-header-leave.md) | Executor: 헤더 다음 턴 삭제 · 회의 나가기 이동 |
 | [progress/2026-09-14-compact-header.md](progress/2026-09-14-compact-header.md) | Executor: 홈 헤더 한 줄 · 전체화면 스크롤 제거 |
+| [progress/2026-09-14-refactor-upgrade-proposals.md](progress/2026-09-14-refactor-upgrade-proposals.md) | Planner: 리팩토링 · 고도화 재제안 (대회 7일) |
+| [progress/2026-09-14-e2e-consensus-strict.md](progress/2026-09-14-e2e-consensus-strict.md) | Executor: R4 합의점 E2E strict |
 | [progress/2026-08-29-no-persona-bubbles.md](progress/2026-08-29-no-persona-bubbles.md) | 종이더미 위치 · 페르소나 말풍선·이름표 제거 |
 
 루트 `PRD.md`는 여기로 가는 포인터다.
