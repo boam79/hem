@@ -1,8 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { debateStartBody } from "@/lib/debate-start";
+import {
+  DEFAULT_SESSION_CATEGORY,
+  debateStartBody,
+  shouldStartWithUploadedMetrics,
+} from "@/lib/debate-start";
 import { loadMetrics } from "@/lib/prompt";
 
 const agenda = "백내장 검색광고 예산을 30% 늘릴지 검토한다";
+
+describe("shouldStartWithUploadedMetrics", () => {
+  it("is true only when parsed metrics are in memory", () => {
+    expect(shouldStartWithUploadedMetrics(null)).toBe(false);
+    expect(shouldStartWithUploadedMetrics(loadMetrics())).toBe(true);
+  });
+});
 
 describe("debateStartBody", () => {
   it("includes uploaded metrics only when the user chose them", () => {
@@ -46,6 +57,19 @@ describe("debateStartBody", () => {
     ).toEqual({
       agenda,
       category: "staffing",
+    });
+  });
+
+  it("defaults category so the home UI does not need a type dropdown", () => {
+    expect(
+      debateStartBody({
+        agenda,
+        metrics: null,
+        useUploadedMetrics: false,
+      }),
+    ).toEqual({
+      agenda,
+      category: DEFAULT_SESSION_CATEGORY,
     });
   });
 });

@@ -12,6 +12,7 @@ import {
   buildSystemPrompt,
   metricsForSession,
   metricsToMarkdownTable,
+  promptSourceFromSession,
 } from "@/lib/prompt";
 import { canStartRound2 } from "@/lib/round-gate";
 import { retryTurnGate } from "@/lib/round-retry";
@@ -110,11 +111,12 @@ export async function runRound(opts: {
   const personas = await loadLivePersonas();
   const metrics = metricsForSession(session);
   const table = metricsToMarkdownTable(metrics);
+  const source = promptSourceFromSession(session, metrics);
 
   const results = await Promise.allSettled(
     personas.map(async (p) => {
       const system = buildSystemPrompt(p, metrics);
-      let user = buildRound1UserPrompt(session.agenda, table);
+      let user = buildRound1UserPrompt(session.agenda, table, source);
       if (round === 2) {
         const others = (r1 ?? [])
           .filter((t) => t.persona !== p.key && t.status === "ok")
@@ -122,7 +124,7 @@ export async function runRound(opts: {
             name: personas.find((x) => x.key === t.persona)?.name ?? t.persona,
             payload: t.payload as TurnPayload,
           }));
-        user = buildRound2UserPrompt(session.agenda, table, others);
+        user = buildRound2UserPrompt(session.agenda, table, others, source);
       }
       const delta: PersonaDeltaHandler | undefined = onDelta
         ? (text) => onDelta(p.key, text)
@@ -223,8 +225,9 @@ export async function retryPersonaTurn(opts: {
   }
   const metrics = metricsForSession(session);
   const table = metricsToMarkdownTable(metrics);
+  const source = promptSourceFromSession(session, metrics);
   const system = buildSystemPrompt(p, metrics);
-  let user = buildRound1UserPrompt(session.agenda, table);
+  let user = buildRound1UserPrompt(session.agenda, table, source);
   if (round === 2) {
     const others = (r1 ?? [])
       .filter((t) => t.persona !== p.key && t.status === "ok")
@@ -232,7 +235,7 @@ export async function retryPersonaTurn(opts: {
         name: personas.find((x) => x.key === t.persona)?.name ?? t.persona,
         payload: t.payload as TurnPayload,
       }));
-    user = buildRound2UserPrompt(session.agenda, table, others);
+    user = buildRound2UserPrompt(session.agenda, table, others, source);
   }
   const body = await callPersona(p, system, user, round);
   const row = {

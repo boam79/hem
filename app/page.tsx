@@ -7,13 +7,6 @@ import { HomeMetricsUpload } from "@/components/home-metrics-upload";
 import { ForestShell } from "@/components/forest-shell";
 import { MeetingScene } from "@/components/meeting-scene";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { AGENDA_MAX, AGENDA_MIN } from "@/config/limits";
 import {
@@ -24,7 +17,11 @@ import {
   canStartDataReview,
   isAgendaValid,
 } from "@/lib/agenda";
-import { debateStartBody } from "@/lib/debate-start";
+import {
+  DEFAULT_SESSION_CATEGORY,
+  debateStartBody,
+  shouldStartWithUploadedMetrics,
+} from "@/lib/debate-start";
 import { apiErrorMessage } from "@/lib/api-errors";
 import type { DebateCell } from "@/lib/debate";
 import { rememberSession, readRecentSessions } from "@/lib/recent-sessions";
@@ -34,20 +31,12 @@ import {
 } from "@/lib/metrics-upload-store";
 import type { UploadedMetricsFile } from "@/lib/forest-ui";
 import { readRoundTurns } from "@/lib/round-client";
-import type { Category, PersonaKey } from "@/lib/schema";
-
-const CATEGORIES: { value: Category; label: string }[] = [
-  { value: "investment", label: "투자" },
-  { value: "marketing", label: "마케팅" },
-  { value: "staffing", label: "인력" },
-  { value: "pricing", label: "가격" },
-];
+import type { PersonaKey } from "@/lib/schema";
 
 export default function Home() {
   const [agenda, setAgenda] = useState(
     "1. 외래 환자 수 감소 원인 분석\n2. 마케팅 캠페인 예산 검토\n3. 신규 진료과 개설 타당성 검토\n4. 비용 절감 방안 논의",
   );
-  const [category, setCategory] = useState<Category>("marketing");
   const [metrics, setMetrics] = useState<unknown | null>(null);
   const [metricsLabel, setMetricsLabel] = useState<string | null>(null);
   const [uploads, setUploads] = useState<UploadedMetricsFile[]>([]);
@@ -127,10 +116,14 @@ export default function Home() {
     return () => window.removeEventListener("keydown", onKey);
   }, [chooserOpen]);
 
-  function openChooser() {
+  function onStartClick() {
     setError(null);
     if (!isAgendaValid(agenda)) {
       setError(agendaError(agenda));
+      return;
+    }
+    if (shouldStartWithUploadedMetrics(metrics)) {
+      void start(agenda, true);
       return;
     }
     setChooserOpen(true);
@@ -158,7 +151,7 @@ export default function Home() {
         body: JSON.stringify(
           debateStartBody({
             agenda: agendaText,
-            category,
+            category: DEFAULT_SESSION_CATEGORY,
             metrics,
             useUploadedMetrics,
           }),
@@ -277,34 +270,31 @@ export default function Home() {
           >
             심사 안건
           </Button>
-          <label className="forest-field-label" htmlFor="category">
-            유형
-          </label>
-          <Select
-            value={category}
-            onValueChange={(value) => setCategory(value as Category)}
-          >
-            <SelectTrigger id="category" className="mb-1 w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {CATEGORIES.map((c) => (
-                <SelectItem key={c.value} value={c.value}>
-                  {c.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
           <Button
             type="button"
             size="lg"
             className="forest-start-btn mt-3 w-full"
             aria-label="토론 시작"
             disabled={loadingRound !== 0 || !agendaOk}
-            onClick={openChooser}
+            onClick={onStartClick}
           >
             {loadingRound === 0 ? "토론 시작" : "토론 중…"}
           </Button>
+          {metricsLabel ? (
+            <p
+              className="forest-field-hint mt-2"
+              data-metrics-source="upload"
+            >
+              토론 시작 시 올린 지표를 넣습니다. ({metricsLabel})
+            </p>
+          ) : (
+            <p
+              className="forest-field-hint mt-2"
+              data-metrics-source="default"
+            >
+              올린 파일이 없으면 기본 합성 지표로 진행합니다.
+            </p>
+          )}
         </section>
       }
       sidebarExtra={
@@ -376,8 +366,7 @@ export default function Home() {
                 토론을 어떻게 진행할까요?
               </h2>
               <p className="start-chooser-copy">
-                올린 파일을 넣을지, 기본 합성 지표만 쓸지 고릅니다. 결정은 하지
-                않습니다.
+                올린 파일이 없어 기본 합성 지표만 씁니다. 결정은 하지 않습니다.
               </p>
               <Button
                 type="button"

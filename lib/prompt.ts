@@ -18,6 +18,28 @@ export function metricsForSession(session: { metrics?: unknown } | null): Metric
   return loadMetrics();
 }
 
+export type MetricsPromptSource = {
+  uploaded: boolean;
+  hospitalName: string;
+};
+
+export function promptSourceFromSession(
+  session: { metrics?: unknown } | null,
+  metrics: Metrics,
+): MetricsPromptSource {
+  return {
+    uploaded: session?.metrics != null,
+    hospitalName: metrics.hospital.name,
+  };
+}
+
+export function metricsPromptSourceLine(source: MetricsPromptSource): string {
+  if (source.uploaded) {
+    return `[지표 출처] 사용자가 올린 파일입니다. 병원: ${source.hospitalName}. 아래 표의 월·숫자만 인용합니다.`;
+  }
+  return `[지표 출처] 기본 합성 지표입니다. 병원: ${source.hospitalName}.`;
+}
+
 export function metricsToMarkdownTable(metrics: Metrics): string {
   const header = METRICS_TABLE_HEADER;
   const sep = "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|";
@@ -49,8 +71,9 @@ export function buildSystemPrompt(persona: Persona, metrics: Metrics): string {
 export function buildRound1UserPrompt(
   agenda: string,
   table: string,
+  source: MetricsPromptSource,
 ): string {
-  return `안건: ${agenda}\n\n[지표]\n${table}`;
+  return `${metricsPromptSourceLine(source)}\n\n안건: ${agenda}\n\n[지표]\n${table}`;
 }
 
 /** R2 min JSON: objection/changed first so a 400-token cap still keeps F4 fields. */
@@ -94,12 +117,15 @@ export function buildRound2UserPrompt(
   agenda: string,
   table: string,
   others: Array<{ name: string; payload: TurnPayload }>,
+  source: MetricsPromptSource,
 ): string {
   const lines = others.map(
     (o) =>
       `- ${o.name}: ${o.payload.position} / ${o.payload.evidence.join("; ")} / ${o.payload.risks.join("; ")}`,
   );
   return `${ROUND2_RULES}
+
+${metricsPromptSourceLine(source)}
 
 안건: ${agenda}
 

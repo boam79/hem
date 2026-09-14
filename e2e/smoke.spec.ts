@@ -210,19 +210,18 @@ test("agenda sits below the header leave button and above the start button", asy
 }) => {
   await page.goto("/");
   const agenda = await page.locator("#agenda").boundingBox();
-  const category = await page.locator("#category").boundingBox();
   const leave = await page
     .locator(".forest-header")
     .getByRole("button", { name: "회의 나가기" })
     .boundingBox();
   const start = await page.getByRole("button", { name: "토론 시작" }).boundingBox();
   expect(agenda).toBeTruthy();
-  expect(category).toBeTruthy();
   expect(leave).toBeTruthy();
   expect(start).toBeTruthy();
   expect(leave!.y).toBeLessThan(agenda!.y);
-  expect(agenda!.y).toBeLessThan(category!.y);
-  expect(category!.y).toBeLessThan(start!.y);
+  expect(agenda!.y).toBeLessThan(start!.y);
+  await expect(page.locator("#category")).toHaveCount(0);
+  await expect(page.getByText("유형", { exact: true })).toHaveCount(0);
 });
 
 test("start chooser offers uploaded data or continue without it", async ({
@@ -305,11 +304,12 @@ test("uploading a dummy csv stacks papers on home", async ({ page }) => {
   await page.getByRole("link", { name: "홈에서 토론 시작" }).click();
   await expect(page).toHaveURL(/\/$/);
   await expect(page.getByRole("button", { name: "데이터 검토" })).toBeEnabled();
-  await page.getByRole("button", { name: "토론 시작" }).click();
-  await expect(
-    page.getByRole("button", { name: "올린 데이터로 진행" }),
-  ).toBeEnabled();
-  await page.getByRole("button", { name: "취소" }).click();
+  await expect(page.locator("[data-metrics-source=upload]")).toContainText(
+    "토론 시작 시 올린 지표를 넣습니다",
+  );
+  await expect(page.locator("[data-metrics-source=upload]")).toContainText(
+    "업로드안과(가상)",
+  );
   await expect(page.locator("[data-stack=stacked]")).toBeVisible();
   await expect(page.locator("[data-stack=stacked]")).toHaveAttribute(
     "data-sheet-count",
