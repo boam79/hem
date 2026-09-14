@@ -156,17 +156,53 @@ body {
   color: var(--forest-ink);
 }
 
+body:has(.forest-app.is-home) {
+  height: 100dvh;
+  overflow: hidden;
+}
+
 .forest-app.is-home {
   grid-template-columns: 1fr;
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
+.forest-app.is-home .forest-main {
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
 .forest-app.is-home .forest-header {
   z-index: 20;
+  flex-shrink: 0;
   flex-wrap: nowrap;
-  gap: 0.7rem;
+  gap: 0.5rem;
   background: #fff;
   border-bottom: 1px solid #e8edf4;
-  padding: 0.55rem 1.15rem 0.55rem 1.05rem;
+  padding: 0.32rem 0.9rem;
+}
+
+.forest-app.is-home .forest-brand svg {
+  width: 1.85rem;
+  height: 1.85rem;
+}
+
+.forest-app.is-home .forest-brand > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.4rem;
+}
+
+.forest-app.is-home .forest-brand-title {
+  font-size: 0.98rem;
+}
+
+.forest-app.is-home .forest-brand-sub {
+  margin-top: 0;
+  font-size: 0.68rem;
 }
 
 .forest-app.is-home .forest-nav {
@@ -175,28 +211,28 @@ body {
   flex-shrink: 1;
   flex-wrap: nowrap;
   align-items: stretch;
-  gap: 0.2rem;
+  gap: 0.12rem;
   min-width: 0;
   margin-right: auto;
 }
 
 .forest-app.is-home .forest-nav-item {
   position: relative;
-  flex: 1 1 0;
-  flex-direction: column;
+  flex: 0 1 auto;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 0.3rem;
-  min-width: 5.2rem;
-  max-width: 8rem;
-  padding: 0.5rem 0.45rem 0.45rem;
-  border-radius: 12px;
+  gap: 0.32rem;
+  min-width: 0;
+  max-width: none;
+  padding: 0.32rem 0.55rem;
+  border-radius: 10px;
   color: #1e3a8a;
 }
 
 .forest-app.is-home .forest-nav-item svg {
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 1.15rem;
+  height: 1.15rem;
   flex-shrink: 0;
 }
 
@@ -218,22 +254,43 @@ body {
   clip: auto;
   display: block;
   max-width: 100%;
-  font-size: 0.9rem;
-  font-weight: 800;
+  font-size: 0.78rem;
+  font-weight: 750;
   letter-spacing: -0.03em;
-  line-height: 1.2;
-  text-align: center;
-  white-space: normal;
+  line-height: 1.15;
+  text-align: left;
+  white-space: nowrap;
 }
 
 .forest-app.is-home .forest-header-tools {
   flex-wrap: nowrap;
   flex-shrink: 0;
-  gap: 0.55rem;
+  gap: 0.4rem;
+}
+
+.forest-app.is-home .sim-live {
+  padding: 0.22rem 0.55rem;
+  font-size: 0.7rem;
+}
+
+.forest-app.is-home .header-ghost-btn {
+  height: 2rem;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.78rem;
+}
+
+.forest-app.is-home .header-leave-btn {
+  height: 2rem !important;
+  padding-left: 0.8rem !important;
+  padding-right: 0.9rem !important;
+  font-size: 0.78rem;
 }
 
 .forest-app.is-home .forest-workspace {
   position: relative;
+  display: flex;
+  min-height: 0;
+  flex: 1;
   padding: 0;
   overflow: hidden;
 }
@@ -241,10 +298,11 @@ body {
 .forest-app.is-home .forest-home-split {
   display: grid;
   grid-template-columns: 20.5rem minmax(0, 1fr);
-  gap: 0.85rem;
-  height: calc(100vh - 6rem);
-  min-height: calc(100vh - 6rem);
-  padding: 0.75rem 0.95rem 0.85rem;
+  gap: 0.75rem;
+  flex: 1;
+  min-height: 0;
+  height: auto;
+  padding: 0.55rem 0.85rem 0.65rem;
 }
 
 .forest-app.is-home .forest-scene-column {
@@ -1772,10 +1830,28 @@ body {
     grid-template-columns: 1fr;
   }
 
+  body:has(.forest-app.is-home) {
+    height: auto;
+    overflow: auto;
+  }
+
+  .forest-app.is-home {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .forest-app.is-home .forest-main,
+  .forest-app.is-home .forest-workspace {
+    height: auto;
+    overflow: visible;
+  }
+
   .forest-app.is-home .forest-home-split {
     grid-template-columns: 1fr;
     height: auto;
     min-height: 0;
+    flex: none;
   }
 
   .forest-app.is-home .forest-upload-column {

@@ -193,8 +193,12 @@ test("home has agenda, the meeting room, and a compact upload", async ({
     .getByRole("link", { name: "회의록" });
   const minutesBox = await headerMinutes.boundingBox();
   expect(minutesBox).toBeTruthy();
-  expect(minutesBox!.height).toBeGreaterThan(44);
+  expect(minutesBox!.height).toBeGreaterThan(28);
+  expect(minutesBox!.height).toBeLessThan(48);
   await expect(headerMinutes.getByText("회의록")).toBeVisible();
+  const headerBox = await page.locator(".forest-header").boundingBox();
+  expect(headerBox).toBeTruthy();
+  expect(headerBox!.height).toBeLessThan(64);
   await expect(
     page.getByRole("navigation", { name: "회의 보기" }),
   ).toHaveCount(0);
@@ -268,6 +272,16 @@ test("agenda panel sits on the left of the meeting room", async ({ page }) => {
   expect(agenda).toBeTruthy();
   expect(scene).toBeTruthy();
   expect(agenda!.x).toBeLessThan(scene!.x + scene!.width / 3);
+});
+
+test("desktop home fits the viewport without page scroll", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  const overflow = await page.evaluate(
+    () =>
+      document.documentElement.scrollHeight - window.innerHeight,
+  );
+  expect(overflow).toBeLessThanOrEqual(2);
 });
 
 test("file management is a dedicated menu", async ({ page }) => {
