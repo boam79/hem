@@ -5,15 +5,18 @@ import { PERSONAS } from "@/config/personas";
 import type { DebateCell } from "@/lib/debate";
 import { ROUND1_LABEL, ROUND2_LABEL } from "@/lib/ko-display";
 import { glanceLine, glanceNote } from "@/lib/forest-ui";
+import type { PersonaKey } from "@/lib/schema";
 
 export function DebateGlance({
   round1,
   round2,
   loadingRound = 0,
+  onRetry,
 }: {
   round1: DebateCell[];
   round2: DebateCell[];
   loadingRound?: 0 | 1 | 2;
+  onRetry?: (persona: PersonaKey, round: 1 | 2) => void;
 }) {
   if (loadingRound === 0 && round1.length === 0 && round2.length === 0) {
     return null;
@@ -34,6 +37,24 @@ export function DebateGlance({
               <h3>{p.name}</h3>
               <ProviderBadge provider={p.provider} />
             </header>
+            {onRetry && r1?.status === "failed" ? (
+              <button
+                type="button"
+                className="glance-retry"
+                onClick={() => onRetry(p.key, 1)}
+              >
+                1라운드 다시
+              </button>
+            ) : null}
+            {onRetry && r2?.status === "failed" ? (
+              <button
+                type="button"
+                className="glance-retry"
+                onClick={() => onRetry(p.key, 2)}
+              >
+                2라운드 다시
+              </button>
+            ) : null}
             <div className="glance-row">
               <span className="glance-round-label">{ROUND1_LABEL}</span>
               {r1Loading ? (

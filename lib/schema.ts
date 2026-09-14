@@ -23,6 +23,7 @@ export const SessionCreateSchema = z.object({
 export const RoundRequestSchema = z.object({
   sessionId: z.string().min(1),
   round: z.union([z.literal(1), z.literal(2)]),
+  persona: PersonaKeySchema.optional(),
 });
 
 export const TurnSchema = z.object({
@@ -83,6 +84,14 @@ function clipArr(v: unknown, maxItems: number, maxLen: number): string[] {
     .map((s) => s.slice(0, maxLen));
 }
 
+function pickAliased(o: Record<string, unknown>, keys: string[], max: number): string {
+  for (const key of keys) {
+    const value = clipStr(o[key], max);
+    if (value) return value;
+  }
+  return "";
+}
+
 export function parseTurnPayload(raw: unknown, round: 1 | 2): TurnPayload {
   if (!raw || typeof raw !== "object") {
     throw new Error("turn payload is not an object");
@@ -95,8 +104,14 @@ export function parseTurnPayload(raw: unknown, round: 1 | 2): TurnPayload {
     needs_data: clipArr(o.needs_data, 3, 80),
   };
   if (round === 2) {
-    const objection = clipStr(o.objection, 200);
-    const changed = clipStr(o.changed, 120);
+    let objection = pickAliased(o, ["objection", "반대", "반대논거", "반론"], 200);
+    let changed = pickAliased(o, ["changed", "변경", "입장변경"], 120);
+    if (!objection) {
+      objection = clipStr(base.risks[0], 200) || clipStr(base.needs_data[0], 200);
+    }
+    if (!changed && base.position) {
+      changed = `유지: ${base.position}`.slice(0, 120);
+    }
     if (!objection || !changed) {
       throw new Error(ROUND2_EMPTY_FIELDS_ERROR);
     }

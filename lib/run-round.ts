@@ -14,6 +14,7 @@ import {
   metricsToMarkdownTable,
 } from "@/lib/prompt";
 import { canStartRound2 } from "@/lib/round-gate";
+import { retryTurnGate } from "@/lib/round-retry";
 import type { PersonaKey, TurnPayload } from "@/lib/schema";
 import { getSupabase, supabaseConfigured } from "@/lib/supabase";
 
@@ -170,4 +171,99 @@ export async function runRound(opts: {
   }
 
   return { ok: true, turns };
+}
+
+export async function retryPersonaTurn(opts: {
+  sessionId: string;
+  round: 1 | 2;
+  persona: PersonaKey;
+}): Promise<RunRoundResult> {
+  if (!supabaseConfigured()) {
+    return { ok: false, status: 503, error: "supabase_unconfigured" };
+  }
+  const { sessionId, round, persona } = opts;
+  const db = getSupabase();
+  const { data: session } = await db
+    .from("sessions")
+    .select("*")
+    .eq("id", sessionId)
+    .maybeSingle();
+  if (!session) {
+    return { ok: false, status: 404, error: "not_found" };
+  }
+  const { data: existing } = await db
+    .from("turns")
+    .select("*")
+    .eq("session_id", sessionId)
+    .eq("round", round)
+    .eq("persona", persona)
+    .maybeSingle();
+  const gate = retryTurnGate(existing?.status);
+  if (!gate.ok) {
+    return gate;
+  }
+
+  const { data: r1 } = await db
+    .from("turns")
+    .select("*")
+    .eq("session_id", sessionId)
+    .eq("round", 1);
+
+  if (round === 2) {
+    const ok = (r1 ?? []).filter((t) => t.status === "ok").length;
+    if (!canStartRound2(ok)) {
+      return { ok: false, status: 422, error: "round1_insufficient" };
+    }
+  }
+
+  const personas = await loadLivePersonas();
+  const p = personas.find((row) => row.key === persona);
+  if (!p) {
+    return { ok: false, status: 404, error: "persona_not_found" };
+  }
+  const metrics = metricsForSession(session);
+  const table = metricsToMarkdownTable(metrics);
+  const system = buildSystemPrompt(p, metrics);
+  let user = buildRound1UserPrompt(session.agenda, table);
+  if (round === 2) {
+    const others = (r1 ?? [])
+      .filter((t) => t.persona !== p.key && t.status === "ok")
+      .map((t) => ({
+        name: personas.find((x) => x.key === t.persona)?.name ?? t.persona,
+        payload: t.payload as TurnPayload,
+      }));
+    user = buildRound2UserPrompt(session.agenda, table, others);
+  }
+  const body = await callPersona(p, system, user, round);
+  const row = {
+    status: body.status,
+    payload: body.status === "ok" ? body.payload : null,
+    error: body.status === "failed" ? body.error : null,
+    usage: body.status === "ok" ? body.usage : null,
+    latency_ms: body.latencyMs,
+    model: body.model,
+    provider: body.provider,
+  };
+  await db
+    .from("turns")
+    .update(row)
+    .eq("session_id", sessionId)
+    .eq("round", round)
+    .eq("persona", persona);
+
+  return {
+    ok: true,
+    turns: [
+      {
+        persona: p.key,
+        provider: p.provider,
+        model: body.model,
+        status: body.status,
+        payload: body.status === "ok" ? body.payload : undefined,
+        error: body.status === "failed" ? body.error : undefined,
+        latencyMs: body.latencyMs,
+        usage: body.status === "ok" ? body.usage : undefined,
+      },
+    ],
+  };
 }

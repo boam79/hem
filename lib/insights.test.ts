@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import demoShare from "@/data/demo-share.json";
 import type { DebateTurnRow } from "@/lib/debate";
-import { insightsAreEmpty, insightsFromTurns } from "@/lib/insights";
+import { insightsAreEmpty, insightsFromTurns, missingDataSeedFromTurns } from "@/lib/insights";
 
 describe("insightsFromTurns", () => {
   const turns = demoShare.turns as DebateTurnRow[];
@@ -19,6 +19,8 @@ describe("insightsFromTurns", () => {
       true,
     );
     expect(insights.risks.length).toBeGreaterThan(0);
+    const missing = missingDataSeedFromTurns(turns);
+    expect(missing.length).toBeGreaterThanOrEqual(3);
   });
 
   it("is empty when there are no ok turns", () => {

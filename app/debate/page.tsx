@@ -1,71 +1,69 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { DebateGlance } from "@/components/debate-glance";
+import { IssueBundle } from "@/components/issue-bundle";
 import { ForestFrame, ForestPageNote } from "@/components/forest-shell";
-import demoShare from "@/data/demo-share.json";
-import {
-  cellsForRound,
-  DEMO_SHARE_ID,
-  type DebateTurnRow,
-} from "@/lib/debate";
+import { DEMO_SHARE_ID, cellsForRound } from "@/lib/debate";
+import { insightsFromTurns } from "@/lib/insights";
 import { apiErrorMessage } from "@/lib/api-errors";
-import { readRecentSessions } from "@/lib/recent-sessions";
+import type { PersonaKey } from "@/lib/schema";
+import { useSessionView } from "@/lib/use-session-view";
 
 function DebateInner() {
-  const search = useSearchParams();
-  const queryId = search.get("id");
-  const [sessionId, setSessionId] = useState<string | null>(null);
-  const [agenda, setAgenda] = useState<string | null>(null);
-  const [turns, setTurns] = useState<DebateTurnRow[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [recent, setRecent] = useState<{ id: string; agenda: string }[]>([]);
+  const {
+    id: sessionId,
+    agenda,
+    turns,
+    error,
+    loading,
+    recent,
+  } = useSessionView();
+  const [retryError, setRetryError] = useState<string | null>(null);
+  const [retrying, setRetrying] = useState(false);
+  const [localTurns, setLocalTurns] = useState(turns);
+  const shownTurns = localTurns.length > 0 ? localTurns : turns;
+  const round1 = cellsForRound(shownTurns, 1);
+  const round2 = cellsForRound(shownTurns, 2);
+  const insights = insightsFromTurns(shownTurns);
 
-  useEffect(() => {
-    setRecent(readRecentSessions());
-    const stored = readRecentSessions()[0]?.id ?? null;
-    const id = queryId || stored;
-    setSessionId(id);
-    if (!id) {
-      setLoading(false);
-      return;
+  async function retry(persona: PersonaKey, round: 1 | 2) {
+    if (!sessionId || sessionId === DEMO_SHARE_ID) return;
+    setRetryError(null);
+    setRetrying(true);
+    try {
+      const res = await fetch("/api/round", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId, round, persona }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        throw new Error(apiErrorMessage(json, "다시 호출하지 못했습니다."));
+      }
+      const next = json.turns?.[0];
+      if (next) {
+        setLocalTurns((prev) => {
+          const base = prev.length > 0 ? prev : shownTurns;
+          return base.map((row) =>
+            row.persona === persona && row.round === round
+              ? {
+                  ...row,
+                  status: next.status,
+                  payload: next.payload,
+                  error: next.error,
+                }
+              : row,
+          );
+        });
+      }
+    } catch (e) {
+      setRetryError(e instanceof Error ? e.message : "다시 호출하지 못했습니다.");
+    } finally {
+      setRetrying(false);
     }
-    if (id === DEMO_SHARE_ID) {
-      setAgenda(demoShare.agenda);
-      setTurns(demoShare.turns as DebateTurnRow[]);
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    void fetch(`/api/session?id=${encodeURIComponent(id)}`)
-      .then(async (res) => {
-        const json = await res.json();
-        if (!res.ok) {
-          throw new Error(apiErrorMessage(json, "세션을 찾지 못했습니다."));
-        }
-        return json as {
-          session: { agenda: string };
-          turns: DebateTurnRow[];
-        };
-      })
-      .then((body) => {
-        setAgenda(body.session.agenda);
-        setTurns(body.turns);
-      })
-      .catch((e) => {
-        setError(e instanceof Error ? e.message : "세션을 찾지 못했습니다.");
-        setAgenda(null);
-        setTurns([]);
-      })
-      .finally(() => setLoading(false));
-  }, [queryId]);
-
-  const round1 = cellsForRound(turns, 1);
-  const round2 = cellsForRound(turns, 2);
+  }
 
   return (
     <ForestFrame
@@ -111,16 +109,26 @@ function DebateInner() {
       ) : null}
       {loading ? <p className="forest-panel-copy">세션을 불러오는 중…</p> : null}
       {error ? <p className="text-destructive text-sm">{error}</p> : null}
+      {retryError ? <p className="text-destructive text-sm">{retryError}</p> : null}
       {agenda ? (
         <section className="forest-panel">
           <h2 className="forest-panel-title">안건</h2>
           <p className="forest-panel-copy">{agenda}</p>
         </section>
       ) : null}
-      {turns.length > 0 ? (
+      <IssueBundle insights={insights} />
+      {shownTurns.length > 0 ? (
         <section className="forest-panel">
           <h2 className="forest-panel-title">라운드 한눈에</h2>
-          <DebateGlance round1={round1} round2={round2} />
+          <DebateGlance
+            round1={round1}
+            round2={round2}
+            onRetry={
+              sessionId && sessionId !== DEMO_SHARE_ID && !retrying
+                ? retry
+                : undefined
+            }
+          />
           <p className="forest-results-links">
             전체 보기:{" "}
             <Link className="forest-dummy-link" href={`/s/${sessionId}`}>

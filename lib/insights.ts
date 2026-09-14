@@ -62,3 +62,19 @@ export function insightsAreEmpty(insights: DebateInsights): boolean {
     insights.needsData.length === 0
   );
 }
+
+export function uniqueInsightTexts(rows: InsightLine[]): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const row of rows) {
+    if (seen.has(row.text)) continue;
+    seen.add(row.text);
+    out.push(row.text);
+  }
+  return out;
+}
+
+/** Prefill 부족한 데이터 only. Consensus stays empty so a person still writes it. */
+export function missingDataSeedFromTurns(turns: DebateTurnRow[]): string[] {
+  return uniqueInsightTexts(insightsFromTurns(turns).needsData);
+}

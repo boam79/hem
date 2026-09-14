@@ -18,6 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { AGENDA_MAX, AGENDA_MIN } from "@/config/limits";
 import {
   DATA_REVIEW_AGENDA,
+  JUDGE_AGENDA,
   agendaError,
   agendaLength,
   canStartDataReview,
@@ -26,7 +27,7 @@ import {
 import { debateStartBody } from "@/lib/debate-start";
 import { apiErrorMessage } from "@/lib/api-errors";
 import type { DebateCell } from "@/lib/debate";
-import { rememberSession } from "@/lib/recent-sessions";
+import { rememberSession, readRecentSessions } from "@/lib/recent-sessions";
 import {
   readMetricsUploadStore,
   type MetricsUploadStore,
@@ -64,6 +65,9 @@ export default function Home() {
     Partial<Record<PersonaKey, string>>
   >({});
   const [chooserOpen, setChooserOpen] = useState(false);
+  const [recentHome, setRecentHome] = useState<{ id: string; agenda: string }[]>(
+    [],
+  );
   const runId = useRef(0);
   const prevFileCount = useRef(0);
   const clientAgendaError = agendaError(agenda);
@@ -109,6 +113,7 @@ export default function Home() {
       applyStore(readMetricsUploadStore());
     }
     hydrate();
+    setRecentHome(readRecentSessions());
     window.addEventListener("storage", hydrate);
     return () => window.removeEventListener("storage", hydrate);
   }, []);
@@ -263,6 +268,15 @@ export default function Home() {
           {clientAgendaError ? (
             <p className="text-destructive mb-2 text-xs">{clientAgendaError}</p>
           ) : null}
+          <Button
+            type="button"
+            variant="outline"
+            className="forest-review-btn mb-3 w-full"
+            disabled={loadingRound !== 0}
+            onClick={() => setAgenda(JUDGE_AGENDA)}
+          >
+            심사 안건
+          </Button>
           <label className="forest-field-label" htmlFor="category">
             유형
           </label>
@@ -322,6 +336,17 @@ export default function Home() {
             </p>
             {error ? (
               <p className="text-destructive mt-2 text-xs">{error}</p>
+            ) : null}
+            {recentHome[0] ? (
+              <p className="forest-field-hint mt-2">
+                최근 회의{" "}
+                <a
+                  className="forest-dummy-link"
+                  href={`/debate?id=${recentHome[0].id}`}
+                >
+                  {recentHome[0].agenda}
+                </a>
+              </p>
             ) : null}
             {sessionId && round1.length > 0 ? (
               <p className="forest-field-hint mt-2">

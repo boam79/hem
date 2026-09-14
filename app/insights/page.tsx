@@ -1,22 +1,16 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { ForestFrame, ForestPageNote } from "@/components/forest-shell";
 import { PERSONAS } from "@/config/personas";
-import demoShare from "@/data/demo-share.json";
-import {
-  DEMO_SHARE_ID,
-  type DebateTurnRow,
-} from "@/lib/debate";
-import { apiErrorMessage } from "@/lib/api-errors";
+import { DEMO_SHARE_ID } from "@/lib/debate";
 import {
   insightsAreEmpty,
   insightsFromTurns,
   type InsightLine,
 } from "@/lib/insights";
-import { readRecentSessions } from "@/lib/recent-sessions";
+import { useSessionView } from "@/lib/use-session-view";
 import type { PersonaKey } from "@/lib/schema";
 
 const PERSONA_NAME: Record<PersonaKey, string> = {
@@ -54,53 +48,13 @@ function InsightList({
 }
 
 function InsightsInner() {
-  const search = useSearchParams();
-  const queryId = search.get("id");
-  const [sessionId, setSessionId] = useState<string | null>(null);
-  const [agenda, setAgenda] = useState<string | null>(null);
-  const [turns, setTurns] = useState<DebateTurnRow[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const stored = readRecentSessions()[0]?.id ?? null;
-    const id = queryId || stored;
-    setSessionId(id);
-    if (!id) {
-      setLoading(false);
-      return;
-    }
-    if (id === DEMO_SHARE_ID) {
-      setAgenda(demoShare.agenda);
-      setTurns(demoShare.turns as DebateTurnRow[]);
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    void fetch(`/api/session?id=${encodeURIComponent(id)}`)
-      .then(async (res) => {
-        const json = await res.json();
-        if (!res.ok) {
-          throw new Error(apiErrorMessage(json, "세션을 찾지 못했습니다."));
-        }
-        return json as {
-          session: { agenda: string };
-          turns: DebateTurnRow[];
-        };
-      })
-      .then((body) => {
-        setAgenda(body.session.agenda);
-        setTurns(body.turns);
-      })
-      .catch((e) => {
-        setError(e instanceof Error ? e.message : "세션을 찾지 못했습니다.");
-        setAgenda(null);
-        setTurns([]);
-      })
-      .finally(() => setLoading(false));
-  }, [queryId]);
-
+  const {
+    id: sessionId,
+    agenda,
+    turns,
+    error,
+    loading,
+  } = useSessionView();
   const insights = insightsFromTurns(turns);
 
   return (

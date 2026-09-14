@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   DATA_REVIEW_AGENDA,
+  JUDGE_AGENDA,
   canStartDataReview,
   isAgendaValid,
 } from "@/lib/agenda";
@@ -28,6 +29,11 @@ describe("data review agenda", () => {
   it("blocks data review until a file is uploaded", () => {
     expect(canStartDataReview(false)).toBe(false);
     expect(canStartDataReview(true)).toBe(true);
+  });
+
+  it("judge agenda is a valid 10+ character fill", () => {
+    expect(isAgendaValid(JUDGE_AGENDA)).toBe(true);
+    expect(JUDGE_AGENDA).toBe("백내장 검색광고 예산 30% 증액");
   });
 });
 
@@ -57,6 +63,11 @@ describe("metrics stats summary", () => {
     expect(summary.surgeryTotal).toBe(surgeryTotal);
     expect(summary.cashNetTotal).toBe(cashNetTotal);
     expect(summary.surgeryTotal).toBeGreaterThan(0);
+    expect(summary.lastInflow).toBeTruthy();
+    expect(summary.lastNationality).toBeTruthy();
+    expect(summary.extremes.some((row) => row.label === "순현금 최고")).toBe(
+      true,
+    );
   });
 
   it("summarizes the dummy monthly csv hospital name", () => {

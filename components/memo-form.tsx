@@ -26,13 +26,19 @@ function lines(value: string): string[] {
     .filter(Boolean);
 }
 
-export function MemoForm({ sessionId }: { sessionId: string }) {
+export function MemoForm({
+  sessionId,
+  missingSeed = [],
+}: {
+  sessionId: string;
+  missingSeed?: string[];
+}) {
   const [consensus, setConsensus] = useState("");
   const [issue, setIssue] = useState("");
   const [cfo, setCfo] = useState("");
   const [mkt, setMkt] = useState("");
   const [md, setMd] = useState("");
-  const [missing, setMissing] = useState("");
+  const [missing, setMissing] = useState(missingSeed.join("\n"));
   const [optionA, setOptionA] = useState("");
   const [optionB, setOptionB] = useState("");
   const [supportA, setSupportA] = useState<PersonaKey[]>([]);

@@ -3,6 +3,8 @@ import { AGENDA_MAX, AGENDA_MIN } from "@/config/limits";
 export const DATA_REVIEW_AGENDA =
   "업로드한 12개월 지표에서 위험·가정·필요 데이터를 올려라";
 
+export const JUDGE_AGENDA = "백내장 검색광고 예산 30% 증액";
+
 export function agendaLength(agenda: string): number {
   return agenda.trim().length;
 }

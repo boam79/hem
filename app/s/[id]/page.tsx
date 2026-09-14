@@ -1,6 +1,7 @@
 import { DebateGrid } from "@/components/debate-grid";
 import { Disclaimer } from "@/components/disclaimer";
 import { MemoView } from "@/components/memo-view";
+import { ShareToolbar } from "@/components/share-toolbar";
 import demoShare from "@/data/demo-share.json";
 import { DEMO_SHARE_ID, type DebateCell } from "@/lib/debate";
 import { MemoSchema, MetricsSchema, type Memo, type TurnPayload } from "@/lib/schema";
@@ -45,6 +46,7 @@ function ShareBody({
   return (
     <main className="mx-auto max-w-6xl p-6">
       <Disclaimer extra={extra} />
+      <ShareToolbar />
       <h1 className="mb-2 text-2xl font-semibold">안건</h1>
       <p className={metricsNote ? "mb-2" : "mb-6"}>{agenda}</p>
       {metricsNote ? (

@@ -128,11 +128,11 @@ describe("TurnSchema", () => {
       }).success,
     ).toBe(true);
   });
-  it("round 2 rejects empty or whitespace objection", () => {
+  it("round 2 rejects empty objection when nothing else can fill it", () => {
     const base = {
-      position: "반대합니다",
+      position: "",
       evidence: ["inflow.search_ad 2026-07"],
-      risks: ["고정비"],
+      risks: [],
       needs_data: [],
       changed: "유지: 현금흐름 우선",
     };
@@ -142,16 +142,40 @@ describe("TurnSchema", () => {
     expect(() =>
       parseTurnPayload({ ...base, objection: "   " }, 2),
     ).toThrow(ROUND2_EMPTY_FIELDS_ERROR);
-    expect(() =>
-      parseTurnPayload({ ...base, objection: "회수 가정이 없습니다", changed: "" }, 2),
-    ).toThrow(ROUND2_EMPTY_FIELDS_ERROR);
-    expect(() =>
-      parseTurnPayload({ ...base, objection: "\t", changed: "  " }, 2),
-    ).toThrow(ROUND2_EMPTY_FIELDS_ERROR);
   });
-  it("jsonrepair of empty objection still fails parse (not a recovery)", () => {
+  it("round 2 reads Korean objection/changed keys", () => {
+    const parsed = parseTurnPayload(
+      {
+        반대: "마케팅의 회수 가정이 없습니다",
+        변경: "유지: 현금흐름 우선",
+        position: "보류",
+        evidence: ["검색광고 유입"],
+        risks: [],
+        needs_data: [],
+      },
+      2,
+    );
+    expect(parsed.objection).toBe("마케팅의 회수 가정이 없습니다");
+    expect(parsed.changed).toBe("유지: 현금흐름 우선");
+  });
+  it("round 2 fills blank objection from the first risk and changed from position", () => {
+    const parsed = parseTurnPayload(
+      {
+        objection: "",
+        changed: "",
+        position: "보류",
+        evidence: ["검색광고 유입"],
+        risks: ["회수 가정이 지표에 없습니다"],
+        needs_data: [],
+      },
+      2,
+    );
+    expect(parsed.objection).toBe("회수 가정이 지표에 없습니다");
+    expect(parsed.changed).toBe("유지: 보류");
+  });
+  it("jsonrepair of empty objection still fails parse when no salvage fields", () => {
     const recovered = extractJsonObject(
-      '{"objection":"","changed":"","position":"보류","evidence":["a"],"risks":[],"needs_data":[]}',
+      '{"objection":"","changed":"","position":"","evidence":["a"],"risks":[],"needs_data":[]}',
     );
     expect(() => parseTurnPayload(recovered, 2)).toThrow(
       ROUND2_EMPTY_FIELDS_ERROR,

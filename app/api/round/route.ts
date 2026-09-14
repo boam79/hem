@@ -1,4 +1,4 @@
-import { runRound } from "@/lib/run-round";
+import { retryPersonaTurn, runRound } from "@/lib/run-round";
 import { RoundRequestSchema } from "@/lib/schema";
 
 export const maxDuration = 60;
@@ -9,7 +9,13 @@ export async function POST(req: Request) {
   if (!parsed.success) {
     return Response.json({ error: "invalid_request" }, { status: 400 });
   }
-  const result = await runRound(parsed.data);
+  const result = parsed.data.persona
+    ? await retryPersonaTurn({
+        sessionId: parsed.data.sessionId,
+        round: parsed.data.round,
+        persona: parsed.data.persona,
+      })
+    : await runRound(parsed.data);
   if (!result.ok) {
     return Response.json({ error: result.error }, { status: result.status });
   }

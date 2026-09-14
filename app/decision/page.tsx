@@ -1,65 +1,27 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { ForestFrame, ForestPageNote } from "@/components/forest-shell";
+import { IssueBundle } from "@/components/issue-bundle";
 import { MemoForm } from "@/components/memo-form";
 import { MemoView } from "@/components/memo-view";
-import demoShare from "@/data/demo-share.json";
 import { DEMO_SHARE_ID } from "@/lib/debate";
-import { apiErrorMessage } from "@/lib/api-errors";
-import { readRecentSessions } from "@/lib/recent-sessions";
-import { MemoSchema, type Memo } from "@/lib/schema";
+import { insightsFromTurns, missingDataSeedFromTurns } from "@/lib/insights";
+import { useSessionView } from "@/lib/use-session-view";
 
 function DecisionInner() {
-  const search = useSearchParams();
-  const queryId = search.get("id");
-  const [sessionId, setSessionId] = useState<string | null>(null);
-  const [agenda, setAgenda] = useState<string | null>(null);
-  const [memo, setMemo] = useState<Memo | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const stored = readRecentSessions()[0]?.id ?? null;
-    const id = queryId || stored;
-    setSessionId(id);
-    if (!id) {
-      setLoading(false);
-      return;
-    }
-    if (id === DEMO_SHARE_ID) {
-      const parsed = MemoSchema.safeParse(demoShare.memo);
-      setAgenda(demoShare.agenda);
-      setMemo(parsed.success ? parsed.data : null);
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    void fetch(`/api/session?id=${encodeURIComponent(id)}`)
-      .then(async (res) => {
-        const json = await res.json();
-        if (!res.ok) throw new Error(apiErrorMessage(json, "세션을 찾지 못했습니다."));
-        return json as {
-          session: { agenda: string; memo?: unknown };
-        };
-      })
-      .then((body) => {
-        setAgenda(body.session.agenda);
-        const parsed = body.session.memo
-          ? MemoSchema.safeParse(body.session.memo)
-          : null;
-        setMemo(parsed?.success ? parsed.data : null);
-      })
-      .catch((e) => {
-        setError(e instanceof Error ? e.message : "세션을 찾지 못했습니다.");
-        setAgenda(null);
-        setMemo(null);
-      })
-      .finally(() => setLoading(false));
-  }, [queryId]);
+  const {
+    id: sessionId,
+    queryId,
+    agenda,
+    turns,
+    memo,
+    error,
+    loading,
+  } = useSessionView();
+  const insights = insightsFromTurns(turns);
+  const missingSeed = memo ? [] : missingDataSeedFromTurns(turns);
 
   return (
     <ForestFrame
@@ -88,7 +50,7 @@ function DecisionInner() {
               데모 공유
             </Link>
             {" · "}
-            <Link className="forest-dummy-link" href="/decision?id=uE7m2G">
+            <Link className="forest-dummy-link" href="/decision?id=w4demo">
               저장된 메모 예시
             </Link>
           </p>
@@ -107,9 +69,10 @@ function DecisionInner() {
           <p className="forest-panel-copy">{agenda}</p>
         </section>
       ) : null}
+      <IssueBundle insights={insights} />
       {memo ? <MemoView memo={memo} /> : null}
       {sessionId && sessionId !== DEMO_SHARE_ID && !loading && !error ? (
-        <MemoForm sessionId={sessionId} />
+        <MemoForm sessionId={sessionId} missingSeed={missingSeed} />
       ) : null}
       {sessionId === DEMO_SHARE_ID ? (
         <p className="forest-panel-copy">

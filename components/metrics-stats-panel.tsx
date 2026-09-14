@@ -5,6 +5,10 @@ function num(n: number): string {
   return n.toLocaleString("ko-KR");
 }
 
+function pct(n: number): string {
+  return `${Math.round(n * 100)}%`;
+}
+
 export function MetricsStatsPanel({ metrics }: { metrics: Metrics }) {
   const summary = summarizeMetrics(metrics);
   return (
@@ -18,6 +22,32 @@ export function MetricsStatsPanel({ metrics }: { metrics: Metrics }) {
         수술 합 {num(summary.surgeryTotal)}건 · 기간 순현금{" "}
         {num(summary.cashNetTotal)}만원
       </p>
+      {summary.lastInflow ? (
+        <p className="forest-panel-copy">
+          마지막 월 유입 검색광고 {num(summary.lastInflow.searchAd)} · 소셜{" "}
+          {num(summary.lastInflow.social)} · 소개 {num(summary.lastInflow.referral)}{" "}
+          · 해외 {num(summary.lastInflow.overseas)}
+        </p>
+      ) : null}
+      {summary.lastNationality ? (
+        <p className="forest-panel-copy">
+          마지막 월 국적 국내 {pct(summary.lastNationality.domestic)} · 중국{" "}
+          {pct(summary.lastNationality.china)} · 일본{" "}
+          {pct(summary.lastNationality.japan)}
+        </p>
+      ) : null}
+      {summary.demographics ? (
+        <p className="forest-panel-copy">{summary.demographics}</p>
+      ) : null}
+      {summary.extremes.length > 0 ? (
+        <p className="metrics-stat-chips">
+          {summary.extremes.map((row) => (
+            <span key={row.label} className="metrics-stat-chip">
+              {row.label} {row.month}
+            </span>
+          ))}
+        </p>
+      ) : null}
       <div className="metrics-stats-wrap">
         <table className="metrics-stats-table">
           <thead>
